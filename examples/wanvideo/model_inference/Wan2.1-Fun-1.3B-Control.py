@@ -26,9 +26,10 @@ dataset_snapshot_download(
 # Control video
 control_video = VideoData("data/examples/wan/control_video.mp4", height=832, width=576)
 video = pipe(
-    prompt="扁平风格动漫，一位长发少女优雅起舞。她五官精致，大眼睛明亮有神，黑色长发柔顺光泽。身穿淡蓝色T恤和深蓝色牛仔短裤。背景是粉色。",
+    prompt="在这个阳光明媚的户外花园里，美女身穿一袭及膝的白色无袖连衣裙，裙摆在她轻盈的舞姿中轻柔地摆动。阳光透过树叶间洒下斑驳的光影，映衬出她柔和的脸庞和清澈的眼眸，显得格外优雅。",
+    # prompt="扁平风格动漫，一位长发少女优雅起舞。她五官精致，大眼睛明亮有神，黑色长发柔顺光泽。身穿淡蓝色T恤和深蓝色牛仔短裤。背景是粉色。",
     negative_prompt="色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
-    control_video=control_video, height=832, width=576, num_frames=49,
-    seed=1, tiled=True
+    control_video=control_video, height=832, width=480, num_frames=288,
+    seed=42, tiled=True
 )
-save_video(video, "video_Wan2.1-Fun-1.3B-Control.mp4", fps=15, quality=5)
+save_video(video, "video_Wan2.1-Fun-1.3B-Control.mp4", fps=16, quality=5)

@@ -1435,6 +1435,20 @@ def model_fn_wan_video(
         dit.freqs[2][:w].view(1, 1, w, -1).expand(f, h, w, -1)
     ], dim=-1).reshape(f * h * w, 1, -1).to(x.device)
 
+    # ── Helios history injection ──────────────────────────────────────
+    # model_fn_wan_video never calls dit.forward(), so history tokens must be
+    # injected here, right after patchification and freqs, before the block loop.
+    helios_history_len = 0
+    if getattr(dit, '_helios_history', None) is not None:
+        from diffsynth.models.wan_video_helios_attention import _build_helios_token_sequence
+        h_tokens, h_freqs = _build_helios_token_sequence(dit, x.device, x.dtype)
+        if h_tokens is not None:
+            helios_history_len = h_tokens.shape[1]
+            x     = torch.cat([h_tokens, x],     dim=1)   # prepend history
+            freqs = torch.cat([h_freqs,  freqs], dim=0)   # prepend history freqs
+    if hasattr(dit, '_helios_current_history_len'):
+        dit._helios_current_history_len = helios_history_len
+
     # VAP 
     if vap is not None:
         # hidden state
@@ -1582,11 +1596,15 @@ def model_fn_wan_video(
         if tea_cache is not None:
             tea_cache.store(x)
             
+    # ── Strip Helios history tokens (prepended before blocks) ────────
+    if helios_history_len > 0:
+        x = x[:, helios_history_len:]
+
     if hasattr(dit, "wantodance_enable_unimodel") and dit.wantodance_enable_unimodel and int(wantodance_fps + 0.5) != 30:
         x = dit.head_global(x, t)
     else:
         x = dit.head(x, t)
-    
+
     if use_unified_sequence_parallel:
         if dist.is_initialized() and dist.get_world_size() > 1:
             x = get_sp_group().all_gather(x, dim=1)
