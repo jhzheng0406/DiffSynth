@@ -197,7 +197,9 @@ class HeliosSelfAttention(nn.Module):
         self.norm_k = base_attn.norm_k
         self.attn = base_attn.attn
 
-        self._helios_parent = parent_dit
+        # Use object.__setattr__ to avoid registering parent_dit as a submodule
+        # (which would create a circular reference: dit → block → _helios_parent → dit)
+        object.__setattr__(self, '_helios_parent', parent_dit)
         self.is_amplify_history = is_amplify_history
         self.max_history_scale = max_history_scale
         self.register_buffer("_scale_cache", None)
@@ -479,7 +481,13 @@ def patch_wan_model_for_helios(
     def clear_helios_history(self_dit) -> None:
         self_dit._helios_history   = None
         self_dit._helios_frame_ids = None
-        self_dit._helios_current_history_len = 0
+        # NOTE: _helios_current_history_len is intentionally NOT reset here.
+        # Gradient checkpointing recomputes block forwards AFTER clear_helios_history()
+        # is called (in the loss finally-block). HeliosAttention reads this value
+        # to decide whether to apply history key-scaling. If we zero it here, the
+        # recomputed path diverges from the original forward (different tensor count
+        # → CheckpointError). The value will be overwritten at the start of the
+        # next forward pass by model_fn_wan_video.
 
     dit.set_helios_history   = types.MethodType(set_helios_history,   dit)
     dit.clear_helios_history = types.MethodType(clear_helios_history, dit)

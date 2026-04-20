@@ -31,9 +31,9 @@ from diffsynth.models.wan_video_helios_attention import (
 # ---------------------------------------------------------------------------
 # Config — edit these
 # ---------------------------------------------------------------------------
-MODEL_DIR        = "models/Wan2.1-Fun-V1.1-1.3B-Control"
-USE_MODEL_ID     = True
-HELIOS_CHECKPOINT = None   # optional full fine-tuned ckpt exported by train_helios.py
+MODEL_DIR        = "/mnt/vita/scratch/vita-students/users/jinghao/code/VideoX-Fun/models/Diffusion_Transformer/Wan2.1-Fun-V1.1-1.3B-Control"
+USE_MODEL_ID     = False
+HELIOS_CHECKPOINT = "models/train/Wan2.1-Fun-V1.1-1.3B-Control-Helios/step-2300.safetensors"
 
 HEIGHT           = 832
 WIDTH            = 480
@@ -145,6 +145,7 @@ def encode_chunk_to_latents(frames):
 # ---------------------------------------------------------------------------
 all_frames        = []           # accumulated output frames (PIL.Image)
 accumulated_lats  = []           # list of [1, C, T_lat, H_lat, W_lat] CPU tensors
+prev_last_frame   = None         # antidrift anchor
 
 for k in range(NUM_CHUNKS):
     is_first_chunk = (k == 0)
@@ -176,7 +177,9 @@ for k in range(NUM_CHUNKS):
         prompt=PROMPT,
         negative_prompt=NEGATIVE_PROMPT,
         control_video=ctrl_chunk,
-        # Use reference_image only for chunk 0 (Helios handles history for k>0)
+        # NOTE: reference_image intentionally omitted for k>0 here.
+        # Helios history tokens handle temporal context once the model is trained.
+        # Zero-shot (untrained) Helios + reference_image causes artifacts.
         reference_image=ref_image if is_first_chunk else None,
         height=HEIGHT,
         width=WIDTH,
@@ -192,6 +195,8 @@ for k in range(NUM_CHUNKS):
 
     # ── VAE-encode chunk output for next chunk's history ─────────────
     accumulated_lats.append(encode_chunk_to_latents(chunk_frames))
+
+    prev_last_frame = chunk_frames[-1]
 
     if is_first_chunk:
         all_frames.extend(chunk_frames)

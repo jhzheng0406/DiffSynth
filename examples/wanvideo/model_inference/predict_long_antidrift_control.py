@@ -24,8 +24,11 @@ from diffsynth.pipelines.wan_video import WanVideoPipeline, ModelConfig
 # ---------------------------------------------------------------------------
 # Config — edit these
 # ---------------------------------------------------------------------------
-MODEL_DIR        = "models/Wan2.1-Fun-V1.1-1.3B-Control"   # local path or set model_id below
-USE_MODEL_ID     = True   # set False to load from MODEL_DIR
+MODEL_DIR        = "/mnt/vita/scratch/vita-students/users/jinghao/code/VideoX-Fun/models/Diffusion_Transformer/Wan2.1-Fun-V1.1-1.3B-Control"
+USE_MODEL_ID     = False  # set False to load from MODEL_DIR
+
+# Fine-tuned checkpoint to load on top of base weights (None = use base model only)
+FINETUNED_CKPT   = None  # fine-tuning degraded quality; base model works better
 
 HEIGHT           = 832
 WIDTH            = 480
@@ -81,6 +84,13 @@ else:
         ],
         tokenizer_config=ModelConfig(os.path.join(MODEL_DIR, "google/umt5-xxl")),
     )
+    if FINETUNED_CKPT is not None:
+        import safetensors.torch
+        state_dict = safetensors.torch.load_file(FINETUNED_CKPT, device="cpu")
+        missing, unexpected = pipe.dit.load_state_dict(state_dict, strict=False)
+        print(f"[ckpt] Loaded {FINETUNED_CKPT}")
+        if missing:    print(f"  missing keys : {len(missing)}")
+        if unexpected: print(f"  unexpected   : {len(unexpected)}")
 
 # ---------------------------------------------------------------------------
 # Load full control video once
