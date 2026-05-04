@@ -43,6 +43,7 @@ def add_output_config(parser: argparse.ArgumentParser):
     parser.add_argument("--output_path", type=str, default="./models", help="Output save path.")
     parser.add_argument("--remove_prefix_in_ckpt", type=str, default="pipe.dit.", help="Remove prefix in ckpt.")
     parser.add_argument("--save_steps", type=int, default=None, help="Number of checkpoint saving invervals. If None, checkpoints will be saved every epoch.")
+    parser.add_argument("--early_save_steps", type=int, default=0, help="Save a checkpoint at every step for the first N steps (for debugging gradient flow, etc.).")
     return parser
 
 def add_lora_config(parser: argparse.ArgumentParser):

@@ -17,7 +17,8 @@ Usage:
     python predict_long_helios_control.py
 """
 
-import os, sys, torch
+import os, sys, torch, re
+from datetime import datetime
 import numpy as np
 from PIL import Image
 from diffsynth.core import load_state_dict
@@ -33,10 +34,18 @@ from diffsynth.models.wan_video_helios_attention import (
 # ---------------------------------------------------------------------------
 MODEL_DIR        = "/mnt/vita/scratch/vita-students/users/jinghao/code/VideoX-Fun/models/Diffusion_Transformer/Wan2.1-Fun-V1.1-1.3B-Control"
 USE_MODEL_ID     = False
-HELIOS_CHECKPOINT = "models/train/Wan2.1-Fun-V1.1-1.3B-Control-Helios/step-2300.safetensors"
+# HELIOS_CHECKPOINT options:
+#   None                                          -> zero-shot (untrained Helios)
+#   "models/train/.../Helios-v6-eadtest/step-XXX.safetensors"  -> NEW ckpt (anchor + Relative RoPE + EAD fixes)
+# WARNING: do NOT load v4 checkpoints with this script. v4 was trained with
+# the legacy layout (no anchor, no RoPE shift, additive EAD); loading it now
+# is OOD and will produce worse results, not better.
+# HELIOS_CHECKPOINT = None
+HELIOS_CHECKPOINT = "models/train/Wan2.1-Fun-V1.1-1.3B-Control-Helios-v6-eadtest/step-700.safetensors"
 
-HEIGHT           = 832
-WIDTH            = 480
+# Resolution must MATCH the training script (eadtest.sh uses --height 480 --width 832).
+HEIGHT           = 480
+WIDTH            = 832
 CHUNK_FRAMES     = 49
 NUM_CHUNKS       = 6
 
@@ -100,6 +109,7 @@ patch_wan_model_for_helios(
     pipe.dit,
     is_amplify_history=True,
     freeze_history_scale=True,   # True at inference; False when training
+    use_first_frame_anchor=True, # match the trained-checkpoint setting
 )
 print("Helios attention patch applied.")
 if HELIOS_CHECKPOINT is not None:
@@ -156,10 +166,21 @@ for k in range(NUM_CHUNKS):
     ctrl_chunk  = all_ctrl_frames[frame_start : frame_start + CHUNK_FRAMES]
 
     # ── Helios history injection ──────────────────────────────────────
-    if not is_first_chunk and len(accumulated_lats) > 0:
+    # ZERO-SHOT MODE (no checkpoint): skip helios entirely (pure base Wan).
+    # TRAINED MODE: only inject for chunk K>0. Chunk 0 falls back to plain
+    # Wan-Fun-Control (uses reference_image) — this matches the training
+    # data which never saw reference_image WITH helios tokens. If we inject
+    # helios history at chunk 0, both helios anchor and ref_latent end up at
+    # RoPE position 0 → severe train/inference OOD → noise output.
+    # if HELIOS_CHECKPOINT is None:
+    #     print("  [zero-shot] skipping Helios history injection")
+    if is_first_chunk:
+        print("  [chunk-0] skipping Helios injection (using reference_image instead)")
+    else:
         history = prepare_helios_history(
             accumulated_lats,
             history_sizes=HISTORY_SIZES,
+            use_first_frame_anchor=True,
             device=pipe.device,
             dtype=pipe.torch_dtype,
         )
@@ -206,8 +227,14 @@ for k in range(NUM_CHUNKS):
 # ---------------------------------------------------------------------------
 # Save
 # ---------------------------------------------------------------------------
+if HELIOS_CHECKPOINT is not None:
+    m = re.search(r"step[-_](\d+)", HELIOS_CHECKPOINT)
+    _tag = f"trained_steps_{m.group(1)}" if m else "trained"
+else:
+    _tag = "zeroshot"
+_ts = datetime.now().strftime("%m%d_%H%M")
+out_name = f"helios_{_tag}_{_ts}.mp4"
 os.makedirs(SAVE_PATH, exist_ok=True)
-index = len(os.listdir(SAVE_PATH)) + 1
-out_path = os.path.join(SAVE_PATH, f"{index:08d}.mp4")
+out_path = os.path.join(SAVE_PATH, out_name)
 save_video(all_frames, out_path, fps=FPS, quality=7)
 print(f"\nSaved {len(all_frames)} frames → {out_path}")

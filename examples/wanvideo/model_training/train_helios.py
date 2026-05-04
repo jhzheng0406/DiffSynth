@@ -25,6 +25,7 @@ Typical usage (SFT fine-tuning, Fun-Control model):
         --helios_init_scale_logit -3.0
 """
 
+import argparse
 import os
 import sys
 
@@ -53,45 +54,47 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 def HeliosFlowMatchSFTLoss(
     pipe,
     helios_history_sizes,
-    helios_corrupt_mode="noise",
-    helios_noise_ratio_short=0.02,
-    helios_noise_ratio_mid=0.03,
-    helios_noise_ratio_long=0.04,
+    helios_corrupt_mode="random",
+    helios_noise_ratio_short=1.0 / 3.0,
+    helios_noise_ratio_mid=1.0 / 3.0,
+    helios_noise_ratio_long=1.0 / 3.0,
     helios_keep_x0=False,
-    helios_apply_saturation=False,
-    helios_saturation_min=0.7,
-    helios_saturation_max=2.0,
-    helios_clean_history_prob=0.2,
+    helios_apply_saturation=True,
+    helios_saturation_min=0.3,
+    helios_saturation_max=1.7,
+    helios_clean_history_prob=0.1,
     helios_drop_t2v_ratio=0.10,
     helios_drop_i2v_ratio=0.05,
     helios_supervise_history=False,
+    helios_use_first_frame_anchor=True,
     **inputs,
 ):
     """
     Flow-matching SFT with Helios history injection.
 
     We keep the original Wan conditioning tensors unchanged, derive Helios
-    history from the first `sum(history_sizes)` latent frames, and by default
-    supervise only the later frames. This keeps tensor shapes aligned with the
-    standard DiffSynth Wan pipeline while teaching the model to consume a
-    Helios-style history side channel.
+    history from the first latent frames, and supervise only the target chunk.
+    With first-frame anchor enabled, the very first latent serves as a
+    permanent visual anchor (matching Helios upstream); the target window
+    starts at position 1 + sum(history_sizes).
     """
     input_latents = inputs["input_latents"]
-    total_history = sum(helios_history_sizes)
+    total_history = sum(helios_history_sizes) + (1 if helios_use_first_frame_anchor else 0)
     if input_latents.shape[2] <= total_history:
         raise ValueError(
-            "Helios training needs more latent frames than history frames. "
-            f"Got latent length={input_latents.shape[2]}, history length={total_history}. "
+            "Helios training needs more latent frames than history (incl. anchor). "
+            f"Got latent length={input_latents.shape[2]}, total history (incl. anchor)={total_history}. "
             "Reduce --helios_history_sizes or increase --num_frames."
         )
 
-    _, lat_long, lat_mid, lat_short, fids_long, fids_mid, fids_short, _ = split_into_helios_history_and_target(
+    target_lat, lat_long, lat_mid, lat_short, fids_long, fids_mid, fids_short, _ = split_into_helios_history_and_target(
         input_latents,
         history_sizes=helios_history_sizes,
         latent_window_size=input_latents.shape[2] - total_history,
         is_random_drop=True,
         drop_t2v_ratio=helios_drop_t2v_ratio,
         drop_i2v_ratio=helios_drop_i2v_ratio,
+        use_first_frame_anchor=helios_use_first_frame_anchor,
     )
 
     if helios_corrupt_mode != "none":
@@ -124,21 +127,31 @@ def HeliosFlowMatchSFTLoss(
         timestep_id = torch.randint(min_timestep_boundary, max_timestep_boundary, (1,))
         timestep = pipe.scheduler.timesteps[timestep_id].to(dtype=pipe.torch_dtype, device=pipe.device)
 
-        noise = torch.randn_like(input_latents)
-        latents = pipe.scheduler.add_noise(input_latents, noise, timestep)
-        training_target = pipe.scheduler.training_target(input_latents, noise, timestep)
+        # Only add noise to / supervise the TARGET frames (not the history).
+        # This forces the model to use Helios history tokens for temporal context
+        # instead of shortcutting through the history frames in the current sequence.
+        # This matches inference, where only the new chunk frames are in the current
+        # token sequence and cross-chunk history arrives exclusively via Helios tokens.
+        noise = torch.randn_like(target_lat)
+        latents = pipe.scheduler.add_noise(target_lat, noise, timestep)
+        training_target = pipe.scheduler.training_target(target_lat, noise, timestep)
 
         model_inputs = dict(inputs)
         model_inputs["latents"] = latents
-        if "first_frame_latents" in model_inputs:
-            model_inputs["latents"][:, :, 0:1] = model_inputs["first_frame_latents"]
+        # Slice any temporal tensors in model_inputs to target frames only.
+        for key in ("y", "image_latents", "control_latents"):
+            if key in model_inputs and model_inputs[key] is not None:
+                t = model_inputs[key]
+                if t.dim() == 5 and t.shape[2] == input_latents.shape[2]:
+                    model_inputs[key] = t[:, :, total_history:]
+        # first_frame_latents conditioning does not apply when we pass only target frames.
+        model_inputs.pop("first_frame_latents", None)
 
         models = {name: getattr(pipe, name) for name in pipe.in_iteration_models}
         noise_pred = pipe.model_fn(**models, **model_inputs, timestep=timestep)
 
-        supervise_from = 0 if helios_supervise_history else total_history
-        if "first_frame_latents" in model_inputs:
-            supervise_from = max(supervise_from, 1)
+        # All target frames are supervised (no skip needed since history frames are absent).
+        supervise_from = 0
         noise_pred = noise_pred[:, :, supervise_from:]
         training_target = training_target[:, :, supervise_from:]
 
@@ -166,6 +179,7 @@ class HeliosWanTrainingModule(WanTrainingModule):
         helios_drop_t2v_ratio,
         helios_drop_i2v_ratio,
         helios_supervise_history,
+        helios_use_first_frame_anchor=True,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -177,8 +191,9 @@ class HeliosWanTrainingModule(WanTrainingModule):
             is_amplify_history=True,
             freeze_history_scale=False,
             init_scale_logit=helios_init_scale_logit,
+            use_first_frame_anchor=helios_use_first_frame_anchor,
         )
-        print("[Helios] patch applied to dit.")
+        print(f"[Helios] patch applied to dit. first_frame_anchor={helios_use_first_frame_anchor}")
 
         loss_kwargs = dict(
             helios_history_sizes=self.helios_history_sizes,
@@ -194,6 +209,7 @@ class HeliosWanTrainingModule(WanTrainingModule):
             helios_drop_t2v_ratio=helios_drop_t2v_ratio,
             helios_drop_i2v_ratio=helios_drop_i2v_ratio,
             helios_supervise_history=helios_supervise_history,
+            helios_use_first_frame_anchor=helios_use_first_frame_anchor,
         )
         self.task_to_loss["sft"] = (
             lambda pipe, inputs_shared, inputs_posi, inputs_nega: HeliosFlowMatchSFTLoss(
@@ -220,27 +236,27 @@ def wan_parser():
     parser.add_argument(
         "--helios_corrupt_mode",
         type=str,
-        default="noise",
+        default="random",
         choices=["none", "noise", "downsample", "random"],
         help="Easy-Anti-Drifting corruption mode for history latents.",
     )
     parser.add_argument(
         "--helios_noise_ratio_short",
         type=float,
-        default=0.02,
-        help="History corruption strength for the short tier.",
+        default=1.0 / 3.0,
+        help="History corruption strength for the short tier (upper bound for σ).",
     )
     parser.add_argument(
         "--helios_noise_ratio_mid",
         type=float,
-        default=0.03,
-        help="History corruption strength for the mid tier.",
+        default=1.0 / 3.0,
+        help="History corruption strength for the mid tier (upper bound for σ).",
     )
     parser.add_argument(
         "--helios_noise_ratio_long",
         type=float,
-        default=0.04,
-        help="History corruption strength for the long tier.",
+        default=1.0 / 3.0,
+        help="History corruption strength for the long tier (upper bound for σ).",
     )
     parser.add_argument(
         "--helios_keep_x0",
@@ -250,26 +266,26 @@ def wan_parser():
     )
     parser.add_argument(
         "--helios_apply_saturation",
-        default=False,
-        action="store_true",
-        help="Apply saturation-drift augmentation to history latents.",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="Apply saturation-drift augmentation to history latents (use --no-helios_apply_saturation to disable).",
     )
     parser.add_argument(
         "--helios_saturation_min",
         type=float,
-        default=0.7,
+        default=0.3,
         help="Lower bound for saturation augmentation.",
     )
     parser.add_argument(
         "--helios_saturation_max",
         type=float,
-        default=2.0,
+        default=1.7,
         help="Upper bound for saturation augmentation.",
     )
     parser.add_argument(
         "--helios_clean_history_prob",
         type=float,
-        default=0.2,
+        default=0.1,
         help="Probability of leaving a history frame unchanged during saturation augmentation.",
     )
     parser.add_argument(
@@ -289,6 +305,13 @@ def wan_parser():
         default=False,
         action="store_true",
         help="Also supervise the history prefix instead of only the post-history region.",
+    )
+    parser.add_argument(
+        "--helios_use_first_frame_anchor",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="Reserve position 0 for the very first VAE latent as a permanent visual anchor "
+             "(combats colour drift). Use --no-helios_use_first_frame_anchor to disable.",
     )
     return parser
 
@@ -349,6 +372,7 @@ if __name__ == "__main__":
         helios_drop_t2v_ratio=args.helios_drop_t2v_ratio,
         helios_drop_i2v_ratio=args.helios_drop_i2v_ratio,
         helios_supervise_history=args.helios_supervise_history,
+        helios_use_first_frame_anchor=args.helios_use_first_frame_anchor,
         model_paths=args.model_paths,
         model_id_with_origin_paths=args.model_id_with_origin_paths,
         tokenizer_path=args.tokenizer_path,

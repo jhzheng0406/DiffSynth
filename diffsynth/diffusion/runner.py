@@ -14,6 +14,7 @@ def launch_training_task(
     weight_decay: float = 1e-2,
     num_workers: int = 1,
     save_steps: int = None,
+    early_save_steps: int = 0,
     num_epochs: int = 1,
     args = None,
 ):
@@ -22,6 +23,7 @@ def launch_training_task(
         weight_decay = args.weight_decay
         num_workers = args.dataset_num_workers
         save_steps = args.save_steps
+        early_save_steps = getattr(args, 'early_save_steps', 0)
         num_epochs = args.num_epochs
     
     optimizer = torch.optim.AdamW(model.trainable_modules(), lr=learning_rate, weight_decay=weight_decay)
@@ -40,7 +42,7 @@ def launch_training_task(
                     loss = model(data)
                 accelerator.backward(loss)
                 optimizer.step()
-                model_logger.on_step_end(accelerator, model, save_steps, loss=loss)
+                model_logger.on_step_end(accelerator, model, save_steps, early_save_steps=early_save_steps, loss=loss)
                 scheduler.step()
         if save_steps is None:
             model_logger.on_epoch_end(accelerator, model, epoch_id)

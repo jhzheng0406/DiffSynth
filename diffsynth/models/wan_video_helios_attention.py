@@ -7,7 +7,8 @@ Three key contributions ported from the Helios paper (arXiv:2603.04379):
    - Three separate Conv3d (patch_helios_{short,mid,long}) with different
      kernel/stride sizes per tier, initialised from the existing patch_embedding.
    - History tokens are PREPENDED to the current token sequence and pass
-     through ALL transformer blocks (norm, self-attn, cross-attn, FFN).
+     through transformer blocks; text cross-attention can be restricted to
+     current tokens to match Helios guidance_cross_attn.
    - 3D RoPE is applied to history tokens using their ACTUAL absolute temporal
      frame indices, and spatially-strided freq entries for compressed tiers.
    - After the block loop, history tokens are stripped; only current tokens
@@ -205,12 +206,15 @@ class HeliosSelfAttention(nn.Module):
         self.register_buffer("_scale_cache", None)
 
         if is_amplify_history:
+            # float32 regardless of model dtype: bfloat16 ULP at init_scale_logit≈-3
+            # is ~0.016, far above the 1e-5 AdamW update, so the parameter would
+            # never move if stored in bfloat16.
             self.history_key_scale = nn.Parameter(
                 torch.full(
                     (self.num_heads,),
                     init_scale_logit,
                     device=self.q.weight.device,
-                    dtype=self.q.weight.dtype,
+                    dtype=torch.float32,
                 )
             )
             self.history_key_scale.requires_grad_(not freeze_history_scale)
@@ -239,10 +243,13 @@ class HeliosSelfAttention(nn.Module):
         if history_len > 0 and self.is_amplify_history:
             scale_key = self.get_scale_key()
             if scale_key is not None:
-                scale_key = scale_key.to(device=k.device, dtype=k.dtype).view(1, 1, self.num_heads, 1)
-                k_heads = rearrange(k, "b s (n d) -> b s n d", n=self.num_heads)
-                k_heads[:, :history_len] = k_heads[:, :history_len] * scale_key
-                k = rearrange(k_heads, "b s n d -> b s (n d)")
+                s = scale_key.to(device=k.device, dtype=k.dtype)   # [num_heads]
+                k_hist = rearrange(k[:, :history_len], "b s (n d) -> b s n d", n=self.num_heads)
+                k_hist = k_hist * s.view(1, 1, -1, 1)              # out-of-place: new tensor
+                k = torch.cat([
+                    rearrange(k_hist, "b s n d -> b s (n d)"),
+                    k[:, history_len:],
+                ], dim=1)
 
         x = self.attn(q, k, v)
         return self.o(x)
@@ -259,6 +266,7 @@ def patch_wan_model_for_helios(
     init_scale_logit: float = -3.0,
     max_history_scale: float = 10.0,
     freeze_history_scale: bool = True,
+    use_first_frame_anchor: bool = True,
 ) -> None:
     """
     Mutates a WanModel `dit` in-place to support Helios history injection.
@@ -336,6 +344,10 @@ def patch_wan_model_for_helios(
     dit._helios_history      = None   # tuple (lat_long, lat_mid, lat_short) or None
     dit._helios_frame_ids    = None   # tuple (fids_long, fids_mid, fids_short)
     dit._helios_history_sizes = list(history_sizes)
+    dit._helios_use_first_frame_anchor = bool(use_first_frame_anchor)
+    # Number of RoPE positions consumed by history layout (== current chunk's
+    # temporal RoPE offset). Anchor adds one extra position at index 0.
+    dit._helios_total_history_positions = sum(history_sizes) + (1 if use_first_frame_anchor else 0)
     dit._helios_current_history_len = 0
 
     # ── 4. Patch forward ──────────────────────────────────────────────
@@ -363,9 +375,19 @@ def patch_wan_model_for_helios(
 
         x, (f, h, w) = self.patchify(x)   # [B, f*h*w, dim]
 
+        # Relative RoPE: when history is present, the current chunk's temporal
+        # positions must land AFTER all history positions [0..total_hist_pos-1],
+        # otherwise current tokens at temporal index k share a RoPE freq with
+        # history tokens at the same index, breaking past/future separation.
+        # When no history is set (e.g. chunk 0 in inference), fall back to [0..f-1].
+        if self._helios_history is not None:
+            t_offset = getattr(self, '_helios_total_history_positions', sum(self._helios_history_sizes))
+        else:
+            t_offset = 0
+
         # Freqs for current tokens
         freqs = torch.cat([
-            self.freqs[0][:f].view(f, 1, 1, -1).expand(f, h, w, -1),
+            self.freqs[0][t_offset : t_offset + f].view(f, 1, 1, -1).expand(f, h, w, -1),
             self.freqs[1][:h].view(1, h, 1, -1).expand(f, h, w, -1),
             self.freqs[2][:w].view(1, 1, w, -1).expand(f, h, w, -1),
         ], dim=-1).reshape(f * h * w, 1, -1).to(x.device)
@@ -510,6 +532,8 @@ def prepare_helios_history(
     frame_offset: int = 0,                    # global latent frame index of first history frame
     device: str = "cpu",
     dtype: torch.dtype = torch.bfloat16,
+    use_first_frame_anchor: bool = True,
+    first_frame_latent: Optional[torch.Tensor] = None,
 ) -> Tuple[
     Optional[torch.Tensor], Optional[torch.Tensor], Optional[torch.Tensor],
     torch.Tensor, torch.Tensor, torch.Tensor,
@@ -517,10 +541,17 @@ def prepare_helios_history(
     """
     Slice the accumulated chunk latents into Helios history tiers.
 
-    Strategy (identical to original Helios):
-      - Concatenate all accumulated latents along temporal dim.
-      - Keep only the last sum(history_sizes) frames.
-      - Split into [long, mid, short] tiers (oldest → most recent).
+    With use_first_frame_anchor=True (Helios upstream behavior):
+      - Position 0 holds the very first VAE latent of the video (anchor).
+      - Positions [1..sum(sizes)] are the sliding window of recent history.
+      - lat_short returns 2 frames: [anchor, most_recent_short] with
+        frame ids [0, 1+sizes[0]+sizes[1]] (non-contiguous).
+      - This anchor never falls out of context, providing a stable color
+        reference that combats colour drift across long generations.
+
+    With use_first_frame_anchor=False (legacy port behavior):
+      - All sum(sizes) slots are the most-recent sliding window.
+      - lat_short returns 1 frame with id sizes[0]+sizes[1].
 
     Returns:
         lat_long, lat_mid, lat_short   — raw latent tensors (on `device`)
@@ -529,28 +560,41 @@ def prepare_helios_history(
     sizes = list(history_sizes)     # [long, mid, short]
     total = sum(sizes)
 
-    # Concatenate all chunks
+    # Concatenate all chunks (preserve their original device — usually CPU
+    # in the existing inference loop, but GPU when chunk-0 zero-priming is used).
     all_lat = torch.cat([l.to(dtype=dtype) for l in accumulated_latents], dim=2)
     F_total = all_lat.shape[2]
 
     # Keep last `total` frames (pad with zeros if not enough history yet)
     if F_total >= total:
         hist = all_lat[:, :, F_total - total:]
-        start_idx = frame_offset + (F_total - total)
     else:
         pad = torch.zeros(
             all_lat.shape[0], all_lat.shape[1], total - F_total,
-            all_lat.shape[3], all_lat.shape[4], dtype=dtype)
+            all_lat.shape[3], all_lat.shape[4],
+            dtype=dtype, device=all_lat.device)
         hist = torch.cat([pad, all_lat], dim=2)
-        start_idx = frame_offset
 
     # Split into tiers: [long (oldest) | mid | short (newest)]
     lat_long, lat_mid, lat_short = hist.split(sizes, dim=2)
 
-    # Absolute frame IDs
-    fids_long  = torch.arange(start_idx, start_idx + sizes[0], dtype=torch.long)
-    fids_mid   = torch.arange(start_idx + sizes[0], start_idx + sizes[0] + sizes[1], dtype=torch.long)
-    fids_short = torch.arange(start_idx + sizes[0] + sizes[1], start_idx + total, dtype=torch.long)
+    if use_first_frame_anchor:
+        if first_frame_latent is None:
+            anchor = accumulated_latents[0][:, :, :1].to(dtype=dtype)
+        else:
+            anchor = first_frame_latent.to(dtype=dtype)
+        # Frame ids match upstream layout
+        # [prefix=0 | long=1..sizes[0] | mid=...+sizes[1] | recent=...+1]
+        fids_long  = torch.arange(1, 1 + sizes[0], dtype=torch.long)
+        fids_mid   = torch.arange(1 + sizes[0], 1 + sizes[0] + sizes[1], dtype=torch.long)
+        fids_short = torch.tensor([0, 1 + sizes[0] + sizes[1]], dtype=torch.long)
+        # short tier carries [anchor, recent] — patch_helios_short stride is (1,2,2)
+        # so they remain two distinct tokens with separate RoPE positions.
+        lat_short = torch.cat([anchor.to(lat_short.device), lat_short], dim=2)
+    else:
+        fids_long  = torch.arange(0, sizes[0], dtype=torch.long)
+        fids_mid   = torch.arange(sizes[0], sizes[0] + sizes[1], dtype=torch.long)
+        fids_short = torch.arange(sizes[0] + sizes[1], total, dtype=torch.long)
 
     lat_long  = lat_long.to(device)
     lat_mid   = lat_mid.to(device)
@@ -583,13 +627,15 @@ def corrupt_history_latents(
     inference time (model generates imperfect frames that accumulate error).
 
     Two modes:
-      "noise"      — add Gaussian noise with random σ ∈ [0, ratio]
+      "noise"      — convex blend with random σ ∈ [0, ratio]: (1-σ)·x + σ·ε
       "downsample" — downsample then upsample to create compression artifacts
       "random"     — randomly choose one of the above per sample
     """
     def _noise_corrupt(x, ratio):
+        # Flow-matching convex blend (matches Helios upstream); additive form
+        # would inflate latent variance and bias the model.
         sigma = torch.rand(1, device=x.device).item() * ratio
-        return x + sigma * torch.randn_like(x)
+        return (1.0 - sigma) * x + sigma * torch.randn_like(x)
 
     def _downsample_corrupt(x, min_ratio=0.85, max_ratio=1.0):
         B, C, T, H, W = x.shape
@@ -680,6 +726,7 @@ def split_into_helios_history_and_target(
     is_random_drop: bool = True,
     drop_t2v_ratio: float = 0.10,      # prob of zeroing all history (T2V sim.)
     drop_i2v_ratio: float = 0.05,      # prob of keeping only x0  (I2V sim.)
+    use_first_frame_anchor: bool = True,
 ) -> Tuple[
     torch.Tensor, torch.Tensor,        # target_latents, history_latents (concat)
     torch.Tensor, torch.Tensor, torch.Tensor,   # fids_short, fids_mid, fids_long
@@ -688,8 +735,16 @@ def split_into_helios_history_and_target(
     For training: split a video clip into a history portion and a target
     (denoising) portion, matching the inference setup.
 
-    The clip must have length == sum(history_sizes) + latent_window_size.
-    The history is taken from the beginning; the target from the end.
+    With use_first_frame_anchor=True (matches Helios upstream + new prepare_helios_history):
+        clip layout: [anchor(1) | long(sizes[0]) | mid(sizes[1]) | recent(sizes[2]=1) | target(window)]
+        anchor      = video_latents[:, :, :1]
+        lat_short   = cat([anchor, recent]) — 2 frames at positions [0, 1+sizes[0]+sizes[1]]
+        target      = video_latents[:, :, 1 + total_hist : 1 + total_hist + window]
+        Required clip length: 1 + total_hist + window.
+
+    With use_first_frame_anchor=False (legacy port behavior):
+        clip layout: [long | mid | short | target]
+        Required clip length: total_hist + window.
 
     Returns history tensors and frame IDs ready to pass to
     set_helios_history() after optional EAD corruption.
@@ -697,36 +752,64 @@ def split_into_helios_history_and_target(
     sizes  = list(history_sizes)
     total_hist = sum(sizes)
     F = video_latents.shape[2]
-    assert F >= total_hist + latent_window_size, (
-        f"Video too short: need {total_hist + latent_window_size} latent frames, got {F}")
 
-    # Use the first `total_hist` frames as history, last `latent_window_size` as target
-    history_lat = video_latents[:, :, :total_hist]
-    target_lat  = video_latents[:, :, total_hist : total_hist + latent_window_size]
+    if use_first_frame_anchor:
+        required = 1 + total_hist + latent_window_size
+        assert F >= required, (
+            f"Video too short for first-frame-anchor mode: need {required} latent frames, got {F}")
 
-    lat_long, lat_mid, lat_short = history_lat.split(sizes, dim=2)
-    lat_long = lat_long.clone()
-    lat_mid = lat_mid.clone()
-    lat_short = lat_short.clone()
+        anchor      = video_latents[:, :, :1].clone()
+        history_lat = video_latents[:, :, 1 : 1 + total_hist]
+        target_lat  = video_latents[:, :, 1 + total_hist : 1 + total_hist + latent_window_size]
 
-    # Absolute frame IDs (0-indexed from start of clip)
-    fids_long  = torch.arange(0, sizes[0], dtype=torch.long)
-    fids_mid   = torch.arange(sizes[0], sizes[0] + sizes[1], dtype=torch.long)
-    fids_short = torch.arange(sizes[0] + sizes[1], total_hist, dtype=torch.long)
-    fids_target = torch.arange(total_hist, total_hist + latent_window_size, dtype=torch.long)
+        lat_long, lat_mid, lat_short_recent = history_lat.split(sizes, dim=2)
+        lat_long  = lat_long.clone()
+        lat_mid   = lat_mid.clone()
+        lat_short = torch.cat([anchor, lat_short_recent], dim=2)  # [B, C, 2, H, W]
 
-    # Optional dropout to unify T2V / I2V / V2V training
-    if is_random_drop:
-        if drop_t2v_ratio > 0 and torch.rand(1).item() < drop_t2v_ratio:
-            # T2V: zero all history
-            lat_long  = torch.zeros_like(lat_long)
-            lat_mid   = torch.zeros_like(lat_mid)
-            lat_short = torch.zeros_like(lat_short)
-        elif drop_i2v_ratio > 0 and torch.rand(1).item() < drop_i2v_ratio:
-            # I2V: keep only the very first frame of history
-            lat_long[:, :, 1:] = 0
-            lat_mid[:]  = 0
-            lat_short[:] = 0
+        fids_long   = torch.arange(1, 1 + sizes[0], dtype=torch.long)
+        fids_mid    = torch.arange(1 + sizes[0], 1 + sizes[0] + sizes[1], dtype=torch.long)
+        fids_short  = torch.tensor([0, 1 + sizes[0] + sizes[1]], dtype=torch.long)
+        fids_target = torch.arange(1 + total_hist, 1 + total_hist + latent_window_size, dtype=torch.long)
+
+        if is_random_drop:
+            if drop_t2v_ratio > 0 and torch.rand(1).item() < drop_t2v_ratio:
+                # T2V: zero all history INCLUDING anchor (matches upstream random_drop_t2v branch)
+                lat_long  = torch.zeros_like(lat_long)
+                lat_mid   = torch.zeros_like(lat_mid)
+                lat_short = torch.zeros_like(lat_short)
+            elif drop_i2v_ratio > 0 and torch.rand(1).item() < drop_i2v_ratio:
+                # I2V: keep only the anchor; zero everything else
+                lat_long  = torch.zeros_like(lat_long)
+                lat_mid   = torch.zeros_like(lat_mid)
+                lat_short[:, :, 1:] = 0  # zero recent, keep anchor at index 0
+    else:
+        required = total_hist + latent_window_size
+        assert F >= required, (
+            f"Video too short: need {required} latent frames, got {F}")
+
+        history_lat = video_latents[:, :, :total_hist]
+        target_lat  = video_latents[:, :, total_hist : total_hist + latent_window_size]
+
+        lat_long, lat_mid, lat_short = history_lat.split(sizes, dim=2)
+        lat_long  = lat_long.clone()
+        lat_mid   = lat_mid.clone()
+        lat_short = lat_short.clone()
+
+        fids_long   = torch.arange(0, sizes[0], dtype=torch.long)
+        fids_mid    = torch.arange(sizes[0], sizes[0] + sizes[1], dtype=torch.long)
+        fids_short  = torch.arange(sizes[0] + sizes[1], total_hist, dtype=torch.long)
+        fids_target = torch.arange(total_hist, total_hist + latent_window_size, dtype=torch.long)
+
+        if is_random_drop:
+            if drop_t2v_ratio > 0 and torch.rand(1).item() < drop_t2v_ratio:
+                lat_long  = torch.zeros_like(lat_long)
+                lat_mid   = torch.zeros_like(lat_mid)
+                lat_short = torch.zeros_like(lat_short)
+            elif drop_i2v_ratio > 0 and torch.rand(1).item() < drop_i2v_ratio:
+                lat_long[:, :, 1:] = 0
+                lat_mid[:]  = 0
+                lat_short[:] = 0
 
     return (
         target_lat,
