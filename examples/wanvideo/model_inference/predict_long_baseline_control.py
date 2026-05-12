@@ -22,8 +22,8 @@ from diffsynth.pipelines.wan_video import WanVideoPipeline, ModelConfig
 MODEL_DIR        = "models/Wan2.1-Fun-V1.1-1.3B-Control"
 USE_MODEL_ID     = True
 
-HEIGHT           = 832
-WIDTH            = 480
+HEIGHT           = 480
+WIDTH            = 832
 CHUNK_FRAMES     = 49
 NUM_CHUNKS       = 6
 

@@ -10,7 +10,7 @@ Three key contributions ported from the Helios paper (arXiv:2603.04379):
      through transformer blocks; text cross-attention can be restricted to
      current tokens to match Helios guidance_cross_attn.
    - 3D RoPE is applied to history tokens using their ACTUAL absolute temporal
-     frame indices, and spatially-strided freq entries for compressed tiers.
+     frame indices, with pooled RoPE grids for compressed tiers.
    - After the block loop, history tokens are stripped; only current tokens
      reach the prediction head.
 
@@ -71,42 +71,117 @@ def _pad_for_conv3d(x: torch.Tensor, stride: Tuple[int, int, int]) -> torch.Tens
     return x
 
 
+def _avg_pool3d_maybe_complex(x: torch.Tensor, kernel_size: Tuple[int, int, int]) -> torch.Tensor:
+    if not x.is_complex():
+        return F.avg_pool3d(x, kernel_size, stride=kernel_size)
+    real = F.avg_pool3d(x.real, kernel_size, stride=kernel_size)
+    imag = F.avg_pool3d(x.imag, kernel_size, stride=kernel_size)
+    return torch.complex(real, imag)
+
+
 def _compute_history_freqs(
     dit,
     f_out: int, h_out: int, w_out: int,
-    frame_ids: torch.Tensor,   # [f_out] int — absolute latent frame positions
-    spatial_stride: int = 1,   # 1 for short, 2 for mid, 4 for long
+    frame_ids: torch.Tensor,   # absolute latent frame positions before pooling
+    temporal_pool: int = 1,    # 1 for short, 2 for mid, 4 for long
+    spatial_pool: int = 1,     # 1 for short, 2 for mid, 4 for long
 ) -> torch.Tensor:
     """
     Build 3D RoPE freqs for history tokens at a given tier.
 
-    spatial_stride reflects how many current-token spatial positions one
-    history token covers:
-      short tier → 1  (same resolution as current)
-      mid   tier → 2  (2× downsampled)
-      long  tier → 4  (4× downsampled)
+    For compressed tiers, Helios builds RoPE on the short-token grid and then
+    applies the same pad + avg-pool schedule used by the history Conv3d.
 
     Returns freqs of shape [f_out * h_out * w_out, 1, head_dim_half].
     """
-    freqs_t = dit.freqs[0]
-    freqs_h = dit.freqs[1]
-    freqs_w = dit.freqs[2]
+    freqs_t, freqs_h, freqs_w = dit.freqs
+    full_t = f_out * temporal_pool
+    full_h = h_out * spatial_pool
+    full_w = w_out * spatial_pool
 
-    # Temporal: use actual frame positions
-    f_ids = frame_ids.long().clamp(0, len(freqs_t) - 1).to(freqs_t.device)
-    temp = freqs_t[f_ids].view(f_out, 1, 1, -1).expand(f_out, h_out, w_out, -1)
+    f_ids = frame_ids.long().to(freqs_t.device)
+    if f_ids.numel() == 0:
+        f_ids = torch.zeros(full_t, dtype=torch.long, device=freqs_t.device)
+    elif f_ids.numel() < full_t:
+        f_ids = torch.cat([f_ids, f_ids[-1:].expand(full_t - f_ids.numel())], dim=0)
+    else:
+        f_ids = f_ids[:full_t]
+    f_ids = f_ids.clamp(0, len(freqs_t) - 1)
 
-    # Spatial: every `spatial_stride`-th position
-    h_idx = torch.arange(0, h_out * spatial_stride, spatial_stride, device=freqs_h.device)
-    w_idx = torch.arange(0, w_out * spatial_stride, spatial_stride, device=freqs_w.device)
-    h_idx = h_idx[:h_out].clamp(max=len(freqs_h) - 1)
-    w_idx = w_idx[:w_out].clamp(max=len(freqs_w) - 1)
+    h_idx = torch.arange(full_h, device=freqs_h.device).clamp(max=len(freqs_h) - 1)
+    w_idx = torch.arange(full_w, device=freqs_w.device).clamp(max=len(freqs_w) - 1)
 
-    hf = freqs_h[h_idx].view(1, h_out, 1, -1).expand(f_out, h_out, w_out, -1)
-    wf = freqs_w[w_idx].view(1, 1, w_out, -1).expand(f_out, h_out, w_out, -1)
+    tf = freqs_t[f_ids].view(full_t, 1, 1, -1).expand(full_t, full_h, full_w, -1)
+    hf = freqs_h[h_idx].view(1, full_h, 1, -1).expand(full_t, full_h, full_w, -1)
+    wf = freqs_w[w_idx].view(1, 1, full_w, -1).expand(full_t, full_h, full_w, -1)
+    freqs = torch.cat([tf, hf, wf], dim=-1)
 
-    freqs = torch.cat([temp, hf, wf], dim=-1)          # [f,h,w, head_dim_half]
+    if temporal_pool > 1 or spatial_pool > 1:
+        freqs = freqs.permute(3, 0, 1, 2).unsqueeze(0)
+        freqs = _avg_pool3d_maybe_complex(freqs, (temporal_pool, spatial_pool, spatial_pool))
+        freqs = freqs.squeeze(0).permute(1, 2, 3, 0).contiguous()
+
     return freqs.reshape(f_out * h_out * w_out, 1, -1)
+
+
+def _build_current_freqs(
+    dit,
+    f: int,
+    h: int,
+    w: int,
+    device: torch.device,
+    temporal_offset: int = 0,
+) -> torch.Tensor:
+    if temporal_offset + f > len(dit.freqs[0]):
+        raise ValueError(
+            f"Helios RoPE offset {temporal_offset} with current length {f} exceeds "
+            f"precomputed temporal freqs length {len(dit.freqs[0])}."
+        )
+    freqs = torch.cat([
+        dit.freqs[0][temporal_offset : temporal_offset + f].view(f, 1, 1, -1).expand(f, h, w, -1),
+        dit.freqs[1][:h].view(1, h, 1, -1).expand(f, h, w, -1),
+        dit.freqs[2][:w].view(1, 1, w, -1).expand(f, h, w, -1),
+    ], dim=-1).reshape(f * h * w, 1, -1)
+    return freqs.to(device)
+
+
+def _prepend_history_timestep_mod(
+    dit,
+    timestep: torch.Tensor,
+    t_mod: torch.Tensor,
+    history_len: int,
+    current_len: int,
+) -> torch.Tensor:
+    if history_len <= 0:
+        return t_mod
+
+    zero_history = getattr(dit, "_helios_zero_history_timestep", True)
+    if not zero_history and len(t_mod.shape) != 4:
+        return t_mod
+
+    if len(t_mod.shape) == 3:
+        current_mod = t_mod.unsqueeze(1).expand(-1, current_len, -1, -1)
+    else:
+        current_mod = t_mod
+        if current_mod.shape[1] != current_len:
+            current_mod = current_mod[:, -current_len:]
+
+    if zero_history:
+        from .wan_video_dit import sinusoidal_embedding_1d
+
+        zero_timestep = torch.zeros(
+            (current_mod.shape[0],),
+            dtype=timestep.dtype,
+            device=t_mod.device,
+        )
+        t0 = dit.time_embedding(sinusoidal_embedding_1d(dit.freq_dim, zero_timestep))
+        history_mod = dit.time_projection(t0).unflatten(1, (6, dit.dim))
+        history_mod = history_mod.to(device=t_mod.device, dtype=t_mod.dtype)
+        history_mod = history_mod.unsqueeze(1).expand(-1, history_len, -1, -1)
+    else:
+        history_mod = current_mod[:, :1].expand(-1, history_len, -1, -1)
+
+    return torch.cat([history_mod, current_mod], dim=1)
 
 
 def _build_helios_token_sequence(
@@ -136,8 +211,8 @@ def _build_helios_token_sequence(
         tok = dit.patch_helios_long(lat)          # [B, dim, fl, hl, wl]
         _, _, fl, hl, wl = tok.shape
         tok = tok.flatten(2).transpose(1, 2)      # [B, fl*hl*wl, dim]
-        t_ids = fids_long[::4][:fl].to(device)
-        fr = _compute_history_freqs(dit, fl, hl, wl, t_ids, spatial_stride=4).to(device)
+        t_ids = fids_long.to(device)
+        fr = _compute_history_freqs(dit, fl, hl, wl, t_ids, temporal_pool=4, spatial_pool=4).to(device)
         h_tokens.append(tok)
         h_freqs.append(fr)
 
@@ -147,8 +222,8 @@ def _build_helios_token_sequence(
         tok = dit.patch_helios_mid(lat)
         _, _, fm, hm, wm = tok.shape
         tok = tok.flatten(2).transpose(1, 2)
-        t_ids = fids_mid[::2][:fm].to(device)
-        fr = _compute_history_freqs(dit, fm, hm, wm, t_ids, spatial_stride=2).to(device)
+        t_ids = fids_mid.to(device)
+        fr = _compute_history_freqs(dit, fm, hm, wm, t_ids, temporal_pool=2, spatial_pool=2).to(device)
         h_tokens.append(tok)
         h_freqs.append(fr)
 
@@ -159,7 +234,7 @@ def _build_helios_token_sequence(
         _, _, fs, hs, ws = tok.shape
         tok = tok.flatten(2).transpose(1, 2)
         t_ids = fids_short[:fs].to(device)
-        fr = _compute_history_freqs(dit, fs, hs, ws, t_ids, spatial_stride=1).to(device)
+        fr = _compute_history_freqs(dit, fs, hs, ws, t_ids, temporal_pool=1, spatial_pool=1).to(device)
         h_tokens.append(tok)
         h_freqs.append(fr)
 
@@ -255,6 +330,37 @@ class HeliosSelfAttention(nn.Module):
         return self.o(x)
 
 
+def _helios_guidance_block_forward(self, x, context, t_mod, freqs):
+    from .wan_video_dit import modulate
+
+    has_seq = len(t_mod.shape) == 4
+    chunk_dim = 2 if has_seq else 1
+    shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp = (
+        self.modulation.to(dtype=t_mod.dtype, device=t_mod.device) + t_mod).chunk(6, dim=chunk_dim)
+    if has_seq:
+        shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp = (
+            shift_msa.squeeze(2), scale_msa.squeeze(2), gate_msa.squeeze(2),
+            shift_mlp.squeeze(2), scale_mlp.squeeze(2), gate_mlp.squeeze(2),
+        )
+
+    input_x = modulate(self.norm1(x), shift_msa, scale_msa)
+    x = self.gate(x, gate_msa, self.self_attn(input_x, freqs))
+
+    parent = getattr(self, "_helios_parent", None)
+    history_len = getattr(parent, "_helios_current_history_len", 0)
+    use_guidance_split = getattr(parent, "_helios_guidance_cross_attn", True)
+    if use_guidance_split and history_len > 0:
+        history_x, current_x = x[:, :history_len], x[:, history_len:]
+        current_x = current_x + self.cross_attn(self.norm3(current_x), context)
+        x = torch.cat([history_x, current_x], dim=1)
+    else:
+        x = x + self.cross_attn(self.norm3(x), context)
+
+    input_x = modulate(self.norm2(x), shift_mlp, scale_mlp)
+    x = self.gate(x, gate_mlp, self.ffn(input_x))
+    return x
+
+
 # ---------------------------------------------------------------------------
 # Patching
 # ---------------------------------------------------------------------------
@@ -267,6 +373,8 @@ def patch_wan_model_for_helios(
     max_history_scale: float = 10.0,
     freeze_history_scale: bool = True,
     use_first_frame_anchor: bool = True,
+    zero_history_timestep: bool = True,
+    guidance_cross_attn: bool = True,
 ) -> None:
     """
     Mutates a WanModel `dit` in-place to support Helios history injection.
@@ -345,10 +453,16 @@ def patch_wan_model_for_helios(
     dit._helios_frame_ids    = None   # tuple (fids_long, fids_mid, fids_short)
     dit._helios_history_sizes = list(history_sizes)
     dit._helios_use_first_frame_anchor = bool(use_first_frame_anchor)
+    dit._helios_zero_history_timestep = bool(zero_history_timestep)
+    dit._helios_guidance_cross_attn = bool(guidance_cross_attn)
     # Number of RoPE positions consumed by history layout (== current chunk's
     # temporal RoPE offset). Anchor adds one extra position at index 0.
     dit._helios_total_history_positions = sum(history_sizes) + (1 if use_first_frame_anchor else 0)
     dit._helios_current_history_len = 0
+
+    for block in dit.blocks:
+        object.__setattr__(block, "_helios_parent", dit)
+        block.forward = types.MethodType(_helios_guidance_block_forward, block)
 
     # ── 4. Patch forward ──────────────────────────────────────────────
     def _helios_forward(
@@ -385,12 +499,8 @@ def patch_wan_model_for_helios(
         else:
             t_offset = 0
 
-        # Freqs for current tokens
-        freqs = torch.cat([
-            self.freqs[0][t_offset : t_offset + f].view(f, 1, 1, -1).expand(f, h, w, -1),
-            self.freqs[1][:h].view(1, h, 1, -1).expand(f, h, w, -1),
-            self.freqs[2][:w].view(1, 1, w, -1).expand(f, h, w, -1),
-        ], dim=-1).reshape(f * h * w, 1, -1).to(x.device)
+        current_len = x.shape[1]
+        freqs = _build_current_freqs(self, f, h, w, x.device, temporal_offset=t_offset)
 
         # ── Prepend history tokens ─────────────────────────────────────
         history_len = 0
@@ -408,10 +518,9 @@ def patch_wan_model_for_helios(
                 tok = self.patch_helios_long(lat)         # [B, dim, fl, hl, wl]
                 _, _, fl, hl, wl = tok.shape
                 tok = tok.flatten(2).transpose(1, 2)      # [B, fl*hl*wl, dim]
-                # Temporal frame IDs: first of each stride-4 window
-                t_ids = fids_long[::4][:fl].to(x.device)
+                t_ids = fids_long.to(x.device)
                 fr = _compute_history_freqs(self, fl, hl, wl, t_ids,
-                                            spatial_stride=4).to(x.device)
+                                            temporal_pool=4, spatial_pool=4).to(x.device)
                 h_tokens.append(tok)
                 h_freqs.append(fr)
 
@@ -422,9 +531,9 @@ def patch_wan_model_for_helios(
                 tok = self.patch_helios_mid(lat)          # [B, dim, fm, hm, wm]
                 _, _, fm, hm, wm = tok.shape
                 tok = tok.flatten(2).transpose(1, 2)
-                t_ids = fids_mid[::2][:fm].to(x.device)
+                t_ids = fids_mid.to(x.device)
                 fr = _compute_history_freqs(self, fm, hm, wm, t_ids,
-                                            spatial_stride=2).to(x.device)
+                                            temporal_pool=2, spatial_pool=2).to(x.device)
                 h_tokens.append(tok)
                 h_freqs.append(fr)
 
@@ -436,7 +545,7 @@ def patch_wan_model_for_helios(
                 tok = tok.flatten(2).transpose(1, 2)
                 t_ids = fids_short[:fs].to(x.device)
                 fr = _compute_history_freqs(self, fs, hs, ws, t_ids,
-                                            spatial_stride=1).to(x.device)
+                                            temporal_pool=1, spatial_pool=1).to(x.device)
                 h_tokens.append(tok)
                 h_freqs.append(fr)
 
@@ -450,6 +559,7 @@ def patch_wan_model_for_helios(
         # Simpler: we mark the history length on self so blocks can read it.
         # (History tokens appear at positions [0:history_len] of x.)
         self._helios_current_history_len = history_len
+        t_mod = _prepend_history_timestep_mod(self, timestep, t_mod, history_len, current_len)
 
         # ── Transformer blocks ────────────────────────────────────────
         for block in self.blocks:
@@ -517,7 +627,9 @@ def patch_wan_model_for_helios(
 
     print(f"[Helios] Patch applied: patch_helios_{{short,mid,long}} added, "
           f"history_key_scale={'trainable' if not freeze_history_scale else 'frozen'} in each block, "
-          f"history_sizes={list(history_sizes)}")
+          f"history_sizes={list(history_sizes)}, "
+          f"zero_history_timestep={bool(zero_history_timestep)}, "
+          f"guidance_cross_attn={bool(guidance_cross_attn)}")
 
 
 # ---------------------------------------------------------------------------
@@ -620,7 +732,8 @@ def corrupt_history_latents(
     noise_ratio_mid:   float = 0.15,
     noise_ratio_long:  float = 0.20,
     corrupt_mode: str = "noise",        # "noise" | "downsample" | "random"
-    is_keep_x0: bool = True,            # keep first (oldest) frame clean
+    is_keep_x0: bool = True,            # keep first-frame anchor clean
+    clean_prob: float = 0.0,            # probability of skipping history corruption entirely
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     EAD: Corrupt history latents to simulate the drift that occurs at
@@ -630,14 +743,19 @@ def corrupt_history_latents(
       "noise"      — convex blend with random σ ∈ [0, ratio]: (1-σ)·x + σ·ε
       "downsample" — downsample then upsample to create compression artifacts
       "random"     — randomly choose one of the above per sample
+
+    With probability `clean_prob`, all history tiers are returned unchanged.
     """
+    if clean_prob > 0.0 and random.random() < clean_prob:
+        return lat_short, lat_mid, lat_long
+
     def _noise_corrupt(x, ratio):
         # Flow-matching convex blend (matches Helios upstream); additive form
         # would inflate latent variance and bias the model.
         sigma = torch.rand(1, device=x.device).item() * ratio
         return (1.0 - sigma) * x + sigma * torch.randn_like(x)
 
-    def _downsample_corrupt(x, min_ratio=0.85, max_ratio=1.0):
+    def _downsample_corrupt(x, min_ratio=0.90, max_ratio=1.0):
         B, C, T, H, W = x.shape
         # Random spatial scale factor close to 1.0 (subtle artifact)
         scale = random.uniform(min_ratio, max_ratio)
@@ -649,6 +767,8 @@ def corrupt_history_latents(
         return x_back.reshape(B, C, T, H, W)
 
     def _corrupt(x, ratio, mode):
+        if x.shape[2] == 0:
+            return x
         if mode == "random":
             mode = random.choice(["noise", "downsample"])
         if mode == "noise":
@@ -663,8 +783,18 @@ def corrupt_history_latents(
     else:
         mode_short = mode_mid = mode_long = corrupt_mode
 
-    # Optionally keep the very first (oldest) long frame clean as an anchor
-    if is_keep_x0 and lat_long.shape[2] > 1:
+    protect_short_anchor = is_keep_x0 and lat_short.shape[2] > 1
+
+    # In first-frame-anchor mode, the permanent x0 anchor lives in short[:, :, :1].
+    if protect_short_anchor:
+        x0 = lat_short[:, :, :1]
+        rest_short = _corrupt(lat_short[:, :, 1:], noise_ratio_short, mode_short)
+        lat_short = torch.cat([x0, rest_short], dim=2)
+    else:
+        lat_short = _corrupt(lat_short, noise_ratio_short, mode_short)
+
+    # Legacy no-anchor mode kept the oldest long-tier frame clean.
+    if is_keep_x0 and not protect_short_anchor and lat_long.shape[2] > 1:
         x0         = lat_long[:, :, :1]
         rest_long  = _corrupt(lat_long[:, :, 1:], noise_ratio_long, mode_long)
         lat_long   = torch.cat([x0, rest_long], dim=2)
@@ -672,7 +802,6 @@ def corrupt_history_latents(
         lat_long   = _corrupt(lat_long, noise_ratio_long, mode_long)
 
     lat_mid   = _corrupt(lat_mid,   noise_ratio_mid,   mode_mid)
-    lat_short = _corrupt(lat_short, noise_ratio_short, mode_short)
 
     return lat_short, lat_mid, lat_long
 
@@ -684,6 +813,7 @@ def add_saturation_to_history_latents(
     sat_min: float = 0.7,
     sat_max: float = 2.0,
     clean_prob: float = 0.2,     # probability of leaving a window unchanged
+    is_keep_x0: bool = True,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     EAD: Simulate colour/brightness drift by randomly scaling latent values
@@ -702,16 +832,23 @@ def add_saturation_to_history_latents(
         mean = x.mean(dim=1, keepdim=True)   # channel mean → [B, 1, T, H, W]
         return (x - mean) * factor + mean
 
-    def _apply_per_frame(lat):
+    def _apply_per_frame(lat, keep_first: bool = False):
         """Apply independently per temporal frame."""
+        if lat.shape[2] == 0:
+            return lat
         frames = lat.unbind(dim=2)
-        corrupted = [_saturate_window(f.unsqueeze(2)) for f in frames]
+        corrupted = []
+        for i, frame in enumerate(frames):
+            frame = frame.unsqueeze(2)
+            corrupted.append(frame if keep_first and i == 0 else _saturate_window(frame))
         return torch.cat(corrupted, dim=2)
 
+    protect_short_anchor = is_keep_x0 and lat_short.shape[2] > 1
+
     return (
-        _apply_per_frame(lat_short),
+        _apply_per_frame(lat_short, keep_first=protect_short_anchor),
         _apply_per_frame(lat_mid),
-        _apply_per_frame(lat_long),
+        _apply_per_frame(lat_long, keep_first=is_keep_x0 and not protect_short_anchor and lat_long.shape[2] > 1),
     )
 
 

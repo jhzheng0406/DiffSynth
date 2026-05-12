@@ -1,10 +1,12 @@
 #!/bin/bash
-# Sanity-check training for the EAD fixes.
-# Same setup as Wan2.1-Fun-V1.1-1.3B-Control-Helios.sh (v4) but:
+# Sanity-check training for freeze-base Helios modules.
+# Same setup as the previous EAD-clean run but:
 #   * uses the new convex-blend noise formula (wan_video_helios_attention.py)
-#   * uses upstream-aligned EAD ratios from Helios correct.yaml
-#   * enables saturation augmentation (was off in v4)
-# Goal: train ~100-200 steps and compare loss curve / output quality vs v4.
+#   * gives history corruption an official-Helios-style clean skip probability
+#   * freezes the base Wan-Control DiT and trains only Helios history patch modules
+#   * disables history-key amplification to match official Helios stage configs
+#   * enables mild saturation augmentation
+# Goal: train ~100-300 steps and compare output quality vs full-DiT SFT.
 #
 # Run from the DiffSynth-Studio repo root:
 #   bash examples/wanvideo/model_training/full/Wan2.1-Fun-V1.1-1.3B-Control-Helios-eadtest.sh
@@ -12,7 +14,7 @@
 set -e
 
 # ---------------------------------------------------------------------------
-# Paths (identical to v4 for fair A/B)
+# Paths
 # ---------------------------------------------------------------------------
 VIDEOXFUN_ROOT="/mnt/vita/scratch/vita-students/users/jinghao/code/VideoX-Fun"
 MODEL_DIR="${VIDEOXFUN_ROOT}/models/Diffusion_Transformer/Wan2.1-Fun-V1.1-1.3B-Control"
@@ -22,10 +24,11 @@ SRC_CSV="${VIDEOXFUN_ROOT}/datasets/antidrift_train.csv"
 
 CONVERTED_CSV="/tmp/antidrift_train_diffsynth.csv"
 
-# Distinct output dir so v4 checkpoints aren't touched
-OUTPUT_DIR="./models/train/Wan2.1-Fun-V1.1-1.3B-Control-Helios-v6-eadtest"
+# Distinct output dir so older checkpoints aren't touched
+OUTPUT_DIR="./models/train/Wan2.1-Fun-V1.1-1.3B-Control-Helios-v11-freezebase"
 
 RESUME_CKPT=""
+# RESUME_CKPT="./models/train/Wan2.1-Fun-V1.1-1.3B-Control-Helios-v11-freezebase/step-450.safetensors"
 
 # ---------------------------------------------------------------------------
 # Convert CSV columns once (same dataset as antidrift)
@@ -55,24 +58,28 @@ export NCCL_SHM_DISABLE=1
 export CUDA_VISIBLE_DEVICES=0
 
 DIT_CKPT="${MODEL_DIR}/diffusion_pytorch_model.safetensors"
+HELIOS_RESUME_ARGS=()
 if [ -n "${RESUME_CKPT}" ]; then
-  DIT_CKPT="${RESUME_CKPT}"
+  HELIOS_RESUME_ARGS=(--helios_resume_ckpt "${RESUME_CKPT}")
 fi
 
 # ---------------------------------------------------------------------------
-# What's different from v4:
-#   - --helios_corrupt_mode "random"          (v4: "noise")
-#   - --helios_noise_ratio_short/mid/long 0.3333  (v4: 0.02/0.03/0.04, ~10x weaker)
-#   - --helios_apply_saturation               (v4: omitted -> off)
-#   - --helios_saturation_min 0.3 / max 1.7   (matches Helios correct.yaml)
-#   - --helios_clean_history_prob 0.1
-#   - --helios_use_first_frame_anchor         (v4: not present -> color drift)
+# What's different from v10-eadclean:
+#   - starts from the base DiT checkpoint instead of resuming v8 weights
+#   - --helios_train_mode "helios_modules" freezes the base DiT
+#   - --no-helios_amplify_history removes the extra history-key scaling path
+#   - --helios_clean_history_prob 0.1 now also skips EAD corruption entirely
+#     with 10% probability, matching official Helios' clean history branch
+#   - keeps mild EAD ratios so the test isolates clean-skip behavior first
 # Code-side fixes (apply automatically):
 #   - convex-blend EAD formula        (was additive: x + σε)
 #   - First-Frame Anchor              (lat_short carries [anchor, recent], fids [0, 7])
 #   - Relative RoPE                   (current chunk freqs offset by 1 + sum(sizes))
 # ---------------------------------------------------------------------------
 
+# num_frames=81 -> 21 latent frames. With anchor + history [4,2,1] = 8
+# history positions, the supervised target has 13 latent frames, matching
+# inference CHUNK_FRAMES=49.
 # num_epochs=1 + frequent saves -> easy to interrupt after ~100-200 steps
 accelerate launch \
   --mixed_precision="bf16" \
@@ -83,31 +90,34 @@ accelerate launch \
   --data_file_keys "video,control_video" \
   --height 480 \
   --width 832 \
-  --num_frames 77 \
+  --num_frames 81 \
   --dataset_repeat 1 \
   --model_paths "[\"${DIT_CKPT}\",\"${MODEL_DIR}/models_t5_umt5-xxl-enc-bf16.pth\",\"${MODEL_DIR}/Wan2.1_VAE.pth\",\"${MODEL_DIR}/models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth\"]" \
   --tokenizer_path "${MODEL_DIR}/google/umt5-xxl" \
   --trainable_models "dit" \
   --extra_inputs "control_video" \
-  --learning_rate 1e-5 \
+  --learning_rate 5e-5 \
   --num_epochs 1 \
   --early_save_steps 20 \
   --save_steps 50 \
   --gradient_accumulation_steps 4 \
   --remove_prefix_in_ckpt "pipe.dit." \
   --output_path "${OUTPUT_DIR}" \
+  --helios_train_mode "helios_modules" \
+  --no-helios_amplify_history \
   --helios_history_sizes "4,2,1" \
   --helios_init_scale_logit -3.0 \
   --helios_corrupt_mode "random" \
-  --helios_noise_ratio_short 0.3333 \
-  --helios_noise_ratio_mid   0.3333 \
-  --helios_noise_ratio_long  0.3333 \
+  --helios_noise_ratio_short 0.05 \
+  --helios_noise_ratio_mid   0.08 \
+  --helios_noise_ratio_long  0.10 \
   --helios_apply_saturation \
-  --helios_saturation_min 0.3 \
-  --helios_saturation_max 1.7 \
+  --helios_saturation_min 0.7 \
+  --helios_saturation_max 1.3 \
   --helios_clean_history_prob 0.1 \
   --helios_use_first_frame_anchor \
   --helios_drop_t2v_ratio 0.10 \
   --helios_drop_i2v_ratio 0.05 \
+  "${HELIOS_RESUME_ARGS[@]}" \
   --use_gradient_checkpointing \
   --find_unused_parameters

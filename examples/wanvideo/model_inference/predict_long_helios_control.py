@@ -6,8 +6,8 @@ Differences from predict_long_antidrift_control.py:
   - After loading the pipeline, calls patch_wan_model_for_helios(pipe.dit)
     so every Wan self-attention block can prepend and attend to Helios
     multi-tier history tokens.
-  - Before each chunk k > 0, VAE-encodes the output of the previous chunk and
-    builds 3-tier history latents, then calls pipe.dit.set_helios_history()
+  - Before each chunk k > 0, reuses the previous chunk's final denoised latent
+    as 3-tier Helios history, then calls pipe.dit.set_helios_history()
     so every attention layer can attend to compressed history tokens
     alongside the current chunk tokens.
   - No reference_image / input_image conditioning for chunks k > 0 (history
@@ -29,6 +29,28 @@ from diffsynth.models.wan_video_helios_attention import (
     prepare_helios_history,
 )
 
+
+def _safe_filename_tag(text):
+    text = str(text).strip()
+    text = re.sub(r"[^A-Za-z0-9._-]+", "_", text)
+    return text.strip("._-") or "unknown"
+
+
+def helios_checkpoint_tag(checkpoint):
+    if checkpoint is None:
+        return "zeroshot_no_ckpt"
+
+    ckpt_path = checkpoint.rstrip(os.sep)
+    train_version = os.path.basename(os.path.dirname(ckpt_path)) or "trained"
+    common_model_prefix = "Wan2.1-Fun-V1.1-1.3B-Control-Helios"
+    if train_version.startswith(common_model_prefix):
+        train_version = train_version[len(common_model_prefix):].lstrip("-_") or "trained"
+    ckpt_name = os.path.basename(ckpt_path)
+
+    m = re.search(r"step[-_]?(\d+)", ckpt_name)
+    step_tag = f"step{m.group(1)}" if m else os.path.splitext(ckpt_name)[0]
+    return f"{_safe_filename_tag(train_version)}_{_safe_filename_tag(step_tag)}"
+
 # ---------------------------------------------------------------------------
 # Config — edit these
 # ---------------------------------------------------------------------------
@@ -40,8 +62,12 @@ USE_MODEL_ID     = False
 # WARNING: do NOT load v4 checkpoints with this script. v4 was trained with
 # the legacy layout (no anchor, no RoPE shift, additive EAD); loading it now
 # is OOD and will produce worse results, not better.
-# HELIOS_CHECKPOINT = None
-HELIOS_CHECKPOINT = "models/train/Wan2.1-Fun-V1.1-1.3B-Control-Helios-v6-eadtest/step-700.safetensors"
+# Set HELIOS_CHECKPOINT="" (empty string) via env var to run baseline (no trained ckpt).
+# Otherwise edit the literal path below.
+HELIOS_CHECKPOINT = os.environ.get(
+    "HELIOS_CHECKPOINT",
+    "models/train/Wan2.1-Fun-V1.1-1.3B-Control-Helios-v10-eadclean/step-1000.safetensors",
+) or None
 
 # Resolution must MATCH the training script (eadtest.sh uses --height 480 --width 832).
 HEIGHT           = 480
@@ -54,6 +80,34 @@ REFERENCE_IMAGE  = None   # PIL.Image or path; used for chunk 0 only
 
 # Helios history config (3 tiers ordered as long / mid / short)
 HISTORY_SIZES    = [4, 2, 1]
+HISTORY_LATENT_SOURCE = "denoised"  # "denoised" or "vae_reencode"
+# Diagnostic sweep to test whether the trained model actually USES helios history
+# at chunk K>0. If "normal" and "no_history" look identical, model is ignoring
+# helios -> training failed to teach temporal flow.
+HISTORY_ABLATION_MODES = ["no_history"]
+# Other useful modes:
+#   normal, no_history, zero_history, random_history
+#   no_long, no_mid, no_short, no_anchor, anchor_only, recent_only
+
+# Reference-image sourcing strategy for chunks K>0 (chunk 0 always uses
+# REFERENCE_IMAGE above, which may be None).
+#   "fixed_first":  use chunk 0's first generated frame for ALL later chunks.
+#                   stable identity, no drift, but doesn't track motion.
+#   "rolling_last": use the previous chunk's last frame as ref for the next
+#                   chunk. tracks character continuously (FramePack-style)
+#                   but small errors can compound.
+#   "none":         no ref for chunk K>0 (legacy behavior).
+REF_STRATEGY = "rolling_last"
+#   long_only, mid_only, short_only
+#   no_anchor, anchor_only, recent_only
+# Trained Helios was optimized with the first-frame anchor and t=0 history tokens.
+# In zero-shot mode these can behave like a hard reference image and hijack later
+# chunks, so default them off unless a Helios checkpoint is loaded.
+USE_FIRST_FRAME_ANCHOR = HELIOS_CHECKPOINT is not None
+# Keep this in sync with the checkpoint's training config. The freeze-base
+# Helios-module runs use --no-helios_amplify_history, matching official configs.
+AMPLIFY_HISTORY        = False
+ZERO_HISTORY_TIMESTEP  = HELIOS_CHECKPOINT is not None
 
 PROMPT = (
     "在这个阳光明媚的户外花园里，美女身穿一袭及膝的白色无袖连衣裙，裙摆在她轻盈的舞姿中轻柔地摆动。阳光透过树叶间洒下斑驳的光影，映衬出她柔和的脸庞和清澈的眼眸，显得格外优雅。"
@@ -63,6 +117,11 @@ NEGATIVE_PROMPT = (
 )
 
 SEED             = 42
+# Per-chunk seed strategy:
+#   "varying" -> SEED + k for chunk k (each chunk samples differently)
+#   "fixed"   -> SEED for ALL chunks (same initial noise, expected to reduce
+#                cross-chunk identity jumps when combined with rolling_ref)
+SEED_STRATEGY    = "fixed"
 CFG_SCALE        = 6.0
 NUM_STEPS        = 50
 FPS              = 16
@@ -107,11 +166,20 @@ else:
 # ---------------------------------------------------------------------------
 patch_wan_model_for_helios(
     pipe.dit,
-    is_amplify_history=True,
+    history_sizes=HISTORY_SIZES,
+    is_amplify_history=AMPLIFY_HISTORY,
     freeze_history_scale=True,   # True at inference; False when training
-    use_first_frame_anchor=True, # match the trained-checkpoint setting
+    use_first_frame_anchor=USE_FIRST_FRAME_ANCHOR,
+    zero_history_timestep=ZERO_HISTORY_TIMESTEP,
 )
-print("Helios attention patch applied.")
+print(
+    "Helios attention patch applied. "
+    f"anchor={USE_FIRST_FRAME_ANCHOR}, "
+    f"amplify_history={AMPLIFY_HISTORY}, "
+    f"zero_history_timestep={ZERO_HISTORY_TIMESTEP}, "
+    f"history_latent_source={HISTORY_LATENT_SOURCE}, "
+    f"history_ablation_modes={HISTORY_ABLATION_MODES}"
+)
 if HELIOS_CHECKPOINT is not None:
     state_dict = load_state_dict(HELIOS_CHECKPOINT, torch_dtype=pipe.torch_dtype)
     missing, unexpected = pipe.dit.load_state_dict(state_dict, strict=False)
@@ -150,91 +218,184 @@ def encode_chunk_to_latents(frames):
     return latents.cpu()
 
 
+def apply_history_ablation(history, mode):
+    lat_long, lat_mid, lat_short, fids_long, fids_mid, fids_short = history
+
+    def _drop_anchor(lat, fids):
+        if lat is None or fids is None or lat.shape[2] == 0:
+            return lat, fids
+        keep = fids != 0
+        if not keep.any():
+            return lat[:, :, :0], fids[:0]
+        return lat[:, :, keep], fids[keep]
+
+    if mode == "normal":
+        return history
+    if mode == "zero_history":
+        return (
+            torch.zeros_like(lat_long),
+            torch.zeros_like(lat_mid),
+            torch.zeros_like(lat_short),
+            fids_long,
+            fids_mid,
+            fids_short,
+        )
+    if mode == "random_history":
+        return (
+            torch.randn_like(lat_long),
+            torch.randn_like(lat_mid),
+            torch.randn_like(lat_short),
+            fids_long,
+            fids_mid,
+            fids_short,
+        )
+    if mode == "no_long":
+        return None, lat_mid, lat_short, None, fids_mid, fids_short
+    if mode == "no_mid":
+        return lat_long, None, lat_short, fids_long, None, fids_short
+    if mode == "no_short":
+        return lat_long, lat_mid, None, fids_long, fids_mid, None
+    if mode == "long_only":
+        return lat_long, None, None, fids_long, None, None
+    if mode == "mid_only":
+        return None, lat_mid, None, None, fids_mid, None
+    if mode == "short_only":
+        return None, None, lat_short, None, None, fids_short
+    if mode == "no_anchor":
+        lat_short_no_anchor, fids_short_no_anchor = _drop_anchor(lat_short, fids_short)
+        return lat_long, lat_mid, lat_short_no_anchor, fids_long, fids_mid, fids_short_no_anchor
+    if mode == "anchor_only":
+        if lat_short is None or fids_short is None:
+            return None, None, None, None, None, None
+        keep = fids_short == 0
+        return None, None, lat_short[:, :, keep], None, None, fids_short[keep]
+    if mode == "recent_only":
+        lat_short_recent, fids_short_recent = _drop_anchor(lat_short, fids_short)
+        return None, None, lat_short_recent, None, None, fids_short_recent
+    raise ValueError(f"Unknown HISTORY_ABLATION_MODE: {mode}")
+
+
+def _shape_or_none(x):
+    return None if x is None else tuple(x.shape)
+
+
+def _fids_or_empty(x):
+    return [] if x is None else x.tolist()
+
+
 # ---------------------------------------------------------------------------
 # Chunk generation loop
 # ---------------------------------------------------------------------------
-all_frames        = []           # accumulated output frames (PIL.Image)
-accumulated_lats  = []           # list of [1, C, T_lat, H_lat, W_lat] CPU tensors
-prev_last_frame   = None         # antidrift anchor
+def generate_one_ablation(ablation_mode):
+    all_frames = []        # accumulated output frames (PIL.Image)
+    accumulated_lats = []  # list of [1, C, T_lat, H_lat, W_lat] CPU tensors
+    fixed_ref = None       # captured from chunk 0's first frame (REF_STRATEGY="fixed_first")
+    rolling_ref = None     # last frame of previous chunk (REF_STRATEGY="rolling_last")
 
-for k in range(NUM_CHUNKS):
-    is_first_chunk = (k == 0)
-    print(f"\n── Chunk {k+1}/{NUM_CHUNKS} ──")
+    print(f"\n========== Helios history ablation: {ablation_mode}  |  REF_STRATEGY={REF_STRATEGY} ==========")
+    for k in range(NUM_CHUNKS):
+        is_first_chunk = (k == 0)
+        print(f"\n── Chunk {k+1}/{NUM_CHUNKS} [{ablation_mode}] ──")
 
-    # Slice control video for this chunk
-    frame_start = k * (CHUNK_FRAMES - 1)
-    ctrl_chunk  = all_ctrl_frames[frame_start : frame_start + CHUNK_FRAMES]
+        # Slice control video for this chunk
+        frame_start = k * (CHUNK_FRAMES - 1)
+        ctrl_chunk = all_ctrl_frames[frame_start : frame_start + CHUNK_FRAMES]
 
-    # ── Helios history injection ──────────────────────────────────────
-    # ZERO-SHOT MODE (no checkpoint): skip helios entirely (pure base Wan).
-    # TRAINED MODE: only inject for chunk K>0. Chunk 0 falls back to plain
-    # Wan-Fun-Control (uses reference_image) — this matches the training
-    # data which never saw reference_image WITH helios tokens. If we inject
-    # helios history at chunk 0, both helios anchor and ref_latent end up at
-    # RoPE position 0 → severe train/inference OOD → noise output.
-    # if HELIOS_CHECKPOINT is None:
-    #     print("  [zero-shot] skipping Helios history injection")
-    if is_first_chunk:
-        print("  [chunk-0] skipping Helios injection (using reference_image instead)")
-    else:
-        history = prepare_helios_history(
-            accumulated_lats,
-            history_sizes=HISTORY_SIZES,
-            use_first_frame_anchor=True,
-            device=pipe.device,
-            dtype=pipe.torch_dtype,
+        # ── Helios history injection ──────────────────────────────────
+        # TRAINED MODE: only inject for chunk K>0. Chunk 0 falls back to
+        # plain Wan-Fun-Control (uses reference_image).
+        pipe.dit.clear_helios_history()
+        if is_first_chunk:
+            print("  [chunk-0] skipping Helios injection (using reference_image instead)")
+        elif ablation_mode == "no_history":
+            print("  [ablation] no Helios history injected")
+        else:
+            history = prepare_helios_history(
+                accumulated_lats,
+                history_sizes=HISTORY_SIZES,
+                use_first_frame_anchor=USE_FIRST_FRAME_ANCHOR,
+                device=pipe.device,
+                dtype=pipe.torch_dtype,
+            )
+            history = apply_history_ablation(history, ablation_mode)
+            pipe.dit.set_helios_history(*history)
+            lat_long, lat_mid, lat_short, fids_long, fids_mid, fids_short = history
+            print(
+                "  History tiers: "
+                f"long={_shape_or_none(lat_long)}@{_fids_or_empty(fids_long)}, "
+                f"mid={_shape_or_none(lat_mid)}@{_fids_or_empty(fids_mid)}, "
+                f"short={_shape_or_none(lat_short)}@{_fids_or_empty(fids_short)}, "
+                f"mode={ablation_mode}"
+            )
+
+        # ── Pick reference_image for this chunk ───────────────────────
+        if is_first_chunk:
+            this_ref = ref_image
+        elif REF_STRATEGY == "fixed_first":
+            this_ref = fixed_ref
+        elif REF_STRATEGY == "rolling_last":
+            this_ref = rolling_ref
+        else:  # "none"
+            this_ref = None
+        if this_ref is not None and not is_first_chunk:
+            print(f"  [chunk-{k+1}] using ref from {REF_STRATEGY}")
+
+        # ── Generate chunk ────────────────────────────────────────────
+        pipe_output = pipe(
+            prompt=PROMPT,
+            negative_prompt=NEGATIVE_PROMPT,
+            control_video=ctrl_chunk,
+            reference_image=this_ref,
+            height=HEIGHT,
+            width=WIDTH,
+            num_frames=CHUNK_FRAMES,
+            seed=SEED if SEED_STRATEGY == "fixed" else SEED + k,
+            cfg_scale=CFG_SCALE,
+            num_inference_steps=NUM_STEPS,
+            tiled=True,
+            return_latents=HISTORY_LATENT_SOURCE == "denoised",
         )
-        pipe.dit.set_helios_history(*history)
-        lat_long, lat_mid, lat_short, fids_long, fids_mid, fids_short = history
-        print(
-            "  History tiers: "
-            f"long={tuple(lat_long.shape)}@{fids_long.tolist()}, "
-            f"mid={tuple(lat_mid.shape)}@{fids_mid.tolist()}, "
-            f"short={tuple(lat_short.shape)}@{fids_short.tolist()}"
-        )
+        if HISTORY_LATENT_SOURCE == "denoised":
+            chunk_frames, chunk_latents = pipe_output
+        else:
+            chunk_frames = pipe_output
+            chunk_latents = encode_chunk_to_latents(chunk_frames)
 
-    # ── Generate chunk ────────────────────────────────────────────────
-    chunk_frames = pipe(
-        prompt=PROMPT,
-        negative_prompt=NEGATIVE_PROMPT,
-        control_video=ctrl_chunk,
-        # NOTE: reference_image intentionally omitted for k>0 here.
-        # Helios history tokens handle temporal context once the model is trained.
-        # Zero-shot (untrained) Helios + reference_image causes artifacts.
-        reference_image=ref_image if is_first_chunk else None,
-        height=HEIGHT,
-        width=WIDTH,
-        num_frames=CHUNK_FRAMES,
-        seed=SEED + k,
-        cfg_scale=CFG_SCALE,
-        num_inference_steps=NUM_STEPS,
-        tiled=True,
-    )  # list[PIL.Image]
+        # ── Clear history side-channel ────────────────────────────────
+        pipe.dit.clear_helios_history()
 
-    # ── Clear history side-channel ────────────────────────────────────
-    pipe.dit.clear_helios_history()
+        # ── Cache chunk latent for next chunk's history ───────────────
+        accumulated_lats.append(chunk_latents)
 
-    # ── VAE-encode chunk output for next chunk's history ─────────────
-    accumulated_lats.append(encode_chunk_to_latents(chunk_frames))
+        # ── Capture references for next iteration ─────────────────────
+        if is_first_chunk and REF_STRATEGY == "fixed_first" and len(chunk_frames) > 0:
+            fixed_ref = chunk_frames[0]
+        if REF_STRATEGY == "rolling_last" and len(chunk_frames) > 0:
+            rolling_ref = chunk_frames[-1]
 
-    prev_last_frame = chunk_frames[-1]
+        if is_first_chunk:
+            all_frames.extend(chunk_frames)
+        else:
+            all_frames.extend(chunk_frames[1:])   # skip overlap frame
 
-    if is_first_chunk:
-        all_frames.extend(chunk_frames)
-    else:
-        all_frames.extend(chunk_frames[1:])   # skip overlap frame
+    return all_frames
+
 
 # ---------------------------------------------------------------------------
 # Save
 # ---------------------------------------------------------------------------
-if HELIOS_CHECKPOINT is not None:
-    m = re.search(r"step[-_](\d+)", HELIOS_CHECKPOINT)
-    _tag = f"trained_steps_{m.group(1)}" if m else "trained"
-else:
-    _tag = "zeroshot"
-_ts = datetime.now().strftime("%m%d_%H%M")
-out_name = f"helios_{_tag}_{_ts}.mp4"
 os.makedirs(SAVE_PATH, exist_ok=True)
-out_path = os.path.join(SAVE_PATH, out_name)
-save_video(all_frames, out_path, fps=FPS, quality=7)
-print(f"\nSaved {len(all_frames)} frames → {out_path}")
+_ts = datetime.now().strftime("%m%d_%H%M")
+for ablation_mode in HISTORY_ABLATION_MODES:
+    all_frames = generate_one_ablation(ablation_mode)
+    _tag = (
+        f"{helios_checkpoint_tag(HELIOS_CHECKPOINT)}"
+        f"_hist-{_safe_filename_tag(HISTORY_LATENT_SOURCE)}"
+        f"_abl-{_safe_filename_tag(ablation_mode)}"
+        f"_seed-{_safe_filename_tag(SEED_STRATEGY)}"
+        f"_ref-{_safe_filename_tag(REF_STRATEGY)}"
+    )
+    out_name = f"helios_{_tag}_{_ts}.mp4"
+    out_path = os.path.join(SAVE_PATH, out_name)
+    save_video(all_frames, out_path, fps=FPS, quality=7)
+    print(f"\nSaved {len(all_frames)} frames → {out_path}")

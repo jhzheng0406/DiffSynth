@@ -27,6 +27,7 @@ Typical usage (SFT fine-tuning, Fun-Control model):
 
 import argparse
 import os
+import re
 import sys
 
 import accelerate
@@ -37,7 +38,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from train import WanTrainingModule, wan_parser as _base_wan_parser
 
-from diffsynth.core import UnifiedDataset
+from diffsynth.core import UnifiedDataset, load_state_dict
 from diffsynth.core.data.operators import ImageCropAndResize, LoadAudio, LoadVideo, ToAbsolutePath
 from diffsynth.diffusion import *
 from diffsynth.models.wan_video_helios_attention import (
@@ -51,6 +52,74 @@ from diffsynth.models.wan_video_helios_attention import (
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
+def _load_helios_resume_checkpoint(dit, checkpoint_path, torch_dtype):
+    state_dict = load_state_dict(checkpoint_path, torch_dtype=torch_dtype)
+    for prefix in ("pipe.dit.", "dit.", "module."):
+        if any(key.startswith(prefix) for key in state_dict):
+            state_dict = {
+                key[len(prefix):] if key.startswith(prefix) else key: value
+                for key, value in state_dict.items()
+            }
+    missing, unexpected = dit.load_state_dict(state_dict, strict=False)
+    print(f"[Helios] resumed checkpoint: {checkpoint_path}")
+    if missing:
+        print(f"[Helios]   Missing keys: {len(missing)}")
+    if unexpected:
+        print(f"[Helios]   Unexpected keys: {len(unexpected)}")
+
+
+def _infer_resume_step(checkpoint_path):
+    if not checkpoint_path:
+        return 0
+    m = re.search(r"step[-_]?(\d+)", os.path.basename(checkpoint_path))
+    return int(m.group(1)) if m else 0
+
+
+def _configure_helios_train_mode(dit, train_mode):
+    train_mode = train_mode.lower()
+    if train_mode == "full":
+        trainable = sum(p.numel() for p in dit.parameters() if p.requires_grad)
+        total = sum(p.numel() for p in dit.parameters())
+        print(f"[Helios] train_mode=full, trainable dit params={trainable:,}/{total:,}")
+        return
+
+    if train_mode != "helios_modules":
+        raise ValueError(f"Unknown helios_train_mode: {train_mode}")
+
+    dit.requires_grad_(False)
+    trainable_modules = [
+        "patch_helios_short",
+        "patch_helios_mid",
+        "patch_helios_long",
+    ]
+    for name in trainable_modules:
+        module = getattr(dit, name, None)
+        if module is None:
+            raise ValueError(f"Helios module {name} is missing; patch_wan_model_for_helios() was not applied.")
+        module.train()
+        module.requires_grad_(True)
+
+    train_history_scale = 0
+    for block in dit.blocks:
+        scale = getattr(getattr(block, "self_attn", None), "history_key_scale", None)
+        if scale is not None:
+            scale.requires_grad_(True)
+            train_history_scale += scale.numel()
+
+    dit.train()
+    trainable_names = [name for name, param in dit.named_parameters() if param.requires_grad]
+    trainable = sum(param.numel() for param in dit.parameters() if param.requires_grad)
+    total = sum(param.numel() for param in dit.parameters())
+    preview = ", ".join(trainable_names[:12])
+    if len(trainable_names) > 12:
+        preview += f", ... (+{len(trainable_names) - 12} tensors)"
+    print(
+        f"[Helios] train_mode=helios_modules, trainable dit params={trainable:,}/{total:,}; "
+        f"history_key_scale_params={train_history_scale:,}"
+    )
+    print(f"[Helios] trainable tensors: {preview}")
+
+
 def HeliosFlowMatchSFTLoss(
     pipe,
     helios_history_sizes,
@@ -58,7 +127,7 @@ def HeliosFlowMatchSFTLoss(
     helios_noise_ratio_short=1.0 / 3.0,
     helios_noise_ratio_mid=1.0 / 3.0,
     helios_noise_ratio_long=1.0 / 3.0,
-    helios_keep_x0=False,
+    helios_keep_x0=True,
     helios_apply_saturation=True,
     helios_saturation_min=0.3,
     helios_saturation_max=1.7,
@@ -107,6 +176,7 @@ def HeliosFlowMatchSFTLoss(
             noise_ratio_long=helios_noise_ratio_long,
             corrupt_mode=helios_corrupt_mode,
             is_keep_x0=helios_keep_x0,
+            clean_prob=helios_clean_history_prob,
         )
 
     if helios_apply_saturation:
@@ -117,6 +187,7 @@ def HeliosFlowMatchSFTLoss(
             sat_min=helios_saturation_min,
             sat_max=helios_saturation_max,
             clean_prob=helios_clean_history_prob,
+            is_keep_x0=helios_keep_x0,
         )
 
     pipe.dit.set_helios_history(lat_long, lat_mid, lat_short, fids_long, fids_mid, fids_short)
@@ -180,6 +251,9 @@ class HeliosWanTrainingModule(WanTrainingModule):
         helios_drop_i2v_ratio,
         helios_supervise_history,
         helios_use_first_frame_anchor=True,
+        helios_resume_ckpt=None,
+        helios_train_mode="full",
+        helios_amplify_history=True,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -188,12 +262,18 @@ class HeliosWanTrainingModule(WanTrainingModule):
         patch_wan_model_for_helios(
             self.pipe.dit,
             history_sizes=self.helios_history_sizes,
-            is_amplify_history=True,
-            freeze_history_scale=False,
+            is_amplify_history=helios_amplify_history,
+            freeze_history_scale=not helios_amplify_history,
             init_scale_logit=helios_init_scale_logit,
             use_first_frame_anchor=helios_use_first_frame_anchor,
         )
-        print(f"[Helios] patch applied to dit. first_frame_anchor={helios_use_first_frame_anchor}")
+        print(
+            f"[Helios] patch applied to dit. first_frame_anchor={helios_use_first_frame_anchor}, "
+            f"amplify_history={helios_amplify_history}"
+        )
+        if helios_resume_ckpt:
+            _load_helios_resume_checkpoint(self.pipe.dit, helios_resume_ckpt, self.pipe.torch_dtype)
+        _configure_helios_train_mode(self.pipe.dit, helios_train_mode)
 
         loss_kwargs = dict(
             helios_history_sizes=self.helios_history_sizes,
@@ -234,6 +314,35 @@ def wan_parser():
         help="Initial value of history_key_scale logit (sigmoid(-3)≈0.05).",
     )
     parser.add_argument(
+        "--helios_train_mode",
+        type=str,
+        default="full",
+        choices=["full", "helios_modules"],
+        help="Which DiT parameters to train. 'full' keeps DiffSynth's current full-DiT SFT; "
+             "'helios_modules' freezes the base DiT and trains only Helios history patch modules "
+             "plus history_key_scale if history amplification is enabled.",
+    )
+    parser.add_argument(
+        "--helios_amplify_history",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="Enable learnable history-key amplification. Official Helios stage configs keep this disabled.",
+    )
+    parser.add_argument(
+        "--helios_resume_ckpt",
+        type=str,
+        default=None,
+        help="Optional Helios training checkpoint to load after applying the Helios patch. "
+             "Do not put this checkpoint in --model_paths.",
+    )
+    parser.add_argument(
+        "--helios_resume_step",
+        type=int,
+        default=None,
+        help="Step offset for checkpoint names when resuming Helios weights. "
+             "If omitted, inferred from --helios_resume_ckpt names like step-450.safetensors.",
+    )
+    parser.add_argument(
         "--helios_corrupt_mode",
         type=str,
         default="random",
@@ -260,9 +369,9 @@ def wan_parser():
     )
     parser.add_argument(
         "--helios_keep_x0",
-        default=False,
-        action="store_true",
-        help="Keep the oldest long-tier history frame clean during corruption.",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="Keep the first-frame anchor clean during EAD corruption and saturation.",
     )
     parser.add_argument(
         "--helios_apply_saturation",
@@ -286,7 +395,7 @@ def wan_parser():
         "--helios_clean_history_prob",
         type=float,
         default=0.1,
-        help="Probability of leaving a history frame unchanged during saturation augmentation.",
+        help="Probability of leaving history unchanged during EAD corruption and saturation augmentation.",
     )
     parser.add_argument(
         "--helios_drop_t2v_ratio",
@@ -373,6 +482,9 @@ if __name__ == "__main__":
         helios_drop_i2v_ratio=args.helios_drop_i2v_ratio,
         helios_supervise_history=args.helios_supervise_history,
         helios_use_first_frame_anchor=args.helios_use_first_frame_anchor,
+        helios_resume_ckpt=args.helios_resume_ckpt,
+        helios_train_mode=args.helios_train_mode,
+        helios_amplify_history=args.helios_amplify_history,
         model_paths=args.model_paths,
         model_id_with_origin_paths=args.model_id_with_origin_paths,
         tokenizer_path=args.tokenizer_path,
@@ -399,6 +511,14 @@ if __name__ == "__main__":
         args.output_path,
         remove_prefix_in_ckpt=args.remove_prefix_in_ckpt,
     )
+    helios_resume_step = (
+        args.helios_resume_step
+        if args.helios_resume_step is not None
+        else _infer_resume_step(args.helios_resume_ckpt)
+    )
+    if helios_resume_step > 0:
+        model_logger.num_steps = helios_resume_step
+        print(f"[Helios] checkpoint numbering resumes from step {helios_resume_step}")
     launcher_map = {
         "sft": launch_training_task,
         "sft:train": launch_training_task,

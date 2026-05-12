@@ -266,6 +266,7 @@ class WanVideoPipeline(BasePipeline):
         # progress_bar
         progress_bar_cmd=tqdm,
         output_type: Optional[Literal["quantized", "floatpoint"]] = "quantized",
+        return_latents: bool = False,
     ):
         # Scheduler
         self.scheduler.set_timesteps(num_inference_steps, denoising_strength=denoising_strength, shift=sigma_shift)
@@ -345,6 +346,7 @@ class WanVideoPipeline(BasePipeline):
         # post-denoising, pre-decoding processing logic
         for unit in self.post_units:
             inputs_shared, _, _ = self.unit_runner(unit, self, inputs_shared, inputs_posi, inputs_nega)
+        output_latents = inputs_shared["latents"].detach().cpu() if return_latents else None
         # Decode
         self.load_models_to_device(['vae'])
         if framewise_decoding:
@@ -356,6 +358,8 @@ class WanVideoPipeline(BasePipeline):
         elif output_type == "floatpoint":
             pass
         self.load_models_to_device([])
+        if return_latents:
+            return video, output_latents
         return video
 
 
@@ -1429,23 +1433,35 @@ def model_fn_wan_video(
         x = torch.concat([reference_latents, x], dim=1)
         f += 1
     
-    freqs = torch.cat([
-        dit.freqs[0][:f].view(f, 1, 1, -1).expand(f, h, w, -1),
-        dit.freqs[1][:h].view(1, h, 1, -1).expand(f, h, w, -1),
-        dit.freqs[2][:w].view(1, 1, w, -1).expand(f, h, w, -1)
-    ], dim=-1).reshape(f * h * w, 1, -1).to(x.device)
+    helios_has_history = getattr(dit, '_helios_history', None) is not None
+    if getattr(dit, '_helios_patch_applied', False):
+        from diffsynth.models.wan_video_helios_attention import _build_current_freqs
+        t_offset = getattr(dit, '_helios_total_history_positions', 0) if helios_has_history else 0
+        freqs = _build_current_freqs(dit, f, h, w, x.device, temporal_offset=t_offset)
+    else:
+        freqs = torch.cat([
+            dit.freqs[0][:f].view(f, 1, 1, -1).expand(f, h, w, -1),
+            dit.freqs[1][:h].view(1, h, 1, -1).expand(f, h, w, -1),
+            dit.freqs[2][:w].view(1, 1, w, -1).expand(f, h, w, -1)
+        ], dim=-1).reshape(f * h * w, 1, -1).to(x.device)
 
     # ── Helios history injection ──────────────────────────────────────
     # model_fn_wan_video never calls dit.forward(), so history tokens must be
     # injected here, right after patchification and freqs, before the block loop.
     helios_history_len = 0
-    if getattr(dit, '_helios_history', None) is not None:
-        from diffsynth.models.wan_video_helios_attention import _build_helios_token_sequence
+    helios_current_len = x.shape[1]
+    if helios_has_history:
+        from diffsynth.models.wan_video_helios_attention import (
+            _build_helios_token_sequence,
+            _prepend_history_timestep_mod,
+        )
         h_tokens, h_freqs = _build_helios_token_sequence(dit, x.device, x.dtype)
         if h_tokens is not None:
             helios_history_len = h_tokens.shape[1]
             x     = torch.cat([h_tokens, x],     dim=1)   # prepend history
             freqs = torch.cat([h_freqs,  freqs], dim=0)   # prepend history freqs
+            t_mod = _prepend_history_timestep_mod(
+                dit, timestep, t_mod, helios_history_len, helios_current_len)
     if hasattr(dit, '_helios_current_history_len'):
         dit._helios_current_history_len = helios_history_len
 
