@@ -1,9 +1,33 @@
-import torch, os, argparse, accelerate, warnings
+import random, torch, os, argparse, accelerate, warnings
 from diffsynth.core import UnifiedDataset
 from diffsynth.core.data.operators import LoadVideo, LoadAudio, ImageCropAndResize, ToAbsolutePath
-from diffsynth.pipelines.wan_video import WanVideoPipeline, ModelConfig
+from diffsynth.pipelines.wan_video import WanVideoPipeline, ModelConfig, WanVideoUnit_FunReference
 from diffsynth.diffusion import *
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+
+def install_ead_hook(pipe, corrupt_ratio, clean_prob):
+    """Helios-style EAD: at training time, corrupt reference_latents with noise
+    `x_corrupted = sigma * randn + (1 - sigma) * x_clean`,  sigma ~ U[0, corrupt_ratio].
+    With probability `clean_prob`, skip corruption (keep clean ref).
+    Mimics inference-time history-frame artifacts so the model learns to be
+    robust to imperfect refs. Monkey-patches WanVideoUnit_FunReference.process.
+    """
+    n_patched = 0
+    for unit in pipe.units:
+        if isinstance(unit, WanVideoUnit_FunReference):
+            orig_process = unit.process
+            def wrapped(pipe_arg, reference_image, height, width, _orig=orig_process):
+                out = _orig(pipe_arg, reference_image, height, width)
+                ref = out.get("reference_latents") if isinstance(out, dict) else None
+                if ref is not None and random.random() >= clean_prob:
+                    sigma_shape = (ref.shape[0],) + (1,) * (ref.ndim - 1)
+                    sigma = torch.rand(*sigma_shape, device=ref.device, dtype=ref.dtype) * corrupt_ratio
+                    out["reference_latents"] = sigma * torch.randn_like(ref) + (1 - sigma) * ref
+                return out
+            unit.process = wrapped
+            n_patched += 1
+    return n_patched
 
 
 class WanTrainingModule(DiffusionTrainingModule):
@@ -68,7 +92,7 @@ class WanTrainingModule(DiffusionTrainingModule):
                 inputs_shared["input_image"] = data["video"][0]
             elif extra_input == "end_image":
                 inputs_shared["end_image"] = data["video"][-1]
-            elif extra_input == "reference_image" or extra_input == "vace_reference_image":
+            elif extra_input == "reference_image" or extra_input == "vace_reference_image" or extra_input == "sink_reference_image":
                 inputs_shared[extra_input] = data[extra_input][0]
             else:
                 inputs_shared[extra_input] = data[extra_input]
@@ -121,6 +145,8 @@ def wan_parser():
     parser.add_argument("--min_timestep_boundary", type=float, default=0.0, help="Min timestep boundary (for mixed models, e.g., Wan-AI/Wan2.2-I2V-A14B).")
     parser.add_argument("--initialize_model_on_cpu", default=False, action="store_true", help="Whether to initialize models on CPU.")
     parser.add_argument("--framewise_decoding", default=False, action="store_true", help="Enable it if this model is a WanToDance global model.")
+    parser.add_argument("--ead_corrupt_ratio", type=float, default=0.0, help="Helios-style EAD: max noise sigma applied to reference_latents during training. 0 disables EAD. Typical: ~0.33.")
+    parser.add_argument("--ead_clean_prob", type=float, default=0.1, help="Probability of keeping reference_latents clean (skipping EAD corruption). Default 0.1.")
     return parser
 
 
@@ -175,9 +201,14 @@ if __name__ == "__main__":
         max_timestep_boundary=args.max_timestep_boundary,
         min_timestep_boundary=args.min_timestep_boundary,
     )
+    if args.ead_corrupt_ratio > 0:
+        n = install_ead_hook(model.pipe, args.ead_corrupt_ratio, args.ead_clean_prob)
+        print(f"[EAD] hooked {n} FunReference unit(s) — corrupt_ratio={args.ead_corrupt_ratio}, clean_prob={args.ead_clean_prob}")
+
     model_logger = ModelLogger(
         args.output_path,
         remove_prefix_in_ckpt=args.remove_prefix_in_ckpt,
+        step_offset=args.global_step_offset,
     )
     launcher_map = {
         "sft:data_process": launch_data_process_task,

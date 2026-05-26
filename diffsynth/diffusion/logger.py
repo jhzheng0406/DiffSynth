@@ -3,19 +3,24 @@ from accelerate import Accelerator
 
 
 class ModelLogger:
-    def __init__(self, output_path, remove_prefix_in_ckpt=None, state_dict_converter=lambda x:x):
+    def __init__(self, output_path, remove_prefix_in_ckpt=None, state_dict_converter=lambda x:x, step_offset=0):
         self.output_path = output_path
         self.remove_prefix_in_ckpt = remove_prefix_in_ckpt
         self.state_dict_converter = state_dict_converter
         self.num_steps = 0
+        self.step_offset = step_offset
+
+
+    def _global_step(self):
+        return self.step_offset + self.num_steps
 
 
     def on_step_end(self, accelerator: Accelerator, model: torch.nn.Module, save_steps=None, early_save_steps=0, **kwargs):
         self.num_steps += 1
         if early_save_steps > 0 and self.num_steps <= early_save_steps:
-            self.save_model(accelerator, model, f"step-{self.num_steps}.safetensors")
+            self.save_model(accelerator, model, f"step-{self._global_step()}.safetensors")
         elif save_steps is not None and self.num_steps % save_steps == 0:
-            self.save_model(accelerator, model, f"step-{self.num_steps}.safetensors")
+            self.save_model(accelerator, model, f"step-{self._global_step()}.safetensors")
 
 
     def on_epoch_end(self, accelerator: Accelerator, model: torch.nn.Module, epoch_id):
@@ -31,7 +36,7 @@ class ModelLogger:
 
     def on_training_end(self, accelerator: Accelerator, model: torch.nn.Module, save_steps=None):
         if save_steps is not None and self.num_steps % save_steps != 0:
-            self.save_model(accelerator, model, f"step-{self.num_steps}.safetensors")
+            self.save_model(accelerator, model, f"step-{self._global_step()}.safetensors")
 
 
     def save_model(self, accelerator: Accelerator, model: torch.nn.Module, file_name):

@@ -1,4 +1,4 @@
-import os, torch
+import os, time, torch
 from tqdm import tqdm
 from accelerate import Accelerator
 from .training_module import DiffusionTrainingModule
@@ -25,15 +25,27 @@ def launch_training_task(
         save_steps = args.save_steps
         early_save_steps = getattr(args, 'early_save_steps', 0)
         num_epochs = args.num_epochs
-    
+
     optimizer = torch.optim.AdamW(model.trainable_modules(), lr=learning_rate, weight_decay=weight_decay)
     scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer)
     dataloader = torch.utils.data.DataLoader(dataset, shuffle=True, collate_fn=lambda x: x[0], num_workers=num_workers)
     model.to(device=accelerator.device)
     model, optimizer, dataloader, scheduler = accelerator.prepare(model, optimizer, dataloader, scheduler)
     initialize_deepspeed_gradient_checkpointing(accelerator)
+
+    step_offset = getattr(model_logger, "step_offset", 0)
+
+    log_file = None
+    if accelerator.is_main_process:
+        os.makedirs(model_logger.output_path, exist_ok=True)
+        log_file = open(os.path.join(model_logger.output_path, "train.log"), "a", buffering=1)
+        offset_note = f" step_offset={step_offset}" if step_offset else ""
+        log_file.write(f"=== run start {time.strftime('%Y-%m-%d %H:%M:%S')} | lr={learning_rate} epochs={num_epochs}{offset_note} ===\n")
+
+    local_step = 0
     for epoch_id in range(num_epochs):
-        for data in tqdm(dataloader):
+        pbar = tqdm(dataloader, disable=not accelerator.is_main_process)
+        for data in pbar:
             with accelerator.accumulate(model):
                 optimizer.zero_grad()
                 if dataset.load_from_cache:
@@ -44,9 +56,18 @@ def launch_training_task(
                 optimizer.step()
                 model_logger.on_step_end(accelerator, model, save_steps, early_save_steps=early_save_steps, loss=loss)
                 scheduler.step()
+                if accelerator.is_main_process:
+                    local_step += 1
+                    global_step = step_offset + local_step
+                    loss_val = loss.detach().float().item()
+                    pbar.set_postfix(loss=f"{loss_val:.4f}")
+                    log_file.write(f"{time.strftime('%H:%M:%S')} epoch={epoch_id} step={global_step} loss={loss_val:.6f}\n")
         if save_steps is None:
             model_logger.on_epoch_end(accelerator, model, epoch_id)
     model_logger.on_training_end(accelerator, model, save_steps)
+    if log_file is not None:
+        log_file.write(f"=== run end {time.strftime('%Y-%m-%d %H:%M:%S')} | total_steps={step_offset + local_step} ===\n")
+        log_file.close()
 
 
 def launch_data_process_task(

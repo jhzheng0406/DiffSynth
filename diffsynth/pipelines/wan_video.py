@@ -209,6 +209,7 @@ class WanVideoPipeline(BasePipeline):
         # ControlNet
         control_video: Optional[list[Image.Image]] = None,
         reference_image: Optional[Image.Image] = None,
+        sink_reference_image: Optional[Image.Image] = None,
         # Camera control
         camera_control_direction: Optional[Literal["Left", "Right", "Up", "Down", "LeftUp", "LeftDown", "RightUp", "RightDown"]] = None,
         camera_control_speed: Optional[float] = 1/54,
@@ -286,7 +287,7 @@ class WanVideoPipeline(BasePipeline):
             "input_image": input_image,
             "end_image": end_image,
             "input_video": input_video, "denoising_strength": denoising_strength,
-            "control_video": control_video, "reference_image": reference_image,
+            "control_video": control_video, "reference_image": reference_image, "sink_reference_image": sink_reference_image,
             "camera_control_direction": camera_control_direction, "camera_control_speed": camera_control_speed, "camera_control_origin": camera_control_origin,
             "vace_video": vace_video, "vace_video_mask": vace_video_mask, "vace_reference_image": vace_reference_image, "vace_scale": vace_scale,
             "seed": seed, "rand_device": rand_device,
@@ -564,23 +565,40 @@ class WanVideoUnit_FunControl(PipelineUnit):
 class WanVideoUnit_FunReference(PipelineUnit):
     def __init__(self):
         super().__init__(
-            input_params=("reference_image", "height", "width", "reference_image"),
+            input_params=("reference_image", "sink_reference_image", "height", "width"),
             output_params=("reference_latents", "clip_feature"),
             onload_model_names=("vae", "image_encoder")
         )
 
-    def process(self, pipe: WanVideoPipeline, reference_image, height, width):
-        if reference_image is None:
+    def process(self, pipe: WanVideoPipeline, reference_image, sink_reference_image, height, width):
+        # If neither ref provided, leave reference_latents/clip_feature unset.
+        if reference_image is None and sink_reference_image is None:
             return {}
         pipe.load_models_to_device(self.onload_model_names)
-        reference_image = reference_image.resize((width, height))
-        reference_latents = pipe.preprocess_video([reference_image])
-        reference_latents = pipe.vae.encode(reference_latents, device=pipe.device)
-        if pipe.image_encoder is None:
-            return {"reference_latents": reference_latents}
-        clip_feature = pipe.preprocess_image(reference_image)
-        clip_feature = pipe.image_encoder.encode_image([clip_feature])
-        return {"reference_latents": reference_latents, "clip_feature": clip_feature}
+
+        # Encode each provided ref to a 1-frame latent and concat along T:
+        # sink occupies T=0, recent occupies T=1 (Helios-style x0 prefix +
+        # short-history layout, simplified to a single recent frame).
+        latents_parts = []
+        for img in [sink_reference_image, reference_image]:
+            if img is None:
+                continue
+            img_resized = img.resize((width, height))
+            part = pipe.preprocess_video([img_resized])
+            part = pipe.vae.encode(part, device=pipe.device)
+            latents_parts.append(part)
+        reference_latents = torch.cat(latents_parts, dim=2) if len(latents_parts) > 1 else latents_parts[0]
+
+        out = {"reference_latents": reference_latents}
+        if pipe.image_encoder is not None:
+            # CLIP feature uses the recent ref if available (richer signal for
+            # the current chunk); fall back to sink when only sink is given.
+            clip_img = reference_image if reference_image is not None else sink_reference_image
+            clip_img = clip_img.resize((width, height))
+            clip_feature = pipe.preprocess_image(clip_img)
+            clip_feature = pipe.image_encoder.encode_image([clip_feature])
+            out["clip_feature"] = clip_feature
+        return out
 
 
 
@@ -1425,13 +1443,24 @@ def model_fn_wan_video(
     f, h, w = x.shape[2:]
     x = rearrange(x, 'b c f h w -> b (f h w) c').contiguous()
     
-    # Reference image
+    # Reference image(s) — prepended to x as self-attention tokens. Each ref
+    # frame contributes h*w tokens and bumps f by 1 (so RoPE places ref at
+    # time-position 0, 1, ... and the actual target at later positions).
+    # T_ref tracked so we can strip the right count back off after the blocks.
+    T_ref = 0
     if reference_latents is not None:
         if len(reference_latents.shape) == 5:
-            reference_latents = reference_latents[:, :, 0]
-        reference_latents = dit.ref_conv(reference_latents).flatten(2).transpose(1, 2)
+            T_ref = reference_latents.shape[2]
+            ref_parts = [
+                dit.ref_conv(reference_latents[:, :, t]).flatten(2).transpose(1, 2)
+                for t in range(T_ref)
+            ]
+            reference_latents = torch.cat(ref_parts, dim=1)   # [B, T_ref*h*w, dim]
+        else:
+            T_ref = 1
+            reference_latents = dit.ref_conv(reference_latents).flatten(2).transpose(1, 2)
         x = torch.concat([reference_latents, x], dim=1)
-        f += 1
+        f += T_ref
     
     helios_has_history = getattr(dit, '_helios_history', None) is not None
     if getattr(dit, '_helios_patch_applied', False):
@@ -1625,10 +1654,10 @@ def model_fn_wan_video(
         if dist.is_initialized() and dist.get_world_size() > 1:
             x = get_sp_group().all_gather(x, dim=1)
             x = x[:, :-pad_shape] if pad_shape > 0 else x
-    # Remove reference latents
+    # Remove reference latents (strip the T_ref * h*w tokens we prepended)
     if reference_latents is not None:
         x = x[:, reference_latents.shape[1]:]
-        f -= 1
+        f -= T_ref
     x = dit.unpatchify(x, (f, h, w))
     return x
 

@@ -84,7 +84,7 @@ HISTORY_LATENT_SOURCE = "denoised"  # "denoised" or "vae_reencode"
 # Diagnostic sweep to test whether the trained model actually USES helios history
 # at chunk K>0. If "normal" and "no_history" look identical, model is ignoring
 # helios -> training failed to teach temporal flow.
-HISTORY_ABLATION_MODES = ["no_history"]
+HISTORY_ABLATION_MODES = ["normal"]
 # Other useful modes:
 #   normal, no_history, zero_history, random_history
 #   no_long, no_mid, no_short, no_anchor, anchor_only, recent_only
@@ -110,7 +110,7 @@ AMPLIFY_HISTORY        = False
 ZERO_HISTORY_TIMESTEP  = HELIOS_CHECKPOINT is not None
 
 PROMPT = (
-    "在这个阳光明媚的户外花园里，美女身穿一袭及膝的白色无袖连衣裙，裙摆在她轻盈的舞姿中轻柔地摆动。阳光透过树叶间洒下斑驳的光影，映衬出她柔和的脸庞和清澈的眼眸，显得格外优雅。"
+    "动漫风格，紫色短发少女正在轻盈起舞。她头戴黑色发箍，身穿白色连衣裙，外搭黑色背心，胸前系着粉色蝴蝶结。背景是粉色的大圆圈，画面简洁柔和。"
 )
 NEGATIVE_PROMPT = (
     "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走"

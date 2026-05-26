@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DiffSynth Results Showcase</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f5;
+      --surface: #ffffff;
+      --surface-2: #eef4f2;
+      --ink: #1e2428;
+      --muted: #69747a;
+      --line: #d8ded9;
+      --teal: #1d8a7a;
+      --coral: #d85c43;
+      --amber: #c99024;
+      --violet: #7060c8;
+      --shadow: 0 18px 42px rgba(30, 36, 40, 0.11);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    button,
+    select {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .app {
+      width: min(1800px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 24px 0 36px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0 18px;
+      background: rgba(247, 248, 245, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(216, 222, 217, 0.72);
+    }
+
+    .brand {
+      min-width: 240px;
+    }
+
+    .eyebrow {
+      margin: 0 0 3px;
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 54px);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .segmented,
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 40px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 8px 22px rgba(30, 36, 40, 0.06);
+    }
+
+    .button,
+    .tab,
+    .speed {
+      height: 32px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .button,
+    .tab {
+      padding: 0 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .speed {
+      width: 88px;
+      padding: 0 8px;
+      font-weight: 700;
+    }
+
+    .button:hover,
+    .tab:hover,
+    .speed:hover {
+      background: var(--surface-2);
+      color: var(--ink);
+    }
+
+    .button:active,
+    .tab:active {
+      transform: translateY(1px);
+    }
+
+    .tab.active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .hero-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: end;
+      padding: 28px 0 20px;
+    }
+
+    .summary {
+      max-width: 860px;
+      margin: 0;
+      color: #3f4b51;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .run-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(76px, 1fr));
+      gap: 8px;
+      width: min(440px, 100%);
+    }
+
+    .metric {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .metric strong,
+    .metric span {
+      display: block;
+    }
+
+    .metric strong {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .metric span {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.2;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .model-section {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .model-section.visible {
+      display: block;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 4px 0 12px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+      text-align: right;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .video-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .video-card[data-kind="baseline"] {
+      border-top: 4px solid var(--teal);
+    }
+
+    .video-card[data-kind="with-ref"] {
+      border-top: 4px solid var(--coral);
+    }
+
+    .video-card[data-kind="lora"] {
+      border-top: 4px solid var(--amber);
+    }
+
+    .video-card[data-kind="ead"] {
+      border-top: 4px solid var(--violet);
+    }
+
+    .video-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 58px;
+      padding: 12px 12px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .video-title {
+      min-width: 0;
+    }
+
+    .video-title h3 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .video-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.25;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 52px;
+      height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: #344147;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .video-frame {
+      position: relative;
+      aspect-ratio: 832 / 480;
+      background: #101416;
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #101416;
+    }
+
+    .missing {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      color: #fff;
+      background: #1f272b;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .video-card.is-missing .missing {
+      display: flex;
+    }
+
+    .video-card.is-missing video {
+      opacity: 0.12;
+    }
+
+    .video-foot {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 48px;
+      padding: 10px 12px 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .path {
+      overflow: hidden;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 11px;
+      line-height: 1.3;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .source-link {
+      height: 28px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 26px;
+      background: #fff;
+    }
+
+    .source-link:hover {
+      border-color: #aeb8b1;
+      background: var(--surface-2);
+    }
+
+    @media (max-width: 1280px) {
+      .video-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        width: min(100vw - 24px, 760px);
+        padding-top: 12px;
+      }
+
+      .topbar,
+      .hero-strip,
+      .section-head {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        position: static;
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .brand {
+        min-width: 0;
+      }
+
+      .controls {
+        justify-content: flex-start;
+      }
+
+      .hero-strip {
+        display: block;
+      }
+
+      .run-meta {
+        margin-top: 16px;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-head p {
+        margin-top: 6px;
+        text-align: left;
+      }
+
+      .video-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .controls {
+        gap: 6px;
+      }
+
+      .segmented,
+      .control-group {
+        width: 100%;
+        height: auto;
+        min-height: 40px;
+        justify-content: space-between;
+      }
+
+      .tab,
+      .button,
+      .speed {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 0 8px;
+      }
+
+      .run-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .video-head,
+      .video-foot {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <p class="eyebrow">DiffSynth Samples</p>
+        <h1>Result Showcase</h1>
+      </div>
+
+      <div class="controls" aria-label="Viewer controls">
+        <div class="segmented" id="modelTabs" aria-label="Model selector"></div>
+        <div class="control-group">
+          <button class="button" type="button" id="playAll">Play</button>
+          <button class="button" type="button" id="pauseAll">Pause</button>
+          <button class="button" type="button" id="restartAll">Reset</button>
+        </div>
+        <div class="control-group">
+          <button class="button" type="button" id="muteAll">Sound</button>
+          <select class="speed" id="speed" aria-label="Playback speed">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2x</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero-strip">
+      <p class="summary">
+        Side-by-side comparison for Wan2.1-Fun V1.1 Control results. Each model block shows Baseline, With Ref, LoRA, and EAD with matching seed, chunk layout, resolution, and FPS where available.
+      </p>
+      <div class="run-meta" aria-label="Run metadata">
+        <div class="metric"><strong>2</strong><span>Models</span></div>
+        <div class="metric"><strong>4</strong><span>Methods</span></div>
+        <div class="metric"><strong>8</strong><span>Videos</span></div>
+      </div>
+    </section>
+
+    <div id="showcase"></div>
+  </main>
+
+  <script>
+    const RESULTS = [
+      {
+        id: "m13b",
+        label: "1.3B",
+        title: "Wan2.1-Fun V1.1 Control 1.3B",
+        detail: "chunks10x49 / 832x480 / seed42 / fps16",
+        videos: [
+          {
+            kind: "baseline",
+            title: "Baseline",
+            tag: "Base",
+            meta: "V1.1 baseline",
+            src: "samples/long_chunk_chain_V1.1_baseline/V1.1_chunks10x49_832x480_seed42_fps16.mp4"
+          },
+          {
+            kind: "with-ref",
+            title: "With Ref",
+            tag: "Ref",
+            meta: "LoRA with ref / step 4975",
+            src: "samples/long_chunk_chain_V1.1_cartoon_with_ref/V1.1+LoRA-with-ref-step-4975_a1.0_chunks10x49_832x480_seed42_fps16.mp4"
+          },
+          {
+            kind: "lora",
+            title: "LoRA",
+            tag: "LoRA",
+            meta: "step 1990",
+            src: "samples/long_chunk_chain_V1.1_cartoon_ead/V1.1+LoRA-step-1990_a1.0_chunks10x49_832x480_seed42_fps16.mp4"
+          },
+          {
+            kind: "ead",
+            title: "EAD",
+            tag: "EAD",
+            meta: "LoRA-EAD / step 4975",
+            src: "samples/long_chunk_chain_V1.1_cartoon_ead/V1.1-1.3B+LoRA-EAD-step-4975_a1.0_chunks10x49_832x480_seed42_fps16.mp4"
+          }
+        ]
+      },
+      {
+        id: "m14b",
+        label: "14B",
+        title: "Wan2.1-Fun V1.1 Control 14B",
+        detail: "chunks10x49 / 832x480 / seed42 / fps16",
+        videos: [
+          {
+            kind: "baseline",
+            title: "Baseline",
+            tag: "Base",
+            meta: "14B baseline",
+            src: "samples/long_chunk_chain_V1.1_14B_baseline/V1.1-14B_chunks10x49_832x480_seed42_fps16.mp4"
+          },
+          {
+            kind: "with-ref",
+            title: "With Ref",
+            tag: "Ref",
+            meta: "with ref / step 4000",
+            src: "samples/long_chunk_chain_V1.1_14B_cartoon_with_ref/V1.1-14B+LoRA-step-4000_a1.0_chunks10x49_832x480_seed42_fps16.mp4"
+          },
+          {
+            kind: "lora",
+            title: "LoRA",
+            tag: "LoRA",
+            meta: "step 1990",
+            src: "samples/long_chunk_chain_V1.1_14B_cartoon/V1.1-14B+LoRA-step-1990_a1.0_chunks10x49_832x480_seed42_fps16.mp4"
+          },
+          {
+            kind: "ead",
+            title: "EAD",
+            tag: "EAD",
+            meta: "LoRA-EAD / step 3980",
+            src: "samples/long_chunk_chain_V1.1_14B_cartoon_ead/V1.1-14B+LoRA-EAD-step-3980_a1.0_chunks10x49_832x480_seed42_fps16.mp4"
+          }
+        ]
+      }
+    ];
+
+    const state = {
+      activeModel: "all",
+      muted: true,
+      speed: 1
+    };
+
+    const tabs = document.getElementById("modelTabs");
+    const showcase = document.getElementById("showcase");
+    const speed = document.getElementById("speed");
+    const muteAll = document.getElementById("muteAll");
+
+    function makeElement(tag, className, text) {
+      const element = document.createElement(tag);
+      if (className) element.className = className;
+      if (text !== undefined) element.textContent = text;
+      return element;
+    }
+
+    function visibleVideos() {
+      return Array.from(document.querySelectorAll(".model-section.visible video"));
+    }
+
+    function applyVideoState(video) {
+      video.muted = state.muted;
+      video.playbackRate = state.speed;
+      video.loop = true;
+    }
+
+    function renderTabs() {
+      const allTab = makeElement("button", "tab active", "All");
+      allTab.type = "button";
+      allTab.dataset.model = "all";
+      tabs.appendChild(allTab);
+
+      RESULTS.forEach((model) => {
+        const tab = makeElement("button", "tab", model.label);
+        tab.type = "button";
+        tab.dataset.model = model.id;
+        tabs.appendChild(tab);
+      });
+    }
+
+    function renderShowcase() {
+      RESULTS.forEach((model) => {
+        const section = makeElement("section", "model-section visible");
+        section.dataset.model = model.id;
+
+        const head = makeElement("div", "section-head");
+        const titleWrap = makeElement("div");
+        const h2 = makeElement("h2", "", model.title);
+        const detail = makeElement("p", "", model.detail);
+        titleWrap.append(h2);
+        head.append(titleWrap, detail);
+
+        const grid = makeElement("div", "video-grid");
+
+        model.videos.forEach((item) => {
+          const card = makeElement("article", "video-card");
+          card.dataset.kind = item.kind;
+
+          const cardHead = makeElement("div", "video-head");
+          const title = makeElement("div", "video-title");
+          title.append(makeElement("h3", "", item.title), makeElement("p", "", item.meta));
+          cardHead.append(title, makeElement("span", "badge", item.tag));
+
+          const frame = makeElement("div", "video-frame");
+          const video = document.createElement("video");
+          video.controls = true;
+          video.muted = state.muted;
+          video.loop = true;
+          video.preload = "metadata";
+          video.playsInline = true;
+          video.src = item.src;
+          video.addEventListener("loadedmetadata", () => applyVideoState(video));
+          video.addEventListener("error", () => card.classList.add("is-missing"));
+
+          const missing = makeElement("div", "missing", "Video file was not found at this path.");
+          frame.append(video, missing);
+
+          const foot = makeElement("div", "video-foot");
+          foot.append(makeElement("div", "path", item.src));
+          const link = makeElement("a", "source-link", "Open");
+          link.href = item.src;
+          link.target = "_blank";
+          link.rel = "noreferrer";
+          foot.append(link);
+
+          card.append(cardHead, frame, foot);
+          grid.append(card);
+        });
+
+        section.append(head, grid);
+        showcase.append(section);
+      });
+    }
+
+    function setActiveModel(modelId) {
+      state.activeModel = modelId;
+
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.model === modelId);
+      });
+
+      document.querySelectorAll(".model-section").forEach((section) => {
+        section.classList.toggle("visible", modelId === "all" || section.dataset.model === modelId);
+      });
+
+      visibleVideos().forEach(applyVideoState);
+    }
+
+    tabs.addEventListener("click", (event) => {
+      const tab = event.target.closest(".tab");
+      if (!tab) return;
+      setActiveModel(tab.dataset.model);
+    });
+
+    document.getElementById("playAll").addEventListener("click", () => {
+      visibleVideos().forEach((video) => {
+        applyVideoState(video);
+        video.play().catch(() => {});
+      });
+    });
+
+    document.getElementById("pauseAll").addEventListener("click", () => {
+      visibleVideos().forEach((video) => video.pause());
+    });
+
+    document.getElementById("restartAll").addEventListener("click", () => {
+      visibleVideos().forEach((video) => {
+        video.currentTime = 0;
+        applyVideoState(video);
+      });
+    });
+
+    muteAll.addEventListener("click", () => {
+      state.muted = !state.muted;
+      muteAll.textContent = state.muted ? "Sound" : "Mute";
+      visibleVideos().forEach((video) => {
+        video.muted = state.muted;
+      });
+    });
+
+    speed.addEventListener("change", () => {
+      state.speed = Number(speed.value);
+      visibleVideos().forEach((video) => {
+        video.playbackRate = state.speed;
+      });
+    });
+
+    renderTabs();
+    renderShowcase();
+  </script>
+</body>
+</html>
