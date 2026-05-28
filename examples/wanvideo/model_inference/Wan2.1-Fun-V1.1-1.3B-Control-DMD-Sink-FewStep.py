@@ -38,6 +38,10 @@ parser.add_argument("--student", default="step-200",
 parser.add_argument("--student_dir", default="models/train/Wan2.1-Fun-V1.1-1.3B-Control_lora_cartoon_sink_dmd",
                     help="Directory holding step-*.safetensors student checkpoints.")
 parser.add_argument("--steps",       type=int, default=4)
+parser.add_argument("--first_chunk_steps", type=int, default=None,
+                    help="Override --steps for chunk 0 only (ASD trick: use more "
+                         "steps on the first chunk to bootstrap a clean reference; "
+                         "later chunks use --steps as usual). Default: same as --steps.")
 parser.add_argument("--sigma_shift", type=float, default=5.0)
 parser.add_argument("--cfg_scale",   type=float, default=None,
                     help="Default auto: 1.0 with a DMD student (distilled to be "
@@ -79,9 +83,10 @@ if args.student.strip():
     if os.path.isfile(s):
         student_path = s
     else:
-        # Accept bare step number ("1200"), "step-1200", or "step-1200.safetensors"
+        # Accept shorthand: "1200", "1200_ema", "step-1200", "step-1200.safetensors", ...
         name = s
-        if name.isdigit():
+        if not name.startswith("step-") and not name.endswith(".safetensors") \
+                and os.sep not in name and name and name[0].isdigit():
             name = f"step-{name}"
         if not name.endswith(".safetensors"):
             name = f"{name}.safetensors"
@@ -155,7 +160,7 @@ for k in range(args.num_chunks):
         sink_reference_image=sink_img,         # sink (constant)
         height=HEIGHT, width=WIDTH,
         num_frames=CHUNK_FRAMES,
-        num_inference_steps=args.steps,
+        num_inference_steps=(args.first_chunk_steps if (k == 0 and args.first_chunk_steps) else args.steps),
         sigma_shift=args.sigma_shift,
         cfg_scale=args.cfg_scale,
         seed=args.seed + k,
