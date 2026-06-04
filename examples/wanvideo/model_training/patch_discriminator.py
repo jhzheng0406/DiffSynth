@@ -81,16 +81,32 @@ class MultiScalePatchD(nn.Module):
         return outs
 
 
-def msgan_g_loss(fake_logits_list):
-    """Hinge G loss averaged across scales."""
+def msgan_g_loss(fake_logits_list, loss_type: str = "hinge"):
+    """G loss averaged across scales.
+
+    loss_type:
+      - "hinge"   : -mean(D(fake))  (saturates outside [-1, 1] margin)
+      - "softplus": mean(softplus(-D(fake))) (always non-zero gradient, baseline log(2))
+    """
+    if loss_type == "softplus":
+        return sum(F.softplus(-fl.float()).mean() for fl in fake_logits_list) / len(fake_logits_list)
     return -sum(fl.float().mean() for fl in fake_logits_list) / len(fake_logits_list)
 
 
-def msgan_d_loss(fake_logits_list, real_logits_list):
-    """Hinge D loss averaged across scales."""
+def msgan_d_loss(fake_logits_list, real_logits_list, loss_type: str = "hinge"):
+    """D loss averaged across scales.
+
+    loss_type:
+      - "hinge"   : relu(1 - real) + relu(1 + fake) — gradient cuts off at margin
+      - "softplus": softplus(-real) + softplus(fake) — never saturates
+    """
     assert len(fake_logits_list) == len(real_logits_list)
     n = len(fake_logits_list)
     loss = fake_logits_list[0].new_zeros((), dtype=torch.float32)
-    for fl, rl in zip(fake_logits_list, real_logits_list):
-        loss = loss + F.relu(1.0 - rl.float()).mean() + F.relu(1.0 + fl.float()).mean()
+    if loss_type == "softplus":
+        for fl, rl in zip(fake_logits_list, real_logits_list):
+            loss = loss + F.softplus(-rl.float()).mean() + F.softplus(fl.float()).mean()
+    else:
+        for fl, rl in zip(fake_logits_list, real_logits_list):
+            loss = loss + F.relu(1.0 - rl.float()).mean() + F.relu(1.0 + fl.float()).mean()
     return loss / n

@@ -1,26 +1,25 @@
 """
-DMD2 + ONE-FORCING (cls_branch GAN) + MULTI-SCALE PATCH GAN HYBRID  (v2).
+DMD2 + ONE-FORCING (cls_branch GAN) + SR-ANCHOR.
 
-v1 mistakenly REPLACED cls_branch with multi-scale PatchD → lost the working
-adversarial signal.  v2 keeps cls_branch AND adds multi-scale PatchD on top.
+Keeps DMD and cls_branch GAN intact. Modification: the "real" anchor that
+cls_branch GAN aims at is replaced by an enhanced/sharpened version of the
+real video. This creates an "aspirational distribution" — sharper than
+real, beyond what teacher can produce — and pulls student toward it via
+the adversarial signal.
 
-Two complementary discriminators:
-  A. cls_branch  — hooks critic's transformer features (layers [13,21,29]).
-                   Operates in semantic / structural feature space.
-                   Loss: softplus(-fake_logit), softplus(±real_logit).
-  B. ms_disc     — multi-scale PatchD on VAE-decoded pixels (scales 1×, 1/2×).
-                   Operates in pixel / texture space.
-                   Loss: hinge (-mean(D(fake)) on G side, relu margins on D side).
+Implementation: unsharp-mask on target_video before VAE-encoding into
+enhanced_target_latents. cls_branch GAN-D and GAN-G then use this enhanced
+version as the "real" sample.
 
-Per step:
-  1. Critic denoising MSE                                            × N
-  2. GAN-D update: cls_branch on noised latents  AND  ms_disc on
-                   VAE-decoded pixels (both backwarded together)      × N
-  3. Generator: dmd_g + w_a * cls_branch_g + w_b * msgan_g            × 1
+DMD path is unchanged: student still aligns to teacher's score function on
+the raw target_latents (because DMD's purpose is matching teacher, not
+overshooting it).
 
-Memory: oneforcing's GAN-D (cls_branch) uses save_on_cpu; msgan adds VAE
-decode + PatchD forward.  Default msgan hyperparams kept conservative
-(scales=2, base_ch=32, num_frames=4) to fit.
+  enhanced_target_video = target_video + sr_amount * (target_video - blur(target_video))
+  enhanced_target_latents = VAE.encode(enhanced_target_video)
+
+  cls_branch GAN-D:  fake (from x_pred) vs real (enhanced_target_latents)
+  DMD:               unchanged (teacher vs critic on noised x_pred)
 """
 import argparse, os, random, sys, time
 import accelerate
@@ -28,8 +27,6 @@ import decord
 import numpy as np
 import pandas as pd
 import torch
-import torch.nn.functional as F
-import torch.utils.checkpoint
 import torch.distributed as dist
 from PIL import Image
 from tqdm import tqdm
@@ -61,7 +58,46 @@ from dmd_utils import (
 )
 from train_chunk_aware import ChunkAwareDataset
 from cls_branch import ClsBranch, FeatureCapturer, gan_g_loss, gan_d_loss
-from patch_discriminator import MultiScalePatchD, msgan_g_loss, msgan_d_loss
+
+
+# ===========================================================================
+# Unsharp mask for SR-anchor enhanced target
+# ===========================================================================
+class _encode_batch_state:
+    """Holds SR-anchor hyperparams so encode_batch (cross-module call) can read them."""
+    sr_amount = 0.0
+    sr_sigma  = 1.2
+
+
+def _gaussian_kernel_1d(sigma: float, ksize: int):
+    if ksize is None:
+        ksize = max(3, int(2 * (3 * sigma) + 1) | 1)
+    x = torch.arange(ksize, dtype=torch.float32) - (ksize - 1) / 2
+    k = torch.exp(-(x ** 2) / (2 * sigma ** 2))
+    return k / k.sum(), ksize
+
+
+def _gaussian_blur_video(x: torch.Tensor, sigma: float = 1.2) -> torch.Tensor:
+    """Per-frame 2D Gaussian blur (separable).
+    x: [B, C, T, H, W] in [-1, 1].  Returns same shape, blurred.
+    """
+    import torch.nn.functional as F
+    B, C, T, H, W = x.shape
+    k1d, ksize = _gaussian_kernel_1d(sigma, None)
+    k1d = k1d.to(dtype=x.dtype, device=x.device)
+    pad = ksize // 2
+    flat = x.permute(0, 2, 1, 3, 4).reshape(B * T, C, H, W)
+    kh = k1d.view(1, 1, ksize, 1).expand(C, 1, ksize, 1).contiguous()
+    kw = k1d.view(1, 1, 1, ksize).expand(C, 1, 1, ksize).contiguous()
+    flat = F.conv2d(flat, kh, padding=(pad, 0), groups=C)
+    flat = F.conv2d(flat, kw, padding=(0, pad), groups=C)
+    return flat.reshape(B, T, C, H, W).permute(0, 2, 1, 3, 4).contiguous()
+
+
+def _unsharp_mask_video(x: torch.Tensor, sigma: float = 1.2, amount: float = 1.0) -> torch.Tensor:
+    """Unsharp mask: enhanced = x + amount * (x - blur(x)).  Clamped to [-1, 1]."""
+    blurred = _gaussian_blur_video(x, sigma=sigma)
+    return (x + amount * (x - blurred)).clamp(-1, 1)
 
 
 # ===========================================================================
@@ -213,6 +249,18 @@ def encode_batch(pipe, batch, dtype, device, no_recent=False):
     target_video = pipe.preprocess_video(batch["video"]).to(dtype=dtype, device=device)
     target_latents = pipe.vae.encode(target_video, device=device).to(dtype=dtype)
 
+    # ── SR-anchor: build enhanced (sharpened) version for GAN-D path ────────
+    # Unsharp mask: enhanced = x + amount * (x - blur(x))
+    # Only used as "real" anchor for cls_branch; DMD path uses raw target_latents.
+    sr_amount = getattr(_encode_batch_state, "sr_amount", 0.0)
+    sr_sigma  = getattr(_encode_batch_state, "sr_sigma", 1.2)
+    if sr_amount > 0.0:
+        with torch.no_grad():
+            enhanced_video = _unsharp_mask_video(target_video, sigma=sr_sigma, amount=sr_amount)
+        enhanced_target_latents = pipe.vae.encode(enhanced_video, device=device).to(dtype=dtype)
+    else:
+        enhanced_target_latents = target_latents
+
     # ---- VAE: control video (pose) → latent ----
     # Wan-Fun-Control expects y to have (dit.in_dim - 2 * latent_channels) channels:
     # y = [control_latent(16) | zero_padding(16)] for V1.1 1.3B (in_dim=48).
@@ -269,7 +317,7 @@ def encode_batch(pipe, batch, dtype, device, no_recent=False):
     return dict(
         prompt_embed=prompt_emb,
         target_latents=target_latents,
-        target_video=target_video,                # pixels in [-1,1] for ms_disc real input
+        enhanced_target_latents=enhanced_target_latents,   # for SR-anchor GAN-D
         control_latents=control_latents,
         reference_latents_aug=reference_latents_aug,
         reference_latents_clean=reference_latents_clean,
@@ -427,27 +475,12 @@ def get_parser():
     p.add_argument("--gan_ffn_dim", type=int, default=4096,
                    help="FFN hidden dim inside each GanCrossAttnBlock (One-Forcing uses 8192).")
     p.add_argument("--gan_num_heads", type=int, default=12)
-    # ─── Multi-scale PatchGAN (added on top of cls_branch) ───
-    p.add_argument("--msgan_g_weight", type=float, default=0.03,
-                   help="Weight on multi-scale Patch G loss in generator total.")
-    p.add_argument("--msgan_d_weight", type=float, default=0.03,
-                   help="Weight on multi-scale Patch D loss in D update.")
-    p.add_argument("--msgan_num_scales", type=int, default=2)
-    p.add_argument("--msgan_base_ch", type=int, default=32)
-    p.add_argument("--msgan_num_layers", type=int, default=3)
-    p.add_argument("--msgan_num_frames", type=int, default=4,
-                   help="How many latent slices to sample for the pixel-D path per step.")
-    p.add_argument("--msgan_vae_chunk", type=int, default=2,
-                   help="VAE-decode chunk size along latent time axis.")
-    p.add_argument("--msgan_skip_full_res", action="store_true",
-                   help="Pool once before the first D, so scales are {1/2×, 1/4×, ...} "
-                        "instead of {1×, 1/2×, ...}. Use when cls_branch already covers "
-                        "fine-pixel texture and you want msgan to focus on mid-/low-freq "
-                        "structure (hands, dress hems, body proportions).")
-    p.add_argument("--msgan_loss_type", choices=["hinge", "softplus"], default="hinge",
-                   help="GAN loss form for ms_disc. Hinge saturates outside ±1 margin "
-                        "(can stall D); softplus has log(2) baseline at logit=0 → "
-                        "G always feels pressure (mirrors One-Forcing's cls_branch).")
+    # ─── SR-anchor (unsharp-masked real for GAN-D target) ───
+    p.add_argument("--sr_amount", type=float, default=0.0,
+                   help="Unsharp-mask amount: enhanced = x + amount*(x - blur(x)). "
+                        "0 = off, 0.5-1.5 typical for visible sharpening.")
+    p.add_argument("--sr_sigma", type=float, default=1.2,
+                   help="Gaussian blur sigma for unsharp mask.")
     # ─── EMA (One-Forcing default) ───
     p.add_argument("--ema_decay", type=float, default=0.99)
     p.add_argument("--ema_start_step", type=int, default=200,
@@ -471,6 +504,10 @@ def get_parser():
 # ===========================================================================
 def main():
     args = get_parser().parse_args()
+    # Pass SR-anchor hyperparams into encode_batch state
+    _encode_batch_state.sr_amount = args.sr_amount
+    _encode_batch_state.sr_sigma  = args.sr_sigma
+
     accelerator = accelerate.Accelerator()
     device = accelerator.device
     dtype = torch.bfloat16
@@ -542,54 +579,31 @@ def main():
         n_cls = sum(p.numel() for p in cls_branch.parameters())
         print(f"[setup] cls_branch: {n_cls/1e6:.1f}M params, layers={gan_layers}")
 
-    # ---------------- Multi-scale PatchD (added on top of cls_branch) ----------
-    ms_disc = MultiScalePatchD(
-        num_scales=args.msgan_num_scales,
-        in_ch=3,
-        base_ch=args.msgan_base_ch,
-        num_layers=args.msgan_num_layers,
-        skip_full_res=args.msgan_skip_full_res,
-    ).to(device=device, dtype=dtype)
-    ms_disc.train()
-    if is_main:
-        n_d = sum(p.numel() for p in ms_disc.parameters())
-        scale_range = "{1/2×, 1/4×, ...}" if args.msgan_skip_full_res else "{1×, 1/2×, ...}"
-        print(f"[setup] ms_disc: {n_d/1e6:.1f}M params, "
-              f"scales={args.msgan_num_scales} {scale_range}, base_ch={args.msgan_base_ch}")
-
     # ---------------- Optimizers ----------------
     student_params = trainable_params(student_pipe.dit)
     critic_params  = trainable_params(critic_pipe.dit)
     cls_params     = list(cls_branch.parameters())
-    disc_params    = list(ms_disc.parameters())
     if is_main:
         print(f"[setup] student trainable params: {sum(p.numel() for p in student_params)/1e6:.1f}M")
         print(f"[setup] critic  trainable params: {sum(p.numel() for p in critic_params )/1e6:.1f}M")
 
     student_optimizer = torch.optim.AdamW(student_params, lr=args.learning_rate_student, weight_decay=1e-2)
-    # critic_optimizer drives BOTH critics: denoising critic, cls_branch, AND ms_disc.
-    critic_optimizer  = torch.optim.AdamW(critic_params + cls_params + disc_params,
+    # critic_optimizer drives BOTH the denoising critic AND the cls_branch — they
+    # are updated together by the GAN-D step and by critic_loss.
+    critic_optimizer  = torch.optim.AdamW(critic_params + cls_params,
                                           lr=args.learning_rate_critic, weight_decay=1e-2)
 
     # ---------------- Resume optimizer state (AdamW moments) ----------------
     # The state sidecar sits next to the student LoRA: step-N.safetensors →
     # step-N_state.pt. Restoring it avoids the cold-start momentum re-warm.
     if args.resume_student_from:
-        # cls_branch state
+        # cls_branch state (also next to student LoRA: ..._cls.pt)
         cls_path = args.resume_student_from.replace(".safetensors", "_cls.pt")
         if os.path.isfile(cls_path):
             cls_branch.load_state_dict(torch.load(cls_path, map_location=device))
             if is_main: print(f"[resume] cls_branch state from {cls_path}")
         elif is_main:
             print(f"[resume] cls_branch NOT loaded (no {cls_path}) — fresh init.")
-
-        # ms_disc state
-        disc_path = args.resume_student_from.replace(".safetensors", "_disc.pt")
-        if os.path.isfile(disc_path):
-            ms_disc.load_state_dict(torch.load(disc_path, map_location=device))
-            if is_main: print(f"[resume] ms_disc state from {disc_path}")
-        elif is_main:
-            print(f"[resume] ms_disc NOT loaded (no {disc_path}) — fresh init.")
 
         # EMA state (saved as LoRA-format safetensors)
         ema_resume_path = args.resume_student_from.replace(".safetensors", "_ema.safetensors")
@@ -713,6 +727,7 @@ def main():
             # ─── encode all conditioning once ───
             cond = encode_batch(student_pipe, batch, dtype, device, no_recent=args.no_recent)
             target_latents    = cond["target_latents"]
+            enhanced_target_latents = cond["enhanced_target_latents"]   # SR-anchor "real" for GAN-D
             control_latents   = cond["control_latents"]
             prompt_embed      = cond["prompt_embed"]
 
@@ -761,7 +776,7 @@ def main():
                 critic_loss = compute_critic_loss(v_critic_pred, x_pred, noise_c)
                 critic_optimizer.zero_grad()
                 critic_loss.backward()
-                all_reduce_grads(critic_params + cls_params + disc_params, num_proc)   # sync
+                all_reduce_grads(critic_params + cls_params, num_proc)   # sync
                 critic_optimizer.step()
 
             # ─── GAN-D update × N (One-Forcing's discriminator step) ───
@@ -773,7 +788,7 @@ def main():
                 sigma_d = timestep_to_sigma(t_d)
                 noise_d = torch.randn_like(x_pred)
                 fake_noisy_d, _ = add_noise_flow(x_pred.detach(), sigma_d, noise_d)
-                real_noisy_d, _ = add_noise_flow(target_latents,   sigma_d, noise_d)
+                real_noisy_d, _ = add_noise_flow(enhanced_target_latents, sigma_d, noise_d)   # SR-anchor
 
                 stacked = torch.cat([fake_noisy_d, real_noisy_d], dim=0)
                 # T5/CLIP/control conditioning: also stack 2× along batch dim
@@ -793,42 +808,10 @@ def main():
                     stacked_logit = cls_branch(stacked_feats)
                 fake_logit_d, real_logit_d = stacked_logit.chunk(2, dim=0)
 
-                d_loss_cls = gan_d_loss(real_logit_d, fake_logit_d) * args.gan_d_weight
-
-                # ─── multi-scale pixel-space D loss (added) ───
-                # Use same noisy-latent? No — pixel D operates on clean pixels.
-                # Re-sample latent slices, VAE-decode (no grad), feed PatchD.
-                T_lat = x_pred.shape[2]
-                n_msg = min(args.msgan_num_frames, T_lat)
-                idx_ms = torch.randperm(T_lat, device=device)[:n_msg]
-                x_pred_sub_d = x_pred.detach().index_select(2, idx_ms)
-                pix_idx = torch.clamp(idx_ms * 4, 0, cond["target_video"].shape[2] - 1)
-                with torch.no_grad():
-                    real_pix_d = cond["target_video"].index_select(2, pix_idx).clamp(-1, 1)
-                    chunk_d = args.msgan_vae_chunk if args.msgan_vae_chunk > 0 else x_pred_sub_d.shape[2]
-                    fake_pieces_d = []
-                    for ci in range(0, x_pred_sub_d.shape[2], chunk_d):
-                        sub = x_pred_sub_d[:, :, ci:ci+chunk_d]
-                        fake_pieces_d.append(student_pipe.vae.decode(
-                            sub.to(dtype), device=device).to(dtype).clamp(-1, 1))
-                    fake_pix_d = torch.cat(fake_pieces_d, dim=2)
-                    T_min = min(fake_pix_d.shape[2], real_pix_d.shape[2])
-                    fake_pix_d = fake_pix_d[:, :, :T_min]
-                    real_pix_d = real_pix_d[:, :, :T_min]
-
-                def _vid2frames(v):
-                    B, C, T, H, W = v.shape
-                    return v.permute(0, 2, 1, 3, 4).reshape(B * T, C, H, W)
-
-                fake_logits_ms = ms_disc(_vid2frames(fake_pix_d))
-                real_logits_ms = ms_disc(_vid2frames(real_pix_d))
-                d_loss_ms = msgan_d_loss(fake_logits_ms, real_logits_ms,
-                                         loss_type=args.msgan_loss_type) * args.msgan_d_weight
-
-                d_loss = d_loss_cls + d_loss_ms
+                d_loss = gan_d_loss(real_logit_d, fake_logit_d) * args.gan_d_weight
                 critic_optimizer.zero_grad()
                 d_loss.backward()
-                all_reduce_grads(critic_params + cls_params + disc_params, num_proc)
+                all_reduce_grads(critic_params + cls_params, num_proc)
                 critic_optimizer.step()
 
             # ─── generator update × 1 (DMD + GAN-G, with grad through x_pred) ───
@@ -884,34 +867,7 @@ def main():
                     )
                     fake_feats_g = cap.features()
                 fake_logit_g = cls_branch(fake_feats_g)
-            g_loss_cls = gan_g_loss(fake_logit_g) * args.gan_g_weight
-
-            # ─── multi-scale pixel-space G loss (added) ───
-            # Decode x_pred with grad (checkpoint) → ms_disc → hinge G loss.
-            T_lat_g = x_pred.shape[2]
-            n_msg_g = min(args.msgan_num_frames, T_lat_g)
-            idx_g = torch.randperm(T_lat_g, device=device)[:n_msg_g]
-            x_pred_sub_g = x_pred.index_select(2, idx_g)
-
-            def _decode_pix(x_lat):
-                return student_pipe.vae.decode(
-                    x_lat.to(dtype), device=device,
-                ).to(dtype).clamp(-1, 1)
-
-            chunk_g = args.msgan_vae_chunk if args.msgan_vae_chunk > 0 else x_pred_sub_g.shape[2]
-            fake_pieces_g = []
-            for ci in range(0, x_pred_sub_g.shape[2], chunk_g):
-                sub = x_pred_sub_g[:, :, ci:ci + chunk_g]
-                fake_pieces_g.append(torch.utils.checkpoint.checkpoint(
-                    _decode_pix, sub, use_reentrant=False,
-                ))
-            fake_pix_g = torch.cat(fake_pieces_g, dim=2)
-            Bg, Cg, Tg, Hg, Wg = fake_pix_g.shape
-            fake_logits_g_ms = ms_disc(fake_pix_g.permute(0, 2, 1, 3, 4).reshape(Bg * Tg, Cg, Hg, Wg))
-            g_loss_ms = msgan_g_loss(fake_logits_g_ms,
-                                     loss_type=args.msgan_loss_type) * args.msgan_g_weight
-
-            g_loss = g_loss_cls + g_loss_ms
+            g_loss = gan_g_loss(fake_logit_g) * args.gan_g_weight
 
             gen_loss = dmd_g_loss + g_loss
             student_optimizer.zero_grad()
@@ -938,17 +894,13 @@ def main():
             if is_main:
                 pbar.set_postfix(
                     g=f"{gen_loss.item():.4f}", c=f"{critic_loss.item():.4f}",
-                    gg=f"{g_loss_cls.item():.4f}", ms_g=f"{g_loss_ms.item():.4f}",
-                    gd=f"{d_loss_cls.item():.4f}", ms_d=f"{d_loss_ms.item():.4f}",
-                    t=t_gen,
+                    gg=f"{g_loss.item():.4f}", gd=f"{d_loss.item():.4f}", t=t_gen,
                 )
                 log_file.write(
                     f"{time.strftime('%H:%M:%S')} epoch={epoch} step={global_step} "
                     f"t_gen={t_gen} gen_loss={gen_loss.item():.6f} "
-                    f"dmd_g={dmd_g_loss.item():.6f} "
-                    f"gan_g_cls={g_loss_cls.item():.6f} gan_g_ms={g_loss_ms.item():.6f} "
-                    f"gan_d_cls={d_loss_cls.item():.6f} gan_d_ms={d_loss_ms.item():.6f} "
-                    f"critic_loss={critic_loss.item():.6f}\n"
+                    f"dmd_g={dmd_g_loss.item():.6f} gan_g={g_loss.item():.6f} "
+                    f"critic_loss={critic_loss.item():.6f} gan_d={d_loss.item():.6f}\n"
                 )
 
             # ─── save (main process only — params are sync'd across ranks anyway) ───
@@ -962,8 +914,6 @@ def main():
                     save_lora_state_dict(critic_pipe.dit,  critic_path,  remove_prefix="dit.")
                     cls_path     = os.path.join(args.output_path, f"step-{global_step}_cls.pt")
                     torch.save(cls_branch.state_dict(), cls_path)
-                    disc_path    = os.path.join(args.output_path, f"step-{global_step}_disc.pt")
-                    torch.save(ms_disc.state_dict(), disc_path)
                     # EMA LoRA — this is typically what you want for inference
                     if hasattr(main, "_ema_state"):
                         ema_path = os.path.join(args.output_path, f"step-{global_step}_ema.safetensors")

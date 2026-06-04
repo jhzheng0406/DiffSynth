@@ -1,26 +1,37 @@
 """
-DMD2 + ONE-FORCING (cls_branch GAN) + MULTI-SCALE PATCH GAN HYBRID  (v2).
+DMD2 + ONE-FORCING (cls_branch GAN) + SVI-STYLE SELF-CORRECTING ERROR RECYCLE.
 
-v1 mistakenly REPLACED cls_branch with multi-scale PatchD → lost the working
-adversarial signal.  v2 keeps cls_branch AND adds multi-scale PatchD on top.
+Keeps DMD + cls_branch GAN intact, adds SVI's core mechanism:
 
-Two complementary discriminators:
-  A. cls_branch  — hooks critic's transformer features (layers [13,21,29]).
-                   Operates in semantic / structural feature space.
-                   Loss: softplus(-fake_logit), softplus(±real_logit).
-  B. ms_disc     — multi-scale PatchD on VAE-decoded pixels (scales 1×, 1/2×).
-                   Operates in pixel / texture space.
-                   Loss: hinge (-mean(D(fake)) on G side, relu margins on D side).
+  Per step:
+    1. CLEAN rollout (no grad):
+         x_pred_clean = student(noise, ref_clean)         ← no error injected
+    2. INJECT error from buffer:
+         ref_corrupt = ref_clean + α · sampled_error
+    3. CORRUPT rollout (with grad):
+         x_pred      = student(noise, ref_corrupt)
+    4. Critic + GAN-D updates on x_pred.detach()           (unchanged)
+    5. Generator update:
+         dmd_g_loss + gan_g_loss + λ_sc · L1(x_pred, x_pred_clean.detach())
+                                          ↑↑↑ SELF-CORRECTING LOSS
+         student must produce same output regardless of error in recent_ref
+    6. COLLECT error (drift direction):
+         err = x_pred_clean[last] - target_latents[last]   ← (student - real)
+         buffer.push(err)
+       Sign matters: this is the direction student's autoregressive recent_ref
+       drifts away from real at inference. Injecting this direction during
+       training simulates what student will see at inference.
 
-Per step:
-  1. Critic denoising MSE                                            × N
-  2. GAN-D update: cls_branch on noised latents  AND  ms_disc on
-                   VAE-decoded pixels (both backwarded together)      × N
-  3. Generator: dmd_g + w_a * cls_branch_g + w_b * msgan_g            × 1
+Key difference vs the naive recycle (replay only): the self-correcting L1
+trains student to be INVARIANT to recent_ref perturbation. This is the
+mechanism that makes SVI work — not just replaying errors, but training
+the network to output the same answer under input corruption.
 
-Memory: oneforcing's GAN-D (cls_branch) uses save_on_cpu; msgan adds VAE
-decode + PatchD forward.  Default msgan hyperparams kept conservative
-(scales=2, base_ch=32, num_frames=4) to fit.
+α schedule: 0 during buffer warmup, then linearly ramps to error_alpha.
+
+Reference: SVI (Stable-Video-Infinity, vita-epfl). Adapted from base-model
+finetuning to DMD distillation regime by anchoring the self-correcting
+target to the clean-input rollout.
 """
 import argparse, os, random, sys, time
 import accelerate
@@ -29,7 +40,6 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn.functional as F
-import torch.utils.checkpoint
 import torch.distributed as dist
 from PIL import Image
 from tqdm import tqdm
@@ -61,7 +71,33 @@ from dmd_utils import (
 )
 from train_chunk_aware import ChunkAwareDataset
 from cls_branch import ClsBranch, FeatureCapturer, gan_g_loss, gan_d_loss
-from patch_discriminator import MultiScalePatchD, msgan_g_loss, msgan_d_loss
+
+
+# ===========================================================================
+# Error replay buffer (FIFO ring buffer of latent residuals)
+# ===========================================================================
+class ErrorBuffer:
+    """Per-rank FIFO buffer of single-latent-frame residuals [C, h, w]."""
+    def __init__(self, max_size: int = 500):
+        self.max_size = max_size
+        self.buf = []     # list of CPU bf16 tensors
+
+    def push(self, err: torch.Tensor):
+        self.buf.append(err.detach().to(torch.bfloat16).cpu().contiguous())
+        if len(self.buf) > self.max_size:
+            self.buf.pop(0)
+
+    def sample(self, device=None, dtype=None) -> torch.Tensor:
+        """Returns a single error of shape [C, h, w]. Raises if empty."""
+        assert len(self.buf) > 0, "ErrorBuffer is empty"
+        idx = torch.randint(0, len(self.buf), (1,)).item()
+        out = self.buf[idx]
+        if device is not None: out = out.to(device)
+        if dtype is not None:  out = out.to(dtype)
+        return out
+
+    def __len__(self):
+        return len(self.buf)
 
 
 # ===========================================================================
@@ -269,7 +305,6 @@ def encode_batch(pipe, batch, dtype, device, no_recent=False):
     return dict(
         prompt_embed=prompt_emb,
         target_latents=target_latents,
-        target_video=target_video,                # pixels in [-1,1] for ms_disc real input
         control_latents=control_latents,
         reference_latents_aug=reference_latents_aug,
         reference_latents_clean=reference_latents_clean,
@@ -322,23 +357,28 @@ def rollout_student(
     dit, denoising_step_list, target_shape,
     prompt_embed, control_latents, reference_latents, clip_feature,
     device, dtype, use_gradient_checkpointing=False,
+    initial_noisy=None, exit_idx=None, renoise_noises=None,
 ):
     """Roll the student through the full few-step denoising schedule, starting
     from PURE NOISE. Random exit step → only one forward keeps grad; everything
-    earlier runs under no_grad with re-noising between steps. The exit step's
-    x0 estimate is returned as x_pred (the model's "final" output at that step).
+    earlier runs under no_grad with re-noising between steps.
 
-    Returns: (x_pred, exit_t)  where exit_t is the timestep at the exit step.
-
-    Mirrors pipeline/bidirectional_training.py:inference_with_trajectory in the
-    upstream Causal-Forcing repo, simplified for our chunk-based setting.
+    Args (new, for SVI self-correcting loss — shared randomness across two rollouts):
+        initial_noisy : pre-generated noise tensor [target_shape]. If None, a new
+                        one is sampled. Pass the same tensor to both clean+corrupt
+                        rollouts so the only difference is the reference.
+        exit_idx      : int in [0, N), the step at which to take the grad forward.
+                        If None, sampled uniformly. Pass same value to both rollouts.
+        renoise_noises: list of fresh noise tensors used for re-noising between
+                        no-grad steps. Length = exit_idx. If None, sampled fresh.
     """
     N = len(denoising_step_list)
-    exit_idx = random.randrange(N)        # uniform over 0..N-1
-
-    # Start from pure noise — KEY DIFFERENCE from current train_dmd.py which
-    # noises GT. The whole rollout is data-free for the target latent.
-    noisy = torch.randn(target_shape, dtype=dtype, device=device)
+    if exit_idx is None:
+        exit_idx = random.randrange(N)        # uniform over 0..N-1
+    if initial_noisy is None:
+        initial_noisy = torch.randn(target_shape, dtype=dtype, device=device)
+    noisy = initial_noisy
+    renoise_idx = 0
 
     for idx, t in enumerate(denoising_step_list):
         sigma_t = float(t) / NUM_TRAIN_TIMESTEPS
@@ -360,12 +400,20 @@ def rollout_student(
             x0 = velocity_to_x0(v, noisy, sigma_t)
             next_t = denoising_step_list[idx + 1]
             sigma_next = float(next_t) / NUM_TRAIN_TIMESTEPS
-            fresh = torch.randn_like(x0)
+            if renoise_noises is not None and renoise_idx < len(renoise_noises):
+                fresh = renoise_noises[renoise_idx]
+            else:
+                fresh = torch.randn_like(x0)
+            renoise_idx += 1
             # Re-noise the clean estimate to the next timestep (consistency-
             # sampler style, matches CF++ scheduler.add_noise).
+            # NOTE: This is a LINEAR INTERPOLATION re-noise. The actual inference
+            # pipeline uses the scheduler's Euler step, not this. For 1-step
+            # rollout this branch is dead (exit_idx is always the only step).
+            # If/when extending to 2/4-step rollouts, this train-vs-inference
+            # mismatch becomes real — consider switching to scheduler.add_noise.
             noisy = sigma_next * fresh + (1 - sigma_next) * x0
 
-    # Should not reach here (exit_idx < N).
     raise RuntimeError("rollout_student: exit step not consumed")
 
 
@@ -427,27 +475,26 @@ def get_parser():
     p.add_argument("--gan_ffn_dim", type=int, default=4096,
                    help="FFN hidden dim inside each GanCrossAttnBlock (One-Forcing uses 8192).")
     p.add_argument("--gan_num_heads", type=int, default=12)
-    # ─── Multi-scale PatchGAN (added on top of cls_branch) ───
-    p.add_argument("--msgan_g_weight", type=float, default=0.03,
-                   help="Weight on multi-scale Patch G loss in generator total.")
-    p.add_argument("--msgan_d_weight", type=float, default=0.03,
-                   help="Weight on multi-scale Patch D loss in D update.")
-    p.add_argument("--msgan_num_scales", type=int, default=2)
-    p.add_argument("--msgan_base_ch", type=int, default=32)
-    p.add_argument("--msgan_num_layers", type=int, default=3)
-    p.add_argument("--msgan_num_frames", type=int, default=4,
-                   help="How many latent slices to sample for the pixel-D path per step.")
-    p.add_argument("--msgan_vae_chunk", type=int, default=2,
-                   help="VAE-decode chunk size along latent time axis.")
-    p.add_argument("--msgan_skip_full_res", action="store_true",
-                   help="Pool once before the first D, so scales are {1/2×, 1/4×, ...} "
-                        "instead of {1×, 1/2×, ...}. Use when cls_branch already covers "
-                        "fine-pixel texture and you want msgan to focus on mid-/low-freq "
-                        "structure (hands, dress hems, body proportions).")
-    p.add_argument("--msgan_loss_type", choices=["hinge", "softplus"], default="hinge",
-                   help="GAN loss form for ms_disc. Hinge saturates outside ±1 margin "
-                        "(can stall D); softplus has log(2) baseline at logit=0 → "
-                        "G always feels pressure (mirrors One-Forcing's cls_branch).")
+    # ─── SVI-style error recycle + self-correcting loss ───
+    p.add_argument("--error_alpha", type=float, default=0.5,
+                   help="Final scale on injected error (after warmup ramp). 0=off (sc loss still active).")
+    p.add_argument("--error_buffer_size", type=int, default=500,
+                   help="Max entries in error replay buffer (per rank, FIFO). SVI uses 500.")
+    p.add_argument("--error_warmup_count", type=int, default=50,
+                   help="Wait until buffer has >= this many entries before injecting (and ramping α).")
+    p.add_argument("--error_alpha_ramp_steps", type=int, default=200,
+                   help="Linearly ramp α from 0 to --error_alpha over this many steps after warmup. "
+                        "0 = apply --error_alpha immediately.")
+    p.add_argument("--sc_weight", type=float, default=0.5,
+                   help="Weight on self-correcting L1 loss between corrupted x_pred and clean x_pred.")
+    p.add_argument("--error_inject_prob", type=float, default=0.8,
+                   help="Probability of injecting error on each step (after warmup). "
+                        "1.0 = always inject, 0.8 = 80% inject + 20% clean (SVI-style). "
+                        "When skipped, alpha_eff=0 and student sees clean ref.")
+    p.add_argument("--error_collect_start_step", type=int, default=0,
+                   help="Global step before which error collection is skipped. "
+                        "Use 100-300 if you want DMD to stabilize before collecting "
+                        "(early residuals may include untrained-LoRA noise, not just drift).")
     # ─── EMA (One-Forcing default) ───
     p.add_argument("--ema_decay", type=float, default=0.99)
     p.add_argument("--ema_start_step", type=int, default=200,
@@ -542,54 +589,31 @@ def main():
         n_cls = sum(p.numel() for p in cls_branch.parameters())
         print(f"[setup] cls_branch: {n_cls/1e6:.1f}M params, layers={gan_layers}")
 
-    # ---------------- Multi-scale PatchD (added on top of cls_branch) ----------
-    ms_disc = MultiScalePatchD(
-        num_scales=args.msgan_num_scales,
-        in_ch=3,
-        base_ch=args.msgan_base_ch,
-        num_layers=args.msgan_num_layers,
-        skip_full_res=args.msgan_skip_full_res,
-    ).to(device=device, dtype=dtype)
-    ms_disc.train()
-    if is_main:
-        n_d = sum(p.numel() for p in ms_disc.parameters())
-        scale_range = "{1/2×, 1/4×, ...}" if args.msgan_skip_full_res else "{1×, 1/2×, ...}"
-        print(f"[setup] ms_disc: {n_d/1e6:.1f}M params, "
-              f"scales={args.msgan_num_scales} {scale_range}, base_ch={args.msgan_base_ch}")
-
     # ---------------- Optimizers ----------------
     student_params = trainable_params(student_pipe.dit)
     critic_params  = trainable_params(critic_pipe.dit)
     cls_params     = list(cls_branch.parameters())
-    disc_params    = list(ms_disc.parameters())
     if is_main:
         print(f"[setup] student trainable params: {sum(p.numel() for p in student_params)/1e6:.1f}M")
         print(f"[setup] critic  trainable params: {sum(p.numel() for p in critic_params )/1e6:.1f}M")
 
     student_optimizer = torch.optim.AdamW(student_params, lr=args.learning_rate_student, weight_decay=1e-2)
-    # critic_optimizer drives BOTH critics: denoising critic, cls_branch, AND ms_disc.
-    critic_optimizer  = torch.optim.AdamW(critic_params + cls_params + disc_params,
+    # critic_optimizer drives BOTH the denoising critic AND the cls_branch — they
+    # are updated together by the GAN-D step and by critic_loss.
+    critic_optimizer  = torch.optim.AdamW(critic_params + cls_params,
                                           lr=args.learning_rate_critic, weight_decay=1e-2)
 
     # ---------------- Resume optimizer state (AdamW moments) ----------------
     # The state sidecar sits next to the student LoRA: step-N.safetensors →
     # step-N_state.pt. Restoring it avoids the cold-start momentum re-warm.
     if args.resume_student_from:
-        # cls_branch state
+        # cls_branch state (also next to student LoRA: ..._cls.pt)
         cls_path = args.resume_student_from.replace(".safetensors", "_cls.pt")
         if os.path.isfile(cls_path):
             cls_branch.load_state_dict(torch.load(cls_path, map_location=device))
             if is_main: print(f"[resume] cls_branch state from {cls_path}")
         elif is_main:
             print(f"[resume] cls_branch NOT loaded (no {cls_path}) — fresh init.")
-
-        # ms_disc state
-        disc_path = args.resume_student_from.replace(".safetensors", "_disc.pt")
-        if os.path.isfile(disc_path):
-            ms_disc.load_state_dict(torch.load(disc_path, map_location=device))
-            if is_main: print(f"[resume] ms_disc state from {disc_path}")
-        elif is_main:
-            print(f"[resume] ms_disc NOT loaded (no {disc_path}) — fresh init.")
 
         # EMA state (saved as LoRA-format safetensors)
         ema_resume_path = args.resume_student_from.replace(".safetensors", "_ema.safetensors")
@@ -606,7 +630,7 @@ def main():
         elif is_main:
             print(f"[resume] EMA NOT loaded (no {ema_resume_path}) — will init when started.")
 
-        # Optimizer states
+        # Optimizer states (+ SVI error buffer state)
         state_path = args.resume_student_from.replace(".safetensors", "_state.pt")
         if os.path.isfile(state_path):
             ckpt = torch.load(state_path, map_location=device)
@@ -614,16 +638,26 @@ def main():
             try:
                 critic_optimizer.load_state_dict(ckpt["critic_optimizer"])
             except (ValueError, KeyError) as e:
-                # Old checkpoint(without cls_branch in critic_optimizer)or
-                # param-group size mismatch → skip critic optimizer state.
                 if is_main:
                     print(f"[resume] critic_optimizer state mismatch ({e}) — cold start critic moments.")
             if is_main:
                 print(f"[resume] student optimizer state from {state_path} "
                       f"(saved at step {ckpt.get('global_step', '?')})")
-        elif is_main:
-            print(f"[resume] WARNING: no optimizer state at {state_path} — "
-                  f"AdamW moments start cold (expect a brief re-warm).")
+            # SVI buffer state (may not exist in old checkpoints — falls back to empty)
+            resume_buffer = ckpt.get("error_buffer", None)
+            resume_warmup_done_step = ckpt.get("error_warmup_done_step", None)
+            if is_main and resume_buffer is not None:
+                print(f"[resume] error buffer with {len(resume_buffer)} entries, "
+                      f"warmup_done_step={resume_warmup_done_step}")
+        else:
+            resume_buffer = None
+            resume_warmup_done_step = None
+            if is_main:
+                print(f"[resume] WARNING: no optimizer state at {state_path} — "
+                      f"AdamW moments + error buffer start cold.")
+    else:
+        resume_buffer = None
+        resume_warmup_done_step = None
 
     # ---------------- Derive denoising timesteps from the scheduler ----------------
     # Guarantees train timesteps == inference timesteps (sigma = t/1000).
@@ -704,6 +738,26 @@ def main():
               f"{start_epoch}, skip {skip_batches}/{steps_per_epoch} batches "
               f"(index-level, no decode)")
 
+    # ---------------- SVI Error Buffer + state ----------------
+    error_buffer = ErrorBuffer(max_size=args.error_buffer_size)
+    error_warmup_done_step = None
+    # Restore from resume checkpoint if available
+    if resume_buffer is not None:
+        # torch.load(..., map_location=device) puts them on GPU; force back to CPU bf16
+        # to match the buffer's runtime invariant.
+        error_buffer.buf = [
+            t.detach().to(torch.bfloat16).cpu().contiguous()
+            for t in list(resume_buffer)[-args.error_buffer_size:]
+        ]
+    if resume_warmup_done_step is not None:
+        error_warmup_done_step = resume_warmup_done_step
+    if is_main:
+        print(f"[setup] error recycle: alpha={args.error_alpha}, buffer={args.error_buffer_size}, "
+              f"warmup_count={args.error_warmup_count}, ramp_steps={args.error_alpha_ramp_steps}, "
+              f"sc_weight={args.sc_weight}")
+        print(f"[setup] error_buffer initial size: {len(error_buffer)}, "
+              f"warmup_done_step: {error_warmup_done_step}")
+
     # ---------------- Training loop ----------------
     local_step = 0
     for epoch in range(start_epoch, start_epoch + args.num_epochs):
@@ -734,16 +788,89 @@ def main():
 
             B = target_latents.shape[0]
 
-            # ─── ROLLOUT student through the full schedule (random exit) ───
-            # Replaces train_dmd.py's GT-noising + single forward. The student
-            # sees its OWN intermediate states; only the exit step has grad.
-            # x_pred is the exit-step x0 estimate (used for both critic update
-            # and the DMD generator update below).
+            # ─── SVI: prepare clean/corrupted reference latents for two rollouts ───
+            # Clean reference (no error) is the target for self-correcting loss.
+            # Corrupted reference (clean + α·sampled_error in recent slice) is what
+            # student actually sees during the gradient-bearing rollout.
+            ref_student_clean = ref_student      # baseline (may already have random aug)
+            alpha_eff = 0.0
+            # Use GLOBAL step for ramp calc so resume picks up where it left off.
+            # (local_step resets to 0 on resume; global_step = offset + local_step.)
+            cur_global_step = args.global_step_offset + local_step
+            # Probabilistic injection: with prob `error_inject_prob`, do error
+            # injection; otherwise use clean ref (SVI's clean_prob mechanism).
+            this_step_inject = (random.random() < args.error_inject_prob)
+            if (args.error_alpha > 0.0
+                    and this_step_inject
+                    and len(error_buffer) >= args.error_warmup_count):
+                if error_warmup_done_step is None:
+                    error_warmup_done_step = cur_global_step
+                    if is_main:
+                        print(f"[error-recycle] buffer warmup done at global_step={cur_global_step}, "
+                              f"begin α ramp")
+                if args.error_alpha_ramp_steps > 0:
+                    ramp = min(1.0, (cur_global_step - error_warmup_done_step) / args.error_alpha_ramp_steps)
+                else:
+                    ramp = 1.0
+                alpha_eff = args.error_alpha * max(0.0, ramp)
+
+            if alpha_eff > 0.0:
+                # SVI injection targets the "recent" slice (T=1) of reference_latents.
+                # Under --no_recent, the reference is sink-only (T=1) and there is
+                # no recent slice → skip injection entirely.
+                if args.no_recent or ref_student.shape[2] < 2:
+                    if local_step == 0 and is_main:
+                        print("[error-recycle] --no_recent or single-frame ref detected; "
+                              "skipping error injection.")
+                    ref_student_corrupt = ref_student
+                    alpha_eff = 0.0
+                else:
+                    err = error_buffer.sample(device=ref_student.device, dtype=ref_student.dtype)
+                    ref_student_corrupt = ref_student.clone()
+                    ref_student_corrupt[:, :, 1, :, :] = ref_student_corrupt[:, :, 1, :, :] + alpha_eff * err
+            else:
+                ref_student_corrupt = ref_student
+
+            # ─── Shared randomness for two rollouts (clean vs corrupt) ─────
+            # The two rollouts MUST differ only by reference_latents. Otherwise
+            # sc_loss = L1(corrupt, clean) ends up regressing two different
+            # random noise inputs to the same output, which pressures student
+            # toward noise-invariance (= mode collapse).
+            sc_loss_active = (alpha_eff > 0.0 and args.sc_weight > 0.0)
+            N_steps = len(denoising_step_list)
+            shared_exit_idx     = random.randrange(N_steps)
+            shared_initial_noisy = torch.randn(target_latents.shape, dtype=dtype, device=device)
+            shared_renoise_noises = [
+                torch.randn(target_latents.shape, dtype=dtype, device=device)
+                for _ in range(shared_exit_idx)        # only need this many fresh re-noises
+            ]
+
+            # ─── CLEAN ROLLOUT (no grad) — target for self-correcting loss ───
+            if sc_loss_active:
+                with torch.no_grad():
+                    x_pred_clean_target, _ = rollout_student(
+                        student_pipe.dit, denoising_step_list, tuple(target_latents.shape),
+                        prompt_embed, control_latents, ref_student_clean, clip_student,
+                        device, dtype,
+                        use_gradient_checkpointing=args.use_gradient_checkpointing,
+                        initial_noisy=shared_initial_noisy,
+                        exit_idx=shared_exit_idx,
+                        renoise_noises=shared_renoise_noises,
+                    )
+                    x_pred_clean_target = x_pred_clean_target.detach()
+            else:
+                x_pred_clean_target = None
+
+            # ─── CORRUPT ROLLOUT (with grad) — main path ───
+            # Uses the SAME initial noise + exit_idx as the clean rollout above.
             x_pred, t_gen = rollout_student(
                 student_pipe.dit, denoising_step_list, tuple(target_latents.shape),
-                prompt_embed, control_latents, ref_student, clip_student,
+                prompt_embed, control_latents, ref_student_corrupt, clip_student,
                 device, dtype,
                 use_gradient_checkpointing=args.use_gradient_checkpointing,
+                initial_noisy=shared_initial_noisy,
+                exit_idx=shared_exit_idx,
+                renoise_noises=shared_renoise_noises,
             )
 
             # ─── critic update × N (use x_pred.detach() — no grad to student) ───
@@ -761,7 +888,7 @@ def main():
                 critic_loss = compute_critic_loss(v_critic_pred, x_pred, noise_c)
                 critic_optimizer.zero_grad()
                 critic_loss.backward()
-                all_reduce_grads(critic_params + cls_params + disc_params, num_proc)   # sync
+                all_reduce_grads(critic_params + cls_params, num_proc)   # sync
                 critic_optimizer.step()
 
             # ─── GAN-D update × N (One-Forcing's discriminator step) ───
@@ -793,42 +920,10 @@ def main():
                     stacked_logit = cls_branch(stacked_feats)
                 fake_logit_d, real_logit_d = stacked_logit.chunk(2, dim=0)
 
-                d_loss_cls = gan_d_loss(real_logit_d, fake_logit_d) * args.gan_d_weight
-
-                # ─── multi-scale pixel-space D loss (added) ───
-                # Use same noisy-latent? No — pixel D operates on clean pixels.
-                # Re-sample latent slices, VAE-decode (no grad), feed PatchD.
-                T_lat = x_pred.shape[2]
-                n_msg = min(args.msgan_num_frames, T_lat)
-                idx_ms = torch.randperm(T_lat, device=device)[:n_msg]
-                x_pred_sub_d = x_pred.detach().index_select(2, idx_ms)
-                pix_idx = torch.clamp(idx_ms * 4, 0, cond["target_video"].shape[2] - 1)
-                with torch.no_grad():
-                    real_pix_d = cond["target_video"].index_select(2, pix_idx).clamp(-1, 1)
-                    chunk_d = args.msgan_vae_chunk if args.msgan_vae_chunk > 0 else x_pred_sub_d.shape[2]
-                    fake_pieces_d = []
-                    for ci in range(0, x_pred_sub_d.shape[2], chunk_d):
-                        sub = x_pred_sub_d[:, :, ci:ci+chunk_d]
-                        fake_pieces_d.append(student_pipe.vae.decode(
-                            sub.to(dtype), device=device).to(dtype).clamp(-1, 1))
-                    fake_pix_d = torch.cat(fake_pieces_d, dim=2)
-                    T_min = min(fake_pix_d.shape[2], real_pix_d.shape[2])
-                    fake_pix_d = fake_pix_d[:, :, :T_min]
-                    real_pix_d = real_pix_d[:, :, :T_min]
-
-                def _vid2frames(v):
-                    B, C, T, H, W = v.shape
-                    return v.permute(0, 2, 1, 3, 4).reshape(B * T, C, H, W)
-
-                fake_logits_ms = ms_disc(_vid2frames(fake_pix_d))
-                real_logits_ms = ms_disc(_vid2frames(real_pix_d))
-                d_loss_ms = msgan_d_loss(fake_logits_ms, real_logits_ms,
-                                         loss_type=args.msgan_loss_type) * args.msgan_d_weight
-
-                d_loss = d_loss_cls + d_loss_ms
+                d_loss = gan_d_loss(real_logit_d, fake_logit_d) * args.gan_d_weight
                 critic_optimizer.zero_grad()
                 d_loss.backward()
-                all_reduce_grads(critic_params + cls_params + disc_params, num_proc)
+                all_reduce_grads(critic_params + cls_params, num_proc)
                 critic_optimizer.step()
 
             # ─── generator update × 1 (DMD + GAN-G, with grad through x_pred) ───
@@ -884,40 +979,51 @@ def main():
                     )
                     fake_feats_g = cap.features()
                 fake_logit_g = cls_branch(fake_feats_g)
-            g_loss_cls = gan_g_loss(fake_logit_g) * args.gan_g_weight
+            g_loss = gan_g_loss(fake_logit_g) * args.gan_g_weight
 
-            # ─── multi-scale pixel-space G loss (added) ───
-            # Decode x_pred with grad (checkpoint) → ms_disc → hinge G loss.
-            T_lat_g = x_pred.shape[2]
-            n_msg_g = min(args.msgan_num_frames, T_lat_g)
-            idx_g = torch.randperm(T_lat_g, device=device)[:n_msg_g]
-            x_pred_sub_g = x_pred.index_select(2, idx_g)
+            # ─── SVI Self-correcting loss ───
+            # L1 between corrupted x_pred (with grad) and clean x_pred (detached).
+            # Trains student to be invariant to error in recent_ref.
+            if x_pred_clean_target is not None:
+                sc_loss = F.l1_loss(x_pred, x_pred_clean_target)
+            else:
+                sc_loss = x_pred.new_zeros(())
 
-            def _decode_pix(x_lat):
-                return student_pipe.vae.decode(
-                    x_lat.to(dtype), device=device,
-                ).to(dtype).clamp(-1, 1)
-
-            chunk_g = args.msgan_vae_chunk if args.msgan_vae_chunk > 0 else x_pred_sub_g.shape[2]
-            fake_pieces_g = []
-            for ci in range(0, x_pred_sub_g.shape[2], chunk_g):
-                sub = x_pred_sub_g[:, :, ci:ci + chunk_g]
-                fake_pieces_g.append(torch.utils.checkpoint.checkpoint(
-                    _decode_pix, sub, use_reentrant=False,
-                ))
-            fake_pix_g = torch.cat(fake_pieces_g, dim=2)
-            Bg, Cg, Tg, Hg, Wg = fake_pix_g.shape
-            fake_logits_g_ms = ms_disc(fake_pix_g.permute(0, 2, 1, 3, 4).reshape(Bg * Tg, Cg, Hg, Wg))
-            g_loss_ms = msgan_g_loss(fake_logits_g_ms,
-                                     loss_type=args.msgan_loss_type) * args.msgan_g_weight
-
-            g_loss = g_loss_cls + g_loss_ms
-
-            gen_loss = dmd_g_loss + g_loss
+            gen_loss = dmd_g_loss + g_loss + args.sc_weight * sc_loss
             student_optimizer.zero_grad()
             gen_loss.backward()
             all_reduce_grads(student_params, num_proc)   # sync across ranks
             student_optimizer.step()
+
+            # ─── SVI COLLECT: push student's drift direction to buffer ───
+            # error = student - real  (drift direction; matches SVI sign)
+            # Skipped until cur_global_step >= error_collect_start_step to avoid
+            # contaminating buffer with cold-start undertrained-LoRA noise.
+            #
+            # CAVEAT (latent space mismatch):
+            #   We collect from target_latents[:, :, -1] which is a slice of
+            #   the 13-frame VIDEO latent (Wan VAE's temporal convs see context).
+            #   We inject into reference_latents[:, :, 1] which is a SINGLE-FRAME
+            #   image VAE encode (no temporal context). The two latents have
+            #   similar but not identical distributions.
+            #   A strictly correct collect would be:
+            #     student_last_pix = vae.decode(x_pred[:, :, -1:])    # 1 frame
+            #     student_enc      = vae.encode(student_last_pix)     # single-frame latent
+            #     err              = student_enc - real_single_frame_enc
+            #   That adds 1 VAE decode + 1 VAE encode per step (~20% overhead).
+            #   First-pass uses video-latent-slice as a proxy — direction should be
+            #   approximately right; if err_norm looks wrong or sc_loss collapses,
+            #   switching to the strict version is the first thing to try.
+            err_norm = 0.0
+            if cur_global_step >= args.error_collect_start_step:
+                with torch.no_grad():
+                    ref_x_pred = x_pred_clean_target if x_pred_clean_target is not None else x_pred
+                    real_last    = target_latents[:, :, -1, :, :]
+                    student_last = ref_x_pred[:,    :, -1, :, :].detach()
+                    err = (student_last - real_last)
+                    err_norm = float(err.abs().mean())          # for logging
+                    for b in range(err.shape[0]):
+                        error_buffer.push(err[b])      # [C, h, w]
 
             # ─── EMA update (One-Forcing: ema_weight=0.99, start after step 200) ───
             local_step += 1
@@ -938,17 +1044,18 @@ def main():
             if is_main:
                 pbar.set_postfix(
                     g=f"{gen_loss.item():.4f}", c=f"{critic_loss.item():.4f}",
-                    gg=f"{g_loss_cls.item():.4f}", ms_g=f"{g_loss_ms.item():.4f}",
-                    gd=f"{d_loss_cls.item():.4f}", ms_d=f"{d_loss_ms.item():.4f}",
+                    gg=f"{g_loss.item():.4f}", gd=f"{d_loss.item():.4f}",
+                    sc=f"{float(sc_loss):.4f}", a=f"{alpha_eff:.2f}",
+                    en=f"{err_norm:.4f}", buf=len(error_buffer),
                     t=t_gen,
                 )
                 log_file.write(
                     f"{time.strftime('%H:%M:%S')} epoch={epoch} step={global_step} "
                     f"t_gen={t_gen} gen_loss={gen_loss.item():.6f} "
-                    f"dmd_g={dmd_g_loss.item():.6f} "
-                    f"gan_g_cls={g_loss_cls.item():.6f} gan_g_ms={g_loss_ms.item():.6f} "
-                    f"gan_d_cls={d_loss_cls.item():.6f} gan_d_ms={d_loss_ms.item():.6f} "
-                    f"critic_loss={critic_loss.item():.6f}\n"
+                    f"dmd_g={dmd_g_loss.item():.6f} gan_g={g_loss.item():.6f} "
+                    f"sc_loss={float(sc_loss):.6f} alpha_eff={alpha_eff:.4f} "
+                    f"err_norm={err_norm:.6f} buf={len(error_buffer)} "
+                    f"critic_loss={critic_loss.item():.6f} gan_d={d_loss.item():.6f}\n"
                 )
 
             # ─── save (main process only — params are sync'd across ranks anyway) ───
@@ -962,8 +1069,6 @@ def main():
                     save_lora_state_dict(critic_pipe.dit,  critic_path,  remove_prefix="dit.")
                     cls_path     = os.path.join(args.output_path, f"step-{global_step}_cls.pt")
                     torch.save(cls_branch.state_dict(), cls_path)
-                    disc_path    = os.path.join(args.output_path, f"step-{global_step}_disc.pt")
-                    torch.save(ms_disc.state_dict(), disc_path)
                     # EMA LoRA — this is typically what you want for inference
                     if hasattr(main, "_ema_state"):
                         ema_path = os.path.join(args.output_path, f"step-{global_step}_ema.safetensors")
@@ -974,13 +1079,17 @@ def main():
                         save_file(ema_sd, ema_path)
                     else:
                         ema_path = "(not yet started)"
-                    # Optimizer moments + step counter for seamless resume.
+                    # Optimizer moments + step counter + SVI buffer for seamless resume.
                     torch.save({
                         "student_optimizer": student_optimizer.state_dict(),
                         "critic_optimizer":  critic_optimizer.state_dict(),
                         "global_step": global_step,
+                        # SVI error recycle state (per-rank buffer; we save rank-0's only)
+                        "error_buffer": list(error_buffer.buf),     # list of CPU bf16 [C,h,w]
+                        "error_warmup_done_step": error_warmup_done_step,
                     }, state_path)
-                    print(f"[save] {student_path} + ema:{ema_path} + {cls_path} + {state_path}")
+                    print(f"[save] {student_path} + ema:{ema_path} + {cls_path} + {state_path} "
+                          f"(buf={len(error_buffer)})")
 
     if is_main:
         log_file.write(f"=== run end {time.strftime('%Y-%m-%d %H:%M:%S')} | "

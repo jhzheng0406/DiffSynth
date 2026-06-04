@@ -1,26 +1,26 @@
 """
-DMD2 + ONE-FORCING (cls_branch GAN) + MULTI-SCALE PATCH GAN HYBRID  (v2).
+DMD2 + ONE-FORCING (cls_branch GAN) + EDGE-CONDITIONAL MULTI-SCALE PATCH GAN.
 
-v1 mistakenly REPLACED cls_branch with multi-scale PatchD → lost the working
-adversarial signal.  v2 keeps cls_branch AND adds multi-scale PatchD on top.
+Same hybrid as msgan_v2/v4 (cls_branch + ms_disc) BUT the ms_disc input is
+the SOBEL-FILTERED pixels, not raw pixels:
 
-Two complementary discriminators:
-  A. cls_branch  — hooks critic's transformer features (layers [13,21,29]).
-                   Operates in semantic / structural feature space.
-                   Loss: softplus(-fake_logit), softplus(±real_logit).
-  B. ms_disc     — multi-scale PatchD on VAE-decoded pixels (scales 1×, 1/2×).
-                   Operates in pixel / texture space.
-                   Loss: hinge (-mean(D(fake)) on G side, relu margins on D side).
+   raw pixels → Sobel magnitude → ms_disc → fake/real logit
 
-Per step:
-  1. Critic denoising MSE                                            × N
-  2. GAN-D update: cls_branch on noised latents  AND  ms_disc on
-                   VAE-decoded pixels (both backwarded together)      × N
-  3. Generator: dmd_g + w_a * cls_branch_g + w_b * msgan_g            × 1
+Rationale: msgan_v4 (raw-pixel D) failed to improve Sobel because D learned
+to discriminate based on whatever cue was easiest (color blocks, textures),
+not necessarily edges. By PRE-FILTERING to edges, the D's input space IS
+already edge maps — D can only discriminate based on edge structure, so its
+gradient pushes G specifically toward "real edge structure".
 
-Memory: oneforcing's GAN-D (cls_branch) uses save_on_cpu; msgan adds VAE
-decode + PatchD forward.  Default msgan hyperparams kept conservative
-(scales=2, base_ch=32, num_frames=4) to fit.
+Compared to edge_v1 (Sobel L1):
+  edge_v1: pixel-wise L1 between Sobel maps. Very direct, but L1 averages
+           everything together — no learnable spatial pattern of where
+           edges should be.
+  this   : adversarial on Sobel maps. D learns "what real edge maps look
+           like in distribution" → G must match that distribution.
+
+Two-disc hybrid (cls_branch + edge-conditional ms_disc) so we keep
+oneforcing's known good signal.
 """
 import argparse, os, random, sys, time
 import accelerate
@@ -62,6 +62,25 @@ from dmd_utils import (
 from train_chunk_aware import ChunkAwareDataset
 from cls_branch import ClsBranch, FeatureCapturer, gan_g_loss, gan_d_loss
 from patch_discriminator import MultiScalePatchD, msgan_g_loss, msgan_d_loss
+
+
+# ===========================================================================
+# Sobel edge filter — for edge-conditional discriminator input
+# ===========================================================================
+_SOBEL_X_2D = torch.tensor([[-1., 0., 1.], [-2., 0., 2.], [-1., 0., 1.]])
+_SOBEL_Y_2D = torch.tensor([[-1., -2., -1.], [0., 0., 0.], [1., 2., 1.]])
+
+
+def sobel_per_frame(x: torch.Tensor) -> torch.Tensor:
+    """Apply Sobel magnitude per channel to a batch of frames.
+    x: [N, C, H, W] in [-1, 1]   →   [N, C, H, W] edge magnitude.
+    """
+    N, C, H, W = x.shape
+    kx = _SOBEL_X_2D.to(dtype=x.dtype, device=x.device).view(1, 1, 3, 3).expand(C, 1, 3, 3).contiguous()
+    ky = _SOBEL_Y_2D.to(dtype=x.dtype, device=x.device).view(1, 1, 3, 3).expand(C, 1, 3, 3).contiguous()
+    gx = torch.nn.functional.conv2d(x, kx, padding=1, groups=C)
+    gy = torch.nn.functional.conv2d(x, ky, padding=1, groups=C)
+    return torch.sqrt(gx * gx + gy * gy + 1e-6)
 
 
 # ===========================================================================
@@ -820,8 +839,9 @@ def main():
                     B, C, T, H, W = v.shape
                     return v.permute(0, 2, 1, 3, 4).reshape(B * T, C, H, W)
 
-                fake_logits_ms = ms_disc(_vid2frames(fake_pix_d))
-                real_logits_ms = ms_disc(_vid2frames(real_pix_d))
+                # Edge-conditional: feed Sobel-filtered pixels to D
+                fake_logits_ms = ms_disc(sobel_per_frame(_vid2frames(fake_pix_d)))
+                real_logits_ms = ms_disc(sobel_per_frame(_vid2frames(real_pix_d)))
                 d_loss_ms = msgan_d_loss(fake_logits_ms, real_logits_ms,
                                          loss_type=args.msgan_loss_type) * args.msgan_d_weight
 
@@ -907,7 +927,9 @@ def main():
                 ))
             fake_pix_g = torch.cat(fake_pieces_g, dim=2)
             Bg, Cg, Tg, Hg, Wg = fake_pix_g.shape
-            fake_logits_g_ms = ms_disc(fake_pix_g.permute(0, 2, 1, 3, 4).reshape(Bg * Tg, Cg, Hg, Wg))
+            # Edge-conditional: feed Sobel-filtered pixels to D
+            fake_pix_frames_g = fake_pix_g.permute(0, 2, 1, 3, 4).reshape(Bg * Tg, Cg, Hg, Wg)
+            fake_logits_g_ms = ms_disc(sobel_per_frame(fake_pix_frames_g))
             g_loss_ms = msgan_g_loss(fake_logits_g_ms,
                                      loss_type=args.msgan_loss_type) * args.msgan_g_weight
 
