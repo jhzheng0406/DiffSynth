@@ -1,0 +1,36 @@
+{
+    "subject_consistency": [
+        0.9499912366953989,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/videos_smoke/dmd_sink-sink_recycle_v1_exp-wan1.3b_dmd_recycle_v2_step-850_1step_cfg1.0_chunks200x49_832x480_seed42_rp_both.mp4",
+                "video_results": 0.9534575910369555
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/videos_smoke/dmd_sink-sink_v2_exp-wan1.3b_dmd_recycle_v1_step-850_1step_cfg1.0_chunks200x49_832x480_seed42_rp_student.mp4",
+                "video_results": 0.952075863952438
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/videos_smoke/dmd_sink-sink_v2_exp-Wan2.1-Fun-V1.1-1.3B-Control_lora_cartoon_sink_dmd_oneforcing_1step_step-850_1step_cfg1.0_chunks200x49_832x480_seed42_rp_norecycle.mp4",
+                "video_results": 0.9444402550968031
+            }
+        ]
+    ],
+    "aesthetic_quality": [
+        0.6313970486323038,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/videos_smoke/dmd_sink-sink_recycle_v1_exp-wan1.3b_dmd_recycle_v2_step-850_1step_cfg1.0_chunks200x49_832x480_seed42_rp_both.mp4",
+                "video_results": 0.631915807723999
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/videos_smoke/dmd_sink-sink_v2_exp-wan1.3b_dmd_recycle_v1_step-850_1step_cfg1.0_chunks200x49_832x480_seed42_rp_student.mp4",
+                "video_results": 0.640354335308075
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/videos_smoke/dmd_sink-sink_v2_exp-Wan2.1-Fun-V1.1-1.3B-Control_lora_cartoon_sink_dmd_oneforcing_1step_step-850_1step_cfg1.0_chunks200x49_832x480_seed42_rp_norecycle.mp4",
+                "video_results": 0.6219210028648376
+            }
+        ]
+    ]
+}

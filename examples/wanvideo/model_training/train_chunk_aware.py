@@ -80,6 +80,8 @@ class ChunkAwareDataset(torch.utils.data.Dataset):
         chunk_frames=49,
         recent_aug_strength=0.5,
         dataset_repeat=1,
+        plp=False,
+        aspect_crop=False,
     ):
         src_df = pd.read_csv(csv_path)
         self.height = height
@@ -87,6 +89,16 @@ class ChunkAwareDataset(torch.utils.data.Dataset):
         self.chunk_frames = chunk_frames
         self.recent_aug_strength = recent_aug_strength
         self.dataset_repeat = dataset_repeat
+        # PLP: also emit the previous chunk's 49-frame window so training can
+        # build the recent reference as a VIDEO-mode latent (its last latent
+        # frame), matching inference's z_prev[:,:,-1] instead of an image-mode
+        # single-frame encode.
+        self.plp = plp
+        # aspect_crop: resize-to-COVER + center-crop to (width,height) instead of
+        # a stretch, so a 3:4 source (UBC) isn't squished into 9:16 (which made
+        # bodies look proportionally wrong). video + pose use the SAME crop → stay
+        # aligned. Default False = legacy stretch (cartoon unaffected).
+        self.aspect_crop = aspect_crop
 
         # ---- enumerate (source_video, chunk_idx) pairs ----
         # 1-frame overlap convention: chunk k spans [k*stride, k*stride+chunk_frames)
@@ -118,9 +130,39 @@ class ChunkAwareDataset(torch.utils.data.Dataset):
 
     def _to_pil(self, frame_np):
         img = Image.fromarray(frame_np).convert("RGB")
-        return img.resize((self.width, self.height))
+        if not self.aspect_crop:
+            return img.resize((self.width, self.height))   # legacy stretch
+        # resize-to-cover target aspect, then center-crop → preserves proportions
+        tw, th = self.width, self.height
+        w, h = img.size
+        scale = max(tw / w, th / h)
+        nw, nh = max(tw, round(w * scale)), max(th, round(h * scale))
+        img = img.resize((nw, nh), Image.LANCZOS)
+        left, top = (nw - tw) // 2, (nh - th) // 2
+        return img.crop((left, top, left + tw, top + th))
 
     def __getitem__(self, idx):
+        # Resilient reads. The NAS (esp. inside the runai container) throws
+        # transient EACCES / read errors under concurrent load even though the
+        # files are world-readable. Strategy: retry the SAME sample a few times
+        # with backoff (recovers transient hiccups WITHOUT dropping data); only
+        # if it stays bad do we substitute a neighbour. Avoids silently biasing
+        # the dataset toward whatever happens to read on the first try.
+        import time
+        n = len(self.samples)
+        last_err = None
+        for off in range(16):
+            j = (idx + off) % n
+            for attempt in range(4):
+                try:
+                    return self._load_sample(j)
+                except Exception as e:
+                    last_err = e
+                    time.sleep(0.4 * (attempt + 1))   # 0.4/0.8/1.2/1.6s backoff
+        raise RuntimeError(f"[ChunkAwareDataset] persistent read failure near "
+                           f"idx={idx % n} after 16 samples × 4 retries; last: {last_err!r}")
+
+    def _load_sample(self, idx):
         sample = self.samples[idx % len(self.samples)]
         s = sample["chunk_start"]
 
@@ -152,13 +194,26 @@ class ChunkAwareDataset(torch.utils.data.Dataset):
         target_pil = [self._to_pil(f) for f in target_np]
         pose_pil   = [self._to_pil(f) for f in pose_np]
 
+        # PLP: previous chunk = frames [s-stride, s] (49 frames ending at the
+        # overlap frame s). Encoded video-mode at train time → last latent frame
+        # is the PLP recent reference. None for chunk 0 (no prior → falls back to
+        # the image-mode recent / sink, matching inference recent_latent=None).
+        recent_window = None
+        if self.plp and s > 0:
+            pw_start = s - (self.chunk_frames - 1)            # = s - stride
+            pw_idx = np.arange(pw_start, pw_start + self.chunk_frames)
+            pw_np = vr_vid.get_batch(pw_idx).asnumpy()
+            recent_window = [self._to_pil(f) for f in pw_np]
+
         return {
             "video":                 target_pil,
             "control_video":         pose_pil,
             "reference_image":       [recent_pil],         # augmented (per recent_aug_strength)
             "reference_image_clean": [recent_pil_clean],   # un-augmented; DMD asymmetric uses this for teacher
             "sink_reference_image":  [sink_pil],
+            "recent_window":         recent_window,        # PLP: prev 49-frame window (or None)
             "prompt":                sample["prompt"],
+            "uid":                   f'{sample["source_video"]}#{sample["source_pose"]}#{s}',  # video+pose+chunk → latent cache id
         }
 
 
@@ -173,6 +228,18 @@ def wan_parser():
              "0.5 mild (brightness ±10%, sat ±15%, noise σ~2-4); "
              "1.0 strong (brightness ±20%, sat ±30%, noise σ~2-8); "
              ">1.0 simulates more severe drift.",
+    )
+    parser.add_argument(
+        "--plp", action="store_true",
+        help="Persistent Latent Propagation: emit the previous chunk's window so "
+             "the recent reference is built from its VIDEO-mode latent (last latent "
+             "frame), matching PLP inference. The base module encodes it.",
+    )
+    parser.add_argument(
+        "--aspect_crop", action="store_true",
+        help="Resize-to-cover + center-crop to (width,height) instead of stretching "
+             "(stops 3:4 sources like UBC being squished into 9:16). Default off = "
+             "legacy stretch.",
     )
     return parser
 
@@ -191,6 +258,8 @@ if __name__ == "__main__":
         chunk_frames=args.num_frames,
         recent_aug_strength=args.recent_aug_strength,
         dataset_repeat=args.dataset_repeat,
+        plp=args.plp,
+        aspect_crop=args.aspect_crop,
     )
 
     model = WanTrainingModule(

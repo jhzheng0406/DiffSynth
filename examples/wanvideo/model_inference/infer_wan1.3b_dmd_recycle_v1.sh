@@ -40,6 +40,7 @@ CUDA_VISIBLE_DEVICES=$GPU bash $LONG --duration $DURATION --steps 1 \
     --control_video "$POSE" \
     --sink_lora $SK_V2 \
     --student_dir $DIR \
+    --save_dir samples/onestep_clarity/01_recycle \
     --student $STEP \
     2>&1 | tee "$LOGDIR/recycle_v1_step${STEP}_${DURATION}s.log"
 

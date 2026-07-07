@@ -1,0 +1,3854 @@
+{
+    "subject_consistency": [
+        0.9727382159151998,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0000.mp4",
+                "video_results": 0.9649577507128319
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0001.mp4",
+                "video_results": 0.9766385151694218
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0002.mp4",
+                "video_results": 0.9687396107862393
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0003.mp4",
+                "video_results": 0.9631962664425373
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0004.mp4",
+                "video_results": 0.9724402738114198
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0005.mp4",
+                "video_results": 0.9681975524872541
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0006.mp4",
+                "video_results": 0.9693172300855318
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0007.mp4",
+                "video_results": 0.9592613639930884
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0008.mp4",
+                "video_results": 0.9712995830923319
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0009.mp4",
+                "video_results": 0.9711799578120311
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0010.mp4",
+                "video_results": 0.9763636874655882
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0011.mp4",
+                "video_results": 0.9739219558735689
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0012.mp4",
+                "video_results": 0.9774623829871416
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0013.mp4",
+                "video_results": 0.9804469036559263
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0014.mp4",
+                "video_results": 0.9789218579729398
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0015.mp4",
+                "video_results": 0.975380927324295
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0016.mp4",
+                "video_results": 0.9744846038520336
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0017.mp4",
+                "video_results": 0.9803950997690359
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0018.mp4",
+                "video_results": 0.9706252509107193
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0019.mp4",
+                "video_results": 0.9698055883248647
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0020.mp4",
+                "video_results": 0.9716123168667158
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0021.mp4",
+                "video_results": 0.9610319013396899
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0022.mp4",
+                "video_results": 0.9732499122619629
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0023.mp4",
+                "video_results": 0.9662841682632765
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0024.mp4",
+                "video_results": 0.9727939330041409
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0025.mp4",
+                "video_results": 0.9683802233388027
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0026.mp4",
+                "video_results": 0.9848282132297754
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0027.mp4",
+                "video_results": 0.9641382278253635
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0028.mp4",
+                "video_results": 0.9770498362680277
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0029.mp4",
+                "video_results": 0.9643634408712387
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0030.mp4",
+                "video_results": 0.9623958903054396
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0031.mp4",
+                "video_results": 0.9703505771855513
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0032.mp4",
+                "video_results": 0.9630222264677286
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0033.mp4",
+                "video_results": 0.9690147551397482
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0034.mp4",
+                "video_results": 0.9668781099220117
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0035.mp4",
+                "video_results": 0.9810602478682995
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0036.mp4",
+                "video_results": 0.9651373575131098
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0037.mp4",
+                "video_results": 0.974338511005044
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0038.mp4",
+                "video_results": 0.9721341375261545
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0039.mp4",
+                "video_results": 0.9825789338598648
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0040.mp4",
+                "video_results": 0.9803279992192984
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0041.mp4",
+                "video_results": 0.9722206157942613
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0042.mp4",
+                "video_results": 0.9754681165019671
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0043.mp4",
+                "video_results": 0.9744166284799576
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0044.mp4",
+                "video_results": 0.980582470074296
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0045.mp4",
+                "video_results": 0.9724860222389301
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0046.mp4",
+                "video_results": 0.9730400890111923
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0047.mp4",
+                "video_results": 0.9687762049337229
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0048.mp4",
+                "video_results": 0.9638890170802673
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0000.mp4",
+                "video_results": 0.9648214497913917
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0001.mp4",
+                "video_results": 0.9786802679300308
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0002.mp4",
+                "video_results": 0.9686911621441444
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0003.mp4",
+                "video_results": 0.963004132732749
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0004.mp4",
+                "video_results": 0.9743255991488695
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0005.mp4",
+                "video_results": 0.9668749049305916
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0006.mp4",
+                "video_results": 0.9709987584501505
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0007.mp4",
+                "video_results": 0.9623964969068766
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0008.mp4",
+                "video_results": 0.9787375231583914
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0009.mp4",
+                "video_results": 0.9715772413959106
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0010.mp4",
+                "video_results": 0.9795253897706667
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0011.mp4",
+                "video_results": 0.9739391834785541
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0012.mp4",
+                "video_results": 0.9783285558223724
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0013.mp4",
+                "video_results": 0.9815467049678167
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0014.mp4",
+                "video_results": 0.980988048017025
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0015.mp4",
+                "video_results": 0.97514234110713
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0016.mp4",
+                "video_results": 0.9760257558276256
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0017.mp4",
+                "video_results": 0.9799167184780041
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0018.mp4",
+                "video_results": 0.9721931777894497
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0019.mp4",
+                "video_results": 0.9742818716913462
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0020.mp4",
+                "video_results": 0.9734137343863646
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0021.mp4",
+                "video_results": 0.9591927422831455
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0022.mp4",
+                "video_results": 0.9752415604889393
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0023.mp4",
+                "video_results": 0.968416161214312
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0024.mp4",
+                "video_results": 0.9752320107072592
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0025.mp4",
+                "video_results": 0.969555047651132
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0026.mp4",
+                "video_results": 0.9850360689063867
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0027.mp4",
+                "video_results": 0.9688655883073807
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0028.mp4",
+                "video_results": 0.9767759088426828
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0029.mp4",
+                "video_results": 0.9670015511413416
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0030.mp4",
+                "video_results": 0.9667761592815319
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0031.mp4",
+                "video_results": 0.9721407480537891
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0032.mp4",
+                "video_results": 0.9654983629782995
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0033.mp4",
+                "video_results": 0.9697567584613959
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0034.mp4",
+                "video_results": 0.9678424037992954
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0035.mp4",
+                "video_results": 0.9819702456394831
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0036.mp4",
+                "video_results": 0.9670100572208563
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0037.mp4",
+                "video_results": 0.9759606725225846
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0038.mp4",
+                "video_results": 0.974070298175017
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0039.mp4",
+                "video_results": 0.9824229050427675
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0040.mp4",
+                "video_results": 0.9800656847655773
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0041.mp4",
+                "video_results": 0.9740898956855139
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0042.mp4",
+                "video_results": 0.9770656588176886
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0043.mp4",
+                "video_results": 0.9779938937475284
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0044.mp4",
+                "video_results": 0.9784970209002495
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0045.mp4",
+                "video_results": 0.9718200471252203
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0046.mp4",
+                "video_results": 0.9766181949526072
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0047.mp4",
+                "video_results": 0.9701683806876341
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0048.mp4",
+                "video_results": 0.9634344341854254
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0000.mp4",
+                "video_results": 0.9669646962235371
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0001.mp4",
+                "video_results": 0.9743503996481498
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0002.mp4",
+                "video_results": 0.9687812570482492
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0003.mp4",
+                "video_results": 0.9662123459080855
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0004.mp4",
+                "video_results": 0.973861920957764
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0005.mp4",
+                "video_results": 0.9714292598267397
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0006.mp4",
+                "video_results": 0.9736478428045908
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0007.mp4",
+                "video_results": 0.9627875008930763
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0008.mp4",
+                "video_results": 0.9805596092094978
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0009.mp4",
+                "video_results": 0.971978671848774
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0010.mp4",
+                "video_results": 0.9785896881173054
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0011.mp4",
+                "video_results": 0.9747190537552038
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0012.mp4",
+                "video_results": 0.9817093548675379
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0013.mp4",
+                "video_results": 0.9815763557950655
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0014.mp4",
+                "video_results": 0.9774830831835667
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0015.mp4",
+                "video_results": 0.9764195258418719
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0016.mp4",
+                "video_results": 0.9766156536837419
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0017.mp4",
+                "video_results": 0.9813451102624337
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0018.mp4",
+                "video_results": 0.9714081902056932
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0019.mp4",
+                "video_results": 0.9735375350962082
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0020.mp4",
+                "video_results": 0.9731518526872
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0021.mp4",
+                "video_results": 0.9594697269300619
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0022.mp4",
+                "video_results": 0.9743673702081045
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0023.mp4",
+                "video_results": 0.9667496296266714
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0024.mp4",
+                "video_results": 0.9705738959213098
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0025.mp4",
+                "video_results": 0.9698851183056831
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0026.mp4",
+                "video_results": 0.9855998512357473
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0027.mp4",
+                "video_results": 0.9636757945020994
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0028.mp4",
+                "video_results": 0.9796783098330101
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0029.mp4",
+                "video_results": 0.968412404259046
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0030.mp4",
+                "video_results": 0.9673193345467249
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0031.mp4",
+                "video_results": 0.9742507891108593
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0032.mp4",
+                "video_results": 0.9693925362080336
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0033.mp4",
+                "video_results": 0.9702207949012518
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0034.mp4",
+                "video_results": 0.968351274728775
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0035.mp4",
+                "video_results": 0.9823021180927753
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0036.mp4",
+                "video_results": 0.966970040773352
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0037.mp4",
+                "video_results": 0.9771597981452942
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0038.mp4",
+                "video_results": 0.9747080697367588
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0039.mp4",
+                "video_results": 0.9823442126313845
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0040.mp4",
+                "video_results": 0.9813700951635838
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0041.mp4",
+                "video_results": 0.9758270271122456
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0042.mp4",
+                "video_results": 0.9751941127081712
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0043.mp4",
+                "video_results": 0.9745292253792286
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0044.mp4",
+                "video_results": 0.9807798278828462
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0045.mp4",
+                "video_results": 0.9736201285074154
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0046.mp4",
+                "video_results": 0.9724821423490843
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0047.mp4",
+                "video_results": 0.9698520253101984
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0048.mp4",
+                "video_results": 0.9614892521252235
+            }
+        ]
+    ],
+    "background_consistency": [
+        0.965094049501311,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0000.mp4",
+                "video_results": 0.9416707356770834,
+                "video_sim": 45.2001953125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0001.mp4",
+                "video_results": 0.9689839680989584,
+                "video_sim": 46.51123046875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0002.mp4",
+                "video_results": 0.9598846435546875,
+                "video_sim": 46.074462890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0003.mp4",
+                "video_results": 0.9611612955729166,
+                "video_sim": 46.1357421875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0004.mp4",
+                "video_results": 0.95947265625,
+                "video_sim": 46.0546875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0005.mp4",
+                "video_results": 0.9556070963541666,
+                "video_sim": 45.869140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0006.mp4",
+                "video_results": 0.9576619466145834,
+                "video_sim": 45.9677734375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0007.mp4",
+                "video_results": 0.9590911865234375,
+                "video_sim": 46.036376953125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0008.mp4",
+                "video_results": 0.9509429931640625,
+                "video_sim": 45.645263671875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0009.mp4",
+                "video_results": 0.9680633544921875,
+                "video_sim": 46.467041015625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0010.mp4",
+                "video_results": 0.9692738850911459,
+                "video_sim": 46.525146484375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0011.mp4",
+                "video_results": 0.9623158772786459,
+                "video_sim": 46.191162109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0012.mp4",
+                "video_results": 0.9706471761067709,
+                "video_sim": 46.591064453125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0013.mp4",
+                "video_results": 0.9714711507161459,
+                "video_sim": 46.630615234375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0014.mp4",
+                "video_results": 0.9763590494791666,
+                "video_sim": 46.865234375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0015.mp4",
+                "video_results": 0.9638264973958334,
+                "video_sim": 46.263671875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0016.mp4",
+                "video_results": 0.9668172200520834,
+                "video_sim": 46.4072265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0017.mp4",
+                "video_results": 0.9619191487630209,
+                "video_sim": 46.172119140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0018.mp4",
+                "video_results": 0.956878662109375,
+                "video_sim": 45.93017578125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0019.mp4",
+                "video_results": 0.96319580078125,
+                "video_sim": 46.2333984375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0020.mp4",
+                "video_results": 0.9594523111979166,
+                "video_sim": 46.0537109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0021.mp4",
+                "video_results": 0.9638722737630209,
+                "video_sim": 46.265869140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0022.mp4",
+                "video_results": 0.9549153645833334,
+                "video_sim": 45.8359375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0023.mp4",
+                "video_results": 0.9494476318359375,
+                "video_sim": 45.573486328125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0024.mp4",
+                "video_results": 0.952423095703125,
+                "video_sim": 45.71630859375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0025.mp4",
+                "video_results": 0.9607493082682291,
+                "video_sim": 46.115966796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0026.mp4",
+                "video_results": 0.9750111897786459,
+                "video_sim": 46.800537109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0027.mp4",
+                "video_results": 0.9391276041666666,
+                "video_sim": 45.078125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0028.mp4",
+                "video_results": 0.9653879801432291,
+                "video_sim": 46.338623046875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0029.mp4",
+                "video_results": 0.9629058837890625,
+                "video_sim": 46.219482421875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0030.mp4",
+                "video_results": 0.9552714029947916,
+                "video_sim": 45.85302734375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0031.mp4",
+                "video_results": 0.9571685791015625,
+                "video_sim": 45.944091796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0032.mp4",
+                "video_results": 0.9573211669921875,
+                "video_sim": 45.951416015625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0033.mp4",
+                "video_results": 0.9577433268229166,
+                "video_sim": 45.9716796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0034.mp4",
+                "video_results": 0.9659169514973959,
+                "video_sim": 46.364013671875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0035.mp4",
+                "video_results": 0.94622802734375,
+                "video_sim": 45.4189453125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0036.mp4",
+                "video_results": 0.9621531168619791,
+                "video_sim": 46.183349609375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0037.mp4",
+                "video_results": 0.9639892578125,
+                "video_sim": 46.271484375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0038.mp4",
+                "video_results": 0.955078125,
+                "video_sim": 45.84375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0039.mp4",
+                "video_results": 0.9582773844401041,
+                "video_sim": 45.997314453125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0040.mp4",
+                "video_results": 0.9663035074869791,
+                "video_sim": 46.382568359375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0041.mp4",
+                "video_results": 0.9688313802083334,
+                "video_sim": 46.50390625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0042.mp4",
+                "video_results": 0.9726053873697916,
+                "video_sim": 46.68505859375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0043.mp4",
+                "video_results": 0.9683634440104166,
+                "video_sim": 46.4814453125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0044.mp4",
+                "video_results": 0.9677785237630209,
+                "video_sim": 46.453369140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0045.mp4",
+                "video_results": 0.9657491048177084,
+                "video_sim": 46.35595703125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0046.mp4",
+                "video_results": 0.9580281575520834,
+                "video_sim": 45.9853515625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0047.mp4",
+                "video_results": 0.9577585856119791,
+                "video_sim": 45.972412109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0048.mp4",
+                "video_results": 0.9669647216796875,
+                "video_sim": 46.414306640625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0000.mp4",
+                "video_results": 0.9406026204427084,
+                "video_sim": 45.14892578125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0001.mp4",
+                "video_results": 0.9764811197916666,
+                "video_sim": 46.87109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0002.mp4",
+                "video_results": 0.9746500651041666,
+                "video_sim": 46.783203125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0003.mp4",
+                "video_results": 0.9649403889973959,
+                "video_sim": 46.317138671875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0004.mp4",
+                "video_results": 0.9741261800130209,
+                "video_sim": 46.758056640625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0005.mp4",
+                "video_results": 0.9730275472005209,
+                "video_sim": 46.705322265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0006.mp4",
+                "video_results": 0.9656117757161459,
+                "video_sim": 46.349365234375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0007.mp4",
+                "video_results": 0.9603169759114584,
+                "video_sim": 46.09521484375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0008.mp4",
+                "video_results": 0.9668477376302084,
+                "video_sim": 46.40869140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0009.mp4",
+                "video_results": 0.9735260009765625,
+                "video_sim": 46.729248046875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0010.mp4",
+                "video_results": 0.970458984375,
+                "video_sim": 46.58203125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0011.mp4",
+                "video_results": 0.9688975016276041,
+                "video_sim": 46.507080078125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0012.mp4",
+                "video_results": 0.9746602376302084,
+                "video_sim": 46.78369140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0013.mp4",
+                "video_results": 0.9707845052083334,
+                "video_sim": 46.59765625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0014.mp4",
+                "video_results": 0.9737752278645834,
+                "video_sim": 46.7412109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0015.mp4",
+                "video_results": 0.9578501383463541,
+                "video_sim": 45.976806640625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0016.mp4",
+                "video_results": 0.9734700520833334,
+                "video_sim": 46.7265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0017.mp4",
+                "video_results": 0.9758555094401041,
+                "video_sim": 46.841064453125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0018.mp4",
+                "video_results": 0.96392822265625,
+                "video_sim": 46.2685546875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0019.mp4",
+                "video_results": 0.9698384602864584,
+                "video_sim": 46.55224609375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0020.mp4",
+                "video_results": 0.9686737060546875,
+                "video_sim": 46.496337890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0021.mp4",
+                "video_results": 0.9689381917317709,
+                "video_sim": 46.509033203125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0022.mp4",
+                "video_results": 0.9649302164713541,
+                "video_sim": 46.316650390625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0023.mp4",
+                "video_results": 0.9614817301432291,
+                "video_sim": 46.151123046875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0024.mp4",
+                "video_results": 0.9748026529947916,
+                "video_sim": 46.79052734375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0025.mp4",
+                "video_results": 0.9735361735026041,
+                "video_sim": 46.729736328125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0026.mp4",
+                "video_results": 0.975311279296875,
+                "video_sim": 46.81494140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0027.mp4",
+                "video_results": 0.9552459716796875,
+                "video_sim": 45.851806640625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0028.mp4",
+                "video_results": 0.9700113932291666,
+                "video_sim": 46.560546875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0029.mp4",
+                "video_results": 0.974853515625,
+                "video_sim": 46.79296875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0030.mp4",
+                "video_results": 0.958984375,
+                "video_sim": 46.03125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0031.mp4",
+                "video_results": 0.966888427734375,
+                "video_sim": 46.41064453125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0032.mp4",
+                "video_results": 0.9651285807291666,
+                "video_sim": 46.326171875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0033.mp4",
+                "video_results": 0.96392822265625,
+                "video_sim": 46.2685546875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0034.mp4",
+                "video_results": 0.9589080810546875,
+                "video_sim": 46.027587890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0035.mp4",
+                "video_results": 0.9633026123046875,
+                "video_sim": 46.238525390625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0036.mp4",
+                "video_results": 0.9696858723958334,
+                "video_sim": 46.544921875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0037.mp4",
+                "video_results": 0.9724680582682291,
+                "video_sim": 46.678466796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0038.mp4",
+                "video_results": 0.9768218994140625,
+                "video_sim": 46.887451171875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0039.mp4",
+                "video_results": 0.9706319173177084,
+                "video_sim": 46.59033203125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0040.mp4",
+                "video_results": 0.9724578857421875,
+                "video_sim": 46.677978515625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0041.mp4",
+                "video_results": 0.9766082763671875,
+                "video_sim": 46.877197265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0042.mp4",
+                "video_results": 0.9690653483072916,
+                "video_sim": 46.51513671875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0043.mp4",
+                "video_results": 0.9760233561197916,
+                "video_sim": 46.84912109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0044.mp4",
+                "video_results": 0.9749755859375,
+                "video_sim": 46.798828125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0045.mp4",
+                "video_results": 0.9594268798828125,
+                "video_sim": 46.052490234375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0046.mp4",
+                "video_results": 0.9714304606119791,
+                "video_sim": 46.628662109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0047.mp4",
+                "video_results": 0.9726613362630209,
+                "video_sim": 46.687744140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0048.mp4",
+                "video_results": 0.9702860514322916,
+                "video_sim": 46.57373046875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0000.mp4",
+                "video_results": 0.9513498942057291,
+                "video_sim": 45.664794921875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0001.mp4",
+                "video_results": 0.9692484537760416,
+                "video_sim": 46.52392578125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0002.mp4",
+                "video_results": 0.9607594807942709,
+                "video_sim": 46.116455078125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0003.mp4",
+                "video_results": 0.9596710205078125,
+                "video_sim": 46.064208984375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0004.mp4",
+                "video_results": 0.9713033040364584,
+                "video_sim": 46.62255859375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0005.mp4",
+                "video_results": 0.9714762369791666,
+                "video_sim": 46.630859375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0006.mp4",
+                "video_results": 0.9547831217447916,
+                "video_sim": 45.82958984375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0007.mp4",
+                "video_results": 0.9615427652994791,
+                "video_sim": 46.154052734375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0008.mp4",
+                "video_results": 0.9680887858072916,
+                "video_sim": 46.46826171875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0009.mp4",
+                "video_results": 0.9747467041015625,
+                "video_sim": 46.787841796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0010.mp4",
+                "video_results": 0.9707743326822916,
+                "video_sim": 46.59716796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0011.mp4",
+                "video_results": 0.968963623046875,
+                "video_sim": 46.51025390625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0012.mp4",
+                "video_results": 0.9718882242838541,
+                "video_sim": 46.650634765625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0013.mp4",
+                "video_results": 0.9752451578776041,
+                "video_sim": 46.811767578125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0014.mp4",
+                "video_results": 0.9569193522135416,
+                "video_sim": 45.93212890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0015.mp4",
+                "video_results": 0.9648590087890625,
+                "video_sim": 46.313232421875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0016.mp4",
+                "video_results": 0.969940185546875,
+                "video_sim": 46.55712890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0017.mp4",
+                "video_results": 0.97003173828125,
+                "video_sim": 46.5615234375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0018.mp4",
+                "video_results": 0.9635264078776041,
+                "video_sim": 46.249267578125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0019.mp4",
+                "video_results": 0.9710744222005209,
+                "video_sim": 46.611572265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0020.mp4",
+                "video_results": 0.9713033040364584,
+                "video_sim": 46.62255859375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0021.mp4",
+                "video_results": 0.9627736409505209,
+                "video_sim": 46.213134765625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0022.mp4",
+                "video_results": 0.9670969645182291,
+                "video_sim": 46.420654296875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0023.mp4",
+                "video_results": 0.9646199544270834,
+                "video_sim": 46.3017578125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0024.mp4",
+                "video_results": 0.965606689453125,
+                "video_sim": 46.34912109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0025.mp4",
+                "video_results": 0.9727834065755209,
+                "video_sim": 46.693603515625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0026.mp4",
+                "video_results": 0.9760335286458334,
+                "video_sim": 46.849609375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0027.mp4",
+                "video_results": 0.9608968098958334,
+                "video_sim": 46.123046875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0028.mp4",
+                "video_results": 0.9679412841796875,
+                "video_sim": 46.461181640625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0029.mp4",
+                "video_results": 0.9627024332682291,
+                "video_sim": 46.209716796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0030.mp4",
+                "video_results": 0.9573720296223959,
+                "video_sim": 45.953857421875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0031.mp4",
+                "video_results": 0.9625752766927084,
+                "video_sim": 46.20361328125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0032.mp4",
+                "video_results": 0.9723307291666666,
+                "video_sim": 46.671875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0033.mp4",
+                "video_results": 0.9512736002604166,
+                "video_sim": 45.6611328125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0034.mp4",
+                "video_results": 0.9605153401692709,
+                "video_sim": 46.104736328125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0035.mp4",
+                "video_results": 0.9546661376953125,
+                "video_sim": 45.823974609375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0036.mp4",
+                "video_results": 0.9688008626302084,
+                "video_sim": 46.50244140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0037.mp4",
+                "video_results": 0.9712320963541666,
+                "video_sim": 46.619140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0038.mp4",
+                "video_results": 0.9684702555338541,
+                "video_sim": 46.486572265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0039.mp4",
+                "video_results": 0.9566396077473959,
+                "video_sim": 45.918701171875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0040.mp4",
+                "video_results": 0.9720509847005209,
+                "video_sim": 46.658447265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0041.mp4",
+                "video_results": 0.96429443359375,
+                "video_sim": 46.2861328125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0042.mp4",
+                "video_results": 0.9627634684244791,
+                "video_sim": 46.212646484375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0043.mp4",
+                "video_results": 0.968048095703125,
+                "video_sim": 46.46630859375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0044.mp4",
+                "video_results": 0.9676513671875,
+                "video_sim": 46.447265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0045.mp4",
+                "video_results": 0.95635986328125,
+                "video_sim": 45.9052734375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0046.mp4",
+                "video_results": 0.9538828531901041,
+                "video_sim": 45.786376953125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0047.mp4",
+                "video_results": 0.9644368489583334,
+                "video_sim": 46.29296875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0048.mp4",
+                "video_results": 0.9703267415364584,
+                "video_sim": 46.57568359375,
+                "cnt_per_video": 48
+            }
+        ]
+    ],
+    "motion_smoothness": [
+        0.9942599538739701,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0000.mp4",
+                "video_results": 0.9931385475475358
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0001.mp4",
+                "video_results": 0.9946610422263857
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0002.mp4",
+                "video_results": 0.9944855559745266
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0003.mp4",
+                "video_results": 0.9934829826305968
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0004.mp4",
+                "video_results": 0.9945335457483608
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0005.mp4",
+                "video_results": 0.9945430096924142
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0006.mp4",
+                "video_results": 0.9948221949509193
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0007.mp4",
+                "video_results": 0.9936157843017237
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0008.mp4",
+                "video_results": 0.9932579102326249
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0009.mp4",
+                "video_results": 0.9949655461810792
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0010.mp4",
+                "video_results": 0.9948739133212268
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0011.mp4",
+                "video_results": 0.9947270210223067
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0012.mp4",
+                "video_results": 0.992567636950057
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0013.mp4",
+                "video_results": 0.993218856870339
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0014.mp4",
+                "video_results": 0.9948465698712712
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0015.mp4",
+                "video_results": 0.994586642549648
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0016.mp4",
+                "video_results": 0.9943662130650872
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0017.mp4",
+                "video_results": 0.9919306977765733
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0018.mp4",
+                "video_results": 0.9943695221450181
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0019.mp4",
+                "video_results": 0.9949897935825862
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0020.mp4",
+                "video_results": 0.9942655863761103
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0021.mp4",
+                "video_results": 0.9942842215846007
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0022.mp4",
+                "video_results": 0.9930794276288685
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0023.mp4",
+                "video_results": 0.9945305814466545
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0024.mp4",
+                "video_results": 0.9945442333277906
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0025.mp4",
+                "video_results": 0.9943873439605766
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0026.mp4",
+                "video_results": 0.9940465866028346
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0027.mp4",
+                "video_results": 0.9944500848689057
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0028.mp4",
+                "video_results": 0.994747421718977
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0029.mp4",
+                "video_results": 0.994260421249162
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0030.mp4",
+                "video_results": 0.993137779161255
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0031.mp4",
+                "video_results": 0.9942936912567734
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0032.mp4",
+                "video_results": 0.9948118449213731
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0033.mp4",
+                "video_results": 0.9948674708236883
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0034.mp4",
+                "video_results": 0.9933122048927522
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0035.mp4",
+                "video_results": 0.9933623563496802
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0036.mp4",
+                "video_results": 0.9946234267584125
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0037.mp4",
+                "video_results": 0.9951486355565419
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0038.mp4",
+                "video_results": 0.9947086622637615
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0039.mp4",
+                "video_results": 0.9932852277696602
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0040.mp4",
+                "video_results": 0.993104321353163
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0041.mp4",
+                "video_results": 0.9947450836916408
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0042.mp4",
+                "video_results": 0.99488378409813
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0043.mp4",
+                "video_results": 0.9945854913340648
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0044.mp4",
+                "video_results": 0.9923366603613711
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0045.mp4",
+                "video_results": 0.9944966742539698
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0046.mp4",
+                "video_results": 0.9946819239486883
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0047.mp4",
+                "video_results": 0.9947439897572499
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0048.mp4",
+                "video_results": 0.994401168912744
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0000.mp4",
+                "video_results": 0.9933109486616495
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0001.mp4",
+                "video_results": 0.994640930799737
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0002.mp4",
+                "video_results": 0.9944527218495126
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0003.mp4",
+                "video_results": 0.9934435952644056
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0004.mp4",
+                "video_results": 0.9943986466309058
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0005.mp4",
+                "video_results": 0.9945343977379058
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0006.mp4",
+                "video_results": 0.9948525456634755
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0007.mp4",
+                "video_results": 0.9933853892535246
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0008.mp4",
+                "video_results": 0.9932561399710125
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0009.mp4",
+                "video_results": 0.9947481453713741
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0010.mp4",
+                "video_results": 0.9949159076635907
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0011.mp4",
+                "video_results": 0.9946367039932738
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0012.mp4",
+                "video_results": 0.9924740015669952
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0013.mp4",
+                "video_results": 0.9930537771109156
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0014.mp4",
+                "video_results": 0.9946656243126257
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0015.mp4",
+                "video_results": 0.9944612302887234
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0016.mp4",
+                "video_results": 0.9943219510694234
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0017.mp4",
+                "video_results": 0.9916912733030802
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0018.mp4",
+                "video_results": 0.9943483510163101
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0019.mp4",
+                "video_results": 0.9949285308017883
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0020.mp4",
+                "video_results": 0.9943125101742308
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0021.mp4",
+                "video_results": 0.9942073605895795
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0022.mp4",
+                "video_results": 0.9929468081664868
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0023.mp4",
+                "video_results": 0.9945192669109355
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0024.mp4",
+                "video_results": 0.9944536183001735
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0025.mp4",
+                "video_results": 0.9943221819671824
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0026.mp4",
+                "video_results": 0.9939224335734561
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0027.mp4",
+                "video_results": 0.994277612426069
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0028.mp4",
+                "video_results": 0.9947758539207394
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0029.mp4",
+                "video_results": 0.9942834077825173
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0030.mp4",
+                "video_results": 0.9931151129934256
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0031.mp4",
+                "video_results": 0.9942576585226995
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0032.mp4",
+                "video_results": 0.9947201789202593
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0033.mp4",
+                "video_results": 0.9949915975309951
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0034.mp4",
+                "video_results": 0.9932743008366763
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0035.mp4",
+                "video_results": 0.9933579319231031
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0036.mp4",
+                "video_results": 0.9946235443212408
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0037.mp4",
+                "video_results": 0.9951027100877744
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0038.mp4",
+                "video_results": 0.9946257826520254
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0039.mp4",
+                "video_results": 0.99306962572578
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0040.mp4",
+                "video_results": 0.9930081351840505
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0041.mp4",
+                "video_results": 0.9947965948949692
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0042.mp4",
+                "video_results": 0.9949099056856984
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0043.mp4",
+                "video_results": 0.9944159035448001
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0044.mp4",
+                "video_results": 0.9922622417272865
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0045.mp4",
+                "video_results": 0.9944087953579758
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0046.mp4",
+                "video_results": 0.9947063835633746
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0047.mp4",
+                "video_results": 0.9947282537953972
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0048.mp4",
+                "video_results": 0.9944579686703519
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0000.mp4",
+                "video_results": 0.9937387657943342
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0001.mp4",
+                "video_results": 0.9949314233656202
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0002.mp4",
+                "video_results": 0.9947343545151545
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0003.mp4",
+                "video_results": 0.9939116937590341
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0004.mp4",
+                "video_results": 0.9947594144912906
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0005.mp4",
+                "video_results": 0.9947330052703062
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0006.mp4",
+                "video_results": 0.9951120447399935
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0007.mp4",
+                "video_results": 0.9937636524266714
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0008.mp4",
+                "video_results": 0.993741273346723
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0009.mp4",
+                "video_results": 0.9950159824073638
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0010.mp4",
+                "video_results": 0.9950832369372695
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0011.mp4",
+                "video_results": 0.9948686708646688
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0012.mp4",
+                "video_results": 0.9933745696545846
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0013.mp4",
+                "video_results": 0.9935895061455627
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0014.mp4",
+                "video_results": 0.9949760516881477
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0015.mp4",
+                "video_results": 0.9948701453098379
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0016.mp4",
+                "video_results": 0.9945682316924944
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0017.mp4",
+                "video_results": 0.992389149436484
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0018.mp4",
+                "video_results": 0.9948168762558219
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0019.mp4",
+                "video_results": 0.9952650059812476
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0020.mp4",
+                "video_results": 0.9946219008965543
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0021.mp4",
+                "video_results": 0.9944839390082956
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0022.mp4",
+                "video_results": 0.9931820955740513
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0023.mp4",
+                "video_results": 0.9949200526397791
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0024.mp4",
+                "video_results": 0.9948635732476974
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0025.mp4",
+                "video_results": 0.9948705934669764
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0026.mp4",
+                "video_results": 0.9943982202951739
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0027.mp4",
+                "video_results": 0.9947371993446595
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0028.mp4",
+                "video_results": 0.9950362006225211
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0029.mp4",
+                "video_results": 0.9947336434100661
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0030.mp4",
+                "video_results": 0.9937665554920552
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0031.mp4",
+                "video_results": 0.9947183992481653
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0032.mp4",
+                "video_results": 0.9951209617850434
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0033.mp4",
+                "video_results": 0.995268034928871
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0034.mp4",
+                "video_results": 0.9938793683455621
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0035.mp4",
+                "video_results": 0.993850682742715
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0036.mp4",
+                "video_results": 0.9949358659312416
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0037.mp4",
+                "video_results": 0.9953572461581232
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0038.mp4",
+                "video_results": 0.9950592230248135
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0039.mp4",
+                "video_results": 0.9936878707729754
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0040.mp4",
+                "video_results": 0.9935919491884182
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0041.mp4",
+                "video_results": 0.995015577483887
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0042.mp4",
+                "video_results": 0.9951649964289269
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0043.mp4",
+                "video_results": 0.9948735442666873
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0044.mp4",
+                "video_results": 0.9928822894954368
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0045.mp4",
+                "video_results": 0.9948092016671118
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0046.mp4",
+                "video_results": 0.994916730057853
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0047.mp4",
+                "video_results": 0.9950371947239767
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0048.mp4",
+                "video_results": 0.9947032701941844
+            }
+        ]
+    ],
+    "dynamic_degree": [
+        0.43537414965986393,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0000.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0001.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0002.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0003.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0004.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0005.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0006.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0007.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0008.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0009.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0010.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0011.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0012.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0013.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0014.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0015.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0016.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0017.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0018.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0019.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0020.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0021.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0022.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0023.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0024.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0025.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0026.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0027.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0028.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0029.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0030.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0031.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0032.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0033.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0034.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0035.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0036.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0037.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0038.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0039.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0040.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0041.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0042.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0043.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0044.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0045.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0046.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0047.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0048.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0000.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0001.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0002.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0003.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0004.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0005.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0006.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0007.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0008.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0009.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0010.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0011.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0012.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0013.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0014.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0015.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0016.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0017.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0018.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0019.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0020.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0021.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0022.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0023.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0024.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0025.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0026.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0027.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0028.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0029.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0030.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0031.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0032.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0033.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0034.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0035.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0036.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0037.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0038.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0039.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0040.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0041.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0042.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0043.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0044.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0045.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0046.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0047.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0048.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0000.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0001.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0002.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0003.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0004.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0005.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0006.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0007.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0008.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0009.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0010.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0011.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0012.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0013.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0014.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0015.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0016.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0017.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0018.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0019.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0020.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0021.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0022.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0023.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0024.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0025.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0026.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0027.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0028.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0029.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0030.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0031.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0032.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0033.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0034.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0035.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0036.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0037.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0038.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0039.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0040.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0041.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0042.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0043.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0044.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0045.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0046.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0047.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0048.mp4",
+                "video_results": false
+            }
+        ]
+    ],
+    "aesthetic_quality": [
+        0.6312688293100215,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0000.mp4",
+                "video_results": 0.719500720500946
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0001.mp4",
+                "video_results": 0.6547563672065735
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0002.mp4",
+                "video_results": 0.6224556565284729
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0003.mp4",
+                "video_results": 0.6354958415031433
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0004.mp4",
+                "video_results": 0.6385547518730164
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0005.mp4",
+                "video_results": 0.649223268032074
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0006.mp4",
+                "video_results": 0.6399518847465515
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0007.mp4",
+                "video_results": 0.6379745006561279
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0008.mp4",
+                "video_results": 0.6329036355018616
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0009.mp4",
+                "video_results": 0.6278480291366577
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0010.mp4",
+                "video_results": 0.6611658930778503
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0011.mp4",
+                "video_results": 0.6253145933151245
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0012.mp4",
+                "video_results": 0.6346077919006348
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0013.mp4",
+                "video_results": 0.622547447681427
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0014.mp4",
+                "video_results": 0.5858320593833923
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0015.mp4",
+                "video_results": 0.6258800029754639
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0016.mp4",
+                "video_results": 0.6005973815917969
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0017.mp4",
+                "video_results": 0.6272091865539551
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0018.mp4",
+                "video_results": 0.633269190788269
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0019.mp4",
+                "video_results": 0.6058822274208069
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0020.mp4",
+                "video_results": 0.6277387142181396
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0021.mp4",
+                "video_results": 0.5898537635803223
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0022.mp4",
+                "video_results": 0.6046710014343262
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0023.mp4",
+                "video_results": 0.6293291449546814
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0024.mp4",
+                "video_results": 0.6033951640129089
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0025.mp4",
+                "video_results": 0.6160740852355957
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0026.mp4",
+                "video_results": 0.5934804677963257
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0027.mp4",
+                "video_results": 0.6193157434463501
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0028.mp4",
+                "video_results": 0.6358698606491089
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0029.mp4",
+                "video_results": 0.5970050692558289
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0030.mp4",
+                "video_results": 0.628319501876831
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0031.mp4",
+                "video_results": 0.6055402159690857
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0032.mp4",
+                "video_results": 0.624544620513916
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0033.mp4",
+                "video_results": 0.6283369660377502
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0034.mp4",
+                "video_results": 0.599572479724884
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0035.mp4",
+                "video_results": 0.6206774711608887
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0036.mp4",
+                "video_results": 0.614562451839447
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0037.mp4",
+                "video_results": 0.6175535917282104
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0038.mp4",
+                "video_results": 0.65118008852005
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0039.mp4",
+                "video_results": 0.6219478249549866
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0040.mp4",
+                "video_results": 0.6140775084495544
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0041.mp4",
+                "video_results": 0.6150473356246948
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0042.mp4",
+                "video_results": 0.6066421270370483
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0043.mp4",
+                "video_results": 0.619726836681366
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0044.mp4",
+                "video_results": 0.6035211682319641
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0045.mp4",
+                "video_results": 0.5972578525543213
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0046.mp4",
+                "video_results": 0.6254740357398987
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0047.mp4",
+                "video_results": 0.5913053154945374
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0048.mp4",
+                "video_results": 0.6281226873397827
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0000.mp4",
+                "video_results": 0.690695583820343
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0001.mp4",
+                "video_results": 0.6583969593048096
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0002.mp4",
+                "video_results": 0.6281577944755554
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0003.mp4",
+                "video_results": 0.6524595022201538
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0004.mp4",
+                "video_results": 0.6294757127761841
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0005.mp4",
+                "video_results": 0.658068060874939
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0006.mp4",
+                "video_results": 0.6647793650627136
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0007.mp4",
+                "video_results": 0.6473870277404785
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0008.mp4",
+                "video_results": 0.6661683320999146
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0009.mp4",
+                "video_results": 0.6504064798355103
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0010.mp4",
+                "video_results": 0.6635674834251404
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0011.mp4",
+                "video_results": 0.6432478427886963
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0012.mp4",
+                "video_results": 0.6371558904647827
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0013.mp4",
+                "video_results": 0.6557788252830505
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0014.mp4",
+                "video_results": 0.5881102085113525
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0015.mp4",
+                "video_results": 0.6395273804664612
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0016.mp4",
+                "video_results": 0.6522599458694458
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0017.mp4",
+                "video_results": 0.6493402719497681
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0018.mp4",
+                "video_results": 0.6448009610176086
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0019.mp4",
+                "video_results": 0.628567099571228
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0020.mp4",
+                "video_results": 0.6562165021896362
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0021.mp4",
+                "video_results": 0.6223134398460388
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0022.mp4",
+                "video_results": 0.629830002784729
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0023.mp4",
+                "video_results": 0.6574091911315918
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0024.mp4",
+                "video_results": 0.6317430734634399
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0025.mp4",
+                "video_results": 0.6372563242912292
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0026.mp4",
+                "video_results": 0.6145657300949097
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0027.mp4",
+                "video_results": 0.6132708787918091
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0028.mp4",
+                "video_results": 0.6257146000862122
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0029.mp4",
+                "video_results": 0.6278104186058044
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0030.mp4",
+                "video_results": 0.6413187384605408
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0031.mp4",
+                "video_results": 0.6328105926513672
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0032.mp4",
+                "video_results": 0.6336600184440613
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0033.mp4",
+                "video_results": 0.6508099436759949
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0034.mp4",
+                "video_results": 0.6005775928497314
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0035.mp4",
+                "video_results": 0.6179295778274536
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0036.mp4",
+                "video_results": 0.6507413983345032
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0037.mp4",
+                "video_results": 0.6136828660964966
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0038.mp4",
+                "video_results": 0.6330990791320801
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0039.mp4",
+                "video_results": 0.6364715099334717
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0040.mp4",
+                "video_results": 0.6232315897941589
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0041.mp4",
+                "video_results": 0.6330371499061584
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0042.mp4",
+                "video_results": 0.6314250230789185
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0043.mp4",
+                "video_results": 0.6348769664764404
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0044.mp4",
+                "video_results": 0.642467200756073
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0045.mp4",
+                "video_results": 0.6318278908729553
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0046.mp4",
+                "video_results": 0.6544949412345886
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0047.mp4",
+                "video_results": 0.6355074644088745
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0048.mp4",
+                "video_results": 0.6143351793289185
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0000.mp4",
+                "video_results": 0.7085314393043518
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0001.mp4",
+                "video_results": 0.6703519225120544
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0002.mp4",
+                "video_results": 0.632685661315918
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0003.mp4",
+                "video_results": 0.6280894875526428
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0004.mp4",
+                "video_results": 0.6385642886161804
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0005.mp4",
+                "video_results": 0.6445747017860413
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0006.mp4",
+                "video_results": 0.655574381351471
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0007.mp4",
+                "video_results": 0.6347078084945679
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0008.mp4",
+                "video_results": 0.6363953948020935
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0009.mp4",
+                "video_results": 0.6281313300132751
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0010.mp4",
+                "video_results": 0.6532263159751892
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0011.mp4",
+                "video_results": 0.6409726738929749
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0012.mp4",
+                "video_results": 0.6097053289413452
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0013.mp4",
+                "video_results": 0.6358121037483215
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0014.mp4",
+                "video_results": 0.5986193418502808
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0015.mp4",
+                "video_results": 0.6358873844146729
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0016.mp4",
+                "video_results": 0.611199140548706
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0017.mp4",
+                "video_results": 0.6256526112556458
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0018.mp4",
+                "video_results": 0.636441707611084
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0019.mp4",
+                "video_results": 0.6279923319816589
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0020.mp4",
+                "video_results": 0.6272009015083313
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0021.mp4",
+                "video_results": 0.6102396249771118
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0022.mp4",
+                "video_results": 0.6103808879852295
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0023.mp4",
+                "video_results": 0.6223128437995911
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0024.mp4",
+                "video_results": 0.6133419871330261
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0025.mp4",
+                "video_results": 0.6275380849838257
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0026.mp4",
+                "video_results": 0.603299081325531
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0027.mp4",
+                "video_results": 0.6155111789703369
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0028.mp4",
+                "video_results": 0.656866729259491
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0029.mp4",
+                "video_results": 0.6301823854446411
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0030.mp4",
+                "video_results": 0.6364073157310486
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0031.mp4",
+                "video_results": 0.6385728716850281
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0032.mp4",
+                "video_results": 0.6181737184524536
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0033.mp4",
+                "video_results": 0.6323858499526978
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0034.mp4",
+                "video_results": 0.6370334625244141
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0035.mp4",
+                "video_results": 0.6582819223403931
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0036.mp4",
+                "video_results": 0.635672390460968
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0037.mp4",
+                "video_results": 0.6159098148345947
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0038.mp4",
+                "video_results": 0.6424035429954529
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0039.mp4",
+                "video_results": 0.6345738768577576
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0040.mp4",
+                "video_results": 0.6564714908599854
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0041.mp4",
+                "video_results": 0.6301366686820984
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0042.mp4",
+                "video_results": 0.6386118531227112
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0043.mp4",
+                "video_results": 0.6035149693489075
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0044.mp4",
+                "video_results": 0.6077756285667419
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0045.mp4",
+                "video_results": 0.6426794528961182
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0046.mp4",
+                "video_results": 0.6327851414680481
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0047.mp4",
+                "video_results": 0.6389482617378235
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0048.mp4",
+                "video_results": 0.6382914781570435
+            }
+        ]
+    ],
+    "imaging_quality": [
+        0.7413360666669306,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0000.mp4",
+                "video_results": 74.23058023258132
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0001.mp4",
+                "video_results": 74.70580073765346
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0002.mp4",
+                "video_results": 74.77738610092474
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0003.mp4",
+                "video_results": 74.13473121487364
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0004.mp4",
+                "video_results": 73.91673278808594
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0005.mp4",
+                "video_results": 74.36559809470663
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0006.mp4",
+                "video_results": 74.80401673608897
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0007.mp4",
+                "video_results": 74.09799941705198
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0008.mp4",
+                "video_results": 74.28542000906808
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0009.mp4",
+                "video_results": 74.66826287094428
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0010.mp4",
+                "video_results": 74.98146337392379
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0011.mp4",
+                "video_results": 74.40429189253827
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0012.mp4",
+                "video_results": 73.38136089091398
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0013.mp4",
+                "video_results": 73.47279793875558
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0014.mp4",
+                "video_results": 74.97751072474888
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0015.mp4",
+                "video_results": 74.79984392438617
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0016.mp4",
+                "video_results": 74.19839586530414
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0017.mp4",
+                "video_results": 72.92628432293327
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0018.mp4",
+                "video_results": 72.76076554278939
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0019.mp4",
+                "video_results": 73.25599592559192
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0020.mp4",
+                "video_results": 72.87709995191925
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0021.mp4",
+                "video_results": 74.53700303058235
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0022.mp4",
+                "video_results": 73.21285465785435
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0023.mp4",
+                "video_results": 72.0959536494041
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0024.mp4",
+                "video_results": 73.30633280228595
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0025.mp4",
+                "video_results": 72.41815901775749
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0026.mp4",
+                "video_results": 73.82502699871452
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0027.mp4",
+                "video_results": 73.38298641905493
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0028.mp4",
+                "video_results": 72.14929557333187
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0029.mp4",
+                "video_results": 73.48410937250877
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0030.mp4",
+                "video_results": 72.94550074363241
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0031.mp4",
+                "video_results": 73.71761602284957
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0032.mp4",
+                "video_results": 72.99601076087173
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0033.mp4",
+                "video_results": 74.02321796027981
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0034.mp4",
+                "video_results": 74.92575524777783
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0035.mp4",
+                "video_results": 74.35764608577806
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0036.mp4",
+                "video_results": 73.29292966881577
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0037.mp4",
+                "video_results": 74.43741810078524
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0038.mp4",
+                "video_results": 73.73374456288863
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0039.mp4",
+                "video_results": 73.57346951231665
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0040.mp4",
+                "video_results": 72.1659271863042
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0041.mp4",
+                "video_results": 73.8844975062779
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0042.mp4",
+                "video_results": 74.56062503736847
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0043.mp4",
+                "video_results": 74.85082135881696
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0044.mp4",
+                "video_results": 73.14179634561344
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0045.mp4",
+                "video_results": 74.56679130087093
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0046.mp4",
+                "video_results": 75.00490741340481
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0047.mp4",
+                "video_results": 74.78770135373486
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/norecycle__w0048.mp4",
+                "video_results": 73.78410899882414
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0000.mp4",
+                "video_results": 74.64000655193718
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0001.mp4",
+                "video_results": 74.79016518106266
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0002.mp4",
+                "video_results": 74.54145875269053
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0003.mp4",
+                "video_results": 73.4148866303113
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0004.mp4",
+                "video_results": 73.58477658641581
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0005.mp4",
+                "video_results": 75.3456705832968
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0006.mp4",
+                "video_results": 75.07183993592554
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0007.mp4",
+                "video_results": 74.92668712382414
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0008.mp4",
+                "video_results": 74.79090896917849
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0009.mp4",
+                "video_results": 75.12032863071987
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0010.mp4",
+                "video_results": 74.99119163046078
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0011.mp4",
+                "video_results": 75.05283713827328
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0012.mp4",
+                "video_results": 74.048722559092
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0013.mp4",
+                "video_results": 73.65654380954042
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0014.mp4",
+                "video_results": 75.13136774179887
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0015.mp4",
+                "video_results": 75.00799280283402
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0016.mp4",
+                "video_results": 74.18900314642458
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0017.mp4",
+                "video_results": 74.5310399580975
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0018.mp4",
+                "video_results": 75.26597081398478
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0019.mp4",
+                "video_results": 75.25831588433714
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0020.mp4",
+                "video_results": 75.15934768988161
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0021.mp4",
+                "video_results": 75.80321549396126
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0022.mp4",
+                "video_results": 74.66568678252551
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0023.mp4",
+                "video_results": 74.16276488012197
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0024.mp4",
+                "video_results": 74.6273118622449
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0025.mp4",
+                "video_results": 74.0679958109953
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0026.mp4",
+                "video_results": 75.07259135343591
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0027.mp4",
+                "video_results": 74.18304536780532
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0028.mp4",
+                "video_results": 74.46309677435427
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0029.mp4",
+                "video_results": 74.43457949891382
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0030.mp4",
+                "video_results": 74.70051029750279
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0031.mp4",
+                "video_results": 74.22389859569316
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0032.mp4",
+                "video_results": 74.45505087716239
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0033.mp4",
+                "video_results": 75.23355616355428
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0034.mp4",
+                "video_results": 74.52623593077368
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0035.mp4",
+                "video_results": 73.91664419368821
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0036.mp4",
+                "video_results": 74.70742268465003
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0037.mp4",
+                "video_results": 75.49273572649274
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0038.mp4",
+                "video_results": 74.58991443867586
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0039.mp4",
+                "video_results": 74.09743375194316
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0040.mp4",
+                "video_results": 73.73573178661113
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0041.mp4",
+                "video_results": 74.83067477479273
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0042.mp4",
+                "video_results": 74.7248209739218
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0043.mp4",
+                "video_results": 74.81111674406091
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0044.mp4",
+                "video_results": 73.8333436615613
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0045.mp4",
+                "video_results": 75.0936439669862
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0046.mp4",
+                "video_results": 74.56291852678571
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0047.mp4",
+                "video_results": 74.42088208879743
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/student__w0048.mp4",
+                "video_results": 73.51773289271763
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0000.mp4",
+                "video_results": 74.25891424685108
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0001.mp4",
+                "video_results": 73.45226801658163
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0002.mp4",
+                "video_results": 73.73129599434989
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0003.mp4",
+                "video_results": 73.98501664765027
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0004.mp4",
+                "video_results": 73.87083933304767
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0005.mp4",
+                "video_results": 74.2635988507952
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0006.mp4",
+                "video_results": 74.75270236268335
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0007.mp4",
+                "video_results": 74.41274681869818
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0008.mp4",
+                "video_results": 73.56202713324099
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0009.mp4",
+                "video_results": 73.8113597947724
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0010.mp4",
+                "video_results": 73.77657816361408
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0011.mp4",
+                "video_results": 73.90100829455318
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0012.mp4",
+                "video_results": 73.07012986163704
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0013.mp4",
+                "video_results": 73.8322839542311
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0014.mp4",
+                "video_results": 74.54456765311105
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0015.mp4",
+                "video_results": 74.17775928730867
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0016.mp4",
+                "video_results": 74.4575584567323
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0017.mp4",
+                "video_results": 73.3229602113062
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0018.mp4",
+                "video_results": 73.07145223812181
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0019.mp4",
+                "video_results": 74.10169796067841
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0020.mp4",
+                "video_results": 74.16687369833187
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0021.mp4",
+                "video_results": 74.13950892857143
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0022.mp4",
+                "video_results": 73.33904344208386
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0023.mp4",
+                "video_results": 72.63241359165737
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0024.mp4",
+                "video_results": 74.07262607496612
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0025.mp4",
+                "video_results": 73.68657061518455
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0026.mp4",
+                "video_results": 74.16547596211336
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0027.mp4",
+                "video_results": 74.9044290659379
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0028.mp4",
+                "video_results": 74.26521441401268
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0029.mp4",
+                "video_results": 73.92376537712254
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0030.mp4",
+                "video_results": 73.28955903345225
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0031.mp4",
+                "video_results": 74.29614942900989
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0032.mp4",
+                "video_results": 74.83932463976802
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0033.mp4",
+                "video_results": 73.96683564478037
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0034.mp4",
+                "video_results": 74.303554768465
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0035.mp4",
+                "video_results": 74.07182623415576
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0036.mp4",
+                "video_results": 74.53222422697107
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0037.mp4",
+                "video_results": 75.33401909653021
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0038.mp4",
+                "video_results": 74.21341160365513
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0039.mp4",
+                "video_results": 72.92928843595544
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0040.mp4",
+                "video_results": 73.6605891013632
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0041.mp4",
+                "video_results": 75.3108149937221
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0042.mp4",
+                "video_results": 74.29602253193758
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0043.mp4",
+                "video_results": 74.00121104960539
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0044.mp4",
+                "video_results": 71.45020730154855
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0045.mp4",
+                "video_results": 73.8737568757972
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0046.mp4",
+                "video_results": 73.62309825663664
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0047.mp4",
+                "video_results": 74.1180228408502
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_drift/both__w0048.mp4",
+                "video_results": 73.21941422443001
+            }
+        ]
+    ]
+}

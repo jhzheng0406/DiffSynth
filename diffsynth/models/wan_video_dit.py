@@ -25,9 +25,34 @@ try:
     SAGE_ATTN_AVAILABLE = True
 except ModuleNotFoundError:
     SAGE_ATTN_AVAILABLE = False
+
+# Block-causal (One-Forcing / Self-Forcing causal-AR baseline). Default OFF —
+# only used when a BlockMask is attached to an AttentionModule via
+# set_block_causal_attention(). flex_attention computes the masked attention
+# without ever materializing the [S, S] score/mask matrix (S ~ 23k tokens).
+try:
+    from torch.nn.attention.flex_attention import flex_attention, create_block_mask
+    _FLEX_AVAILABLE = True
+    _flex_attention_compiled = torch.compile(flex_attention, dynamic=False)
+except Exception:
+    _FLEX_AVAILABLE = False
     
     
-def flash_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, num_heads: int, compatibility_mode=False):
+def flash_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, num_heads: int, compatibility_mode=False, block_mask=None):
+    # Block-causal path (causal-AR baseline): when a flex BlockMask is supplied,
+    # route through flex_attention. Bypasses all flash/sage backends (they cannot
+    # take an arbitrary block-causal mask). q,k,v arrive as [b, s, n*d].
+    if block_mask is not None:
+        q = rearrange(q, "b s (n d) -> b n s d", n=num_heads)
+        k = rearrange(k, "b s (n d) -> b n s d", n=num_heads)
+        v = rearrange(v, "b s (n d) -> b n s d", n=num_heads)
+        try:
+            x = _flex_attention_compiled(q, k, v, block_mask=block_mask)
+        except Exception:
+            # triton/compile unavailable on this node → eager flex (correct, slower)
+            x = flex_attention(q, k, v, block_mask=block_mask)
+        x = rearrange(x, "b n s d -> b s (n d)", n=num_heads)
+        return x
     if compatibility_mode:
         q = rearrange(q, "b s (n d) -> b n s d", n=num_heads)
         k = rearrange(k, "b s (n d) -> b n s d", n=num_heads)
@@ -107,6 +132,77 @@ def set_to_torch_norm(models):
                 module.use_torch_norm = True
 
 
+# ===========================================================================
+# Block-causal attention for the One-Forcing / Self-Forcing causal-AR baseline.
+# ===========================================================================
+# Token layout (model_fn_wan_video): frame-major, [ref(T_ref) | target(f)],
+# each latent frame = S_f = h*w tokens. We want:
+#   - ref prefix: bidirectional WITHIN the prefix, attends only to ref (it is
+#     conditioning, must not see future target frames);
+#   - target frame fi: attends to the full ref prefix + target frames in
+#     earlier-or-equal causal BLOCKS (block_frames latent frames per block).
+# block_frames=1 → strict per-latent-frame causal AR (each latent frame ≈ 4
+# real frames, matching Self-Forcing's small-block causal granularity).
+def build_block_causal_mask(T_ref, f, h, w, block_frames=1, device="cuda"):
+    if not _FLEX_AVAILABLE:
+        raise RuntimeError("flex_attention unavailable — cannot build block-causal mask")
+    S_f = h * w
+    S = (T_ref + f) * S_f
+
+    def mask_mod(b, hd, q_idx, kv_idx):
+        qf = q_idx // S_f
+        kf = kv_idx // S_f
+        q_ref = qf < T_ref
+        k_ref = kf < T_ref
+        # target block indices (only meaningful for non-ref frames)
+        qb = (qf - T_ref) // block_frames
+        kb = (kf - T_ref) // block_frames
+        ref_to_ref = q_ref & k_ref
+        tgt_rule = (~q_ref) & (k_ref | (kb <= qb))
+        return ref_to_ref | tgt_rule
+
+    return create_block_mask(mask_mod, B=None, H=None, Q_LEN=S, KV_LEN=S, device=device)
+
+
+def set_block_causal_attention(dit, T_ref, f, h, w, block_frames=1):
+    """Attach a block-causal BlockMask to every SELF-attention module of `dit`
+    (cross-attention to text/clip stays full). Call clear_block_causal_attention
+    to restore the default bidirectional behavior."""
+    device = next(dit.parameters()).device
+    block_mask = build_block_causal_mask(T_ref, f, h, w, block_frames, device)
+    for blk in dit.blocks:
+        blk.self_attn.attn.block_mask = block_mask
+    return block_mask
+
+
+def clear_block_causal_attention(dit):
+    for blk in dit.blocks:
+        blk.self_attn.attn.block_mask = None
+
+
+def maybe_apply_causal_mask(dit, T_ref, f_total, h, w):
+    """Called from model_fn_wan_video AFTER the ref prefix is prepended (so
+    T_ref + target frame counts are exact). No-op unless `dit._causal_block_frames`
+    is set (the causal-AR baseline sets it at inference / training). Masks are
+    cached per shape on the dit, so a chunk-chain with varying T_ref rebuilds at
+    most once per distinct (T_ref, f, h, w). f_total = T_ref + target frames."""
+    bf = getattr(dit, "_causal_block_frames", None)
+    if not bf:
+        return
+    cache = getattr(dit, "_causal_mask_cache", None)
+    if cache is None:
+        cache = {}
+        dit._causal_mask_cache = cache
+    key = (T_ref, f_total, h, w, bf)
+    bm = cache.get(key)
+    if bm is None:
+        bm = build_block_causal_mask(T_ref, f_total - T_ref, h, w,
+                                     block_frames=bf, device=next(dit.parameters()).device)
+        cache[key] = bm
+    for blk in dit.blocks:
+        blk.self_attn.attn.block_mask = bm
+
+
 class RMSNorm(nn.Module):
     def __init__(self, dim, eps=1e-5):
         super().__init__()
@@ -130,9 +226,12 @@ class AttentionModule(nn.Module):
     def __init__(self, num_heads):
         super().__init__()
         self.num_heads = num_heads
-        
+        # block_mask is None for the default bidirectional model. The causal-AR
+        # baseline attaches a flex BlockMask here (self-attn only) before forward.
+        self.block_mask = None
+
     def forward(self, q, k, v):
-        x = flash_attention(q=q, k=k, v=v, num_heads=self.num_heads)
+        x = flash_attention(q=q, k=k, v=v, num_heads=self.num_heads, block_mask=self.block_mask)
         return x
 
 

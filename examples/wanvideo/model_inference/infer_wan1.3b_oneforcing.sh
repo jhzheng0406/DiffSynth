@@ -40,6 +40,7 @@ CUDA_VISIBLE_DEVICES=$GPU bash $LONG --duration $DURATION --steps 1 \
     --control_video "$POSE" \
     --sink_lora $SK_V2 \
     --student_dir $DIR \
+    --save_dir samples/onestep_clarity/00_oneforcing_baseline \
     --student $STEP \
     2>&1 | tee "$LOGDIR/oneforcing_step${STEP}_${DURATION}s.log"
 

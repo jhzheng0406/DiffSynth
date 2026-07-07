@@ -16,7 +16,7 @@ from ..diffusion import FlowMatchScheduler
 from ..core import ModelConfig, gradient_checkpoint_forward
 from ..diffusion.base_pipeline import BasePipeline, PipelineUnit
 
-from ..models.wan_video_dit import WanModel, sinusoidal_embedding_1d
+from ..models.wan_video_dit import WanModel, sinusoidal_embedding_1d, maybe_apply_causal_mask
 from ..models.wan_video_dit_s2v import rope_precompute
 from ..models.wan_video_text_encoder import WanTextEncoder, HuggingfaceTokenizer
 from ..models.wan_video_vae import WanVideoVAE
@@ -210,6 +210,11 @@ class WanVideoPipeline(BasePipeline):
         control_video: Optional[list[Image.Image]] = None,
         reference_image: Optional[Image.Image] = None,
         sink_reference_image: Optional[Image.Image] = None,
+        # PLP (persistent latent propagation): if given, used directly as the
+        # *recent* reference latent (T=1 slice), bypassing the lossy
+        # decode→re-encode of reference_image. Shape [B, C, 1, h, w] (the prev
+        # chunk's last latent frame). reference_image is still used for CLIP.
+        recent_latent: Optional[torch.Tensor] = None,
         # Camera control
         camera_control_direction: Optional[Literal["Left", "Right", "Up", "Down", "LeftUp", "LeftDown", "RightUp", "RightDown"]] = None,
         camera_control_speed: Optional[float] = 1/54,
@@ -287,7 +292,7 @@ class WanVideoPipeline(BasePipeline):
             "input_image": input_image,
             "end_image": end_image,
             "input_video": input_video, "denoising_strength": denoising_strength,
-            "control_video": control_video, "reference_image": reference_image, "sink_reference_image": sink_reference_image,
+            "control_video": control_video, "reference_image": reference_image, "sink_reference_image": sink_reference_image, "recent_latent": recent_latent,
             "camera_control_direction": camera_control_direction, "camera_control_speed": camera_control_speed, "camera_control_origin": camera_control_origin,
             "vace_video": vace_video, "vace_video_mask": vace_video_mask, "vace_reference_image": vace_reference_image, "vace_scale": vace_scale,
             "seed": seed, "rand_device": rand_device,
@@ -565,35 +570,44 @@ class WanVideoUnit_FunControl(PipelineUnit):
 class WanVideoUnit_FunReference(PipelineUnit):
     def __init__(self):
         super().__init__(
-            input_params=("reference_image", "sink_reference_image", "height", "width"),
+            input_params=("reference_image", "sink_reference_image", "height", "width", "recent_latent"),
             output_params=("reference_latents", "clip_feature"),
             onload_model_names=("vae", "image_encoder")
         )
 
-    def process(self, pipe: WanVideoPipeline, reference_image, sink_reference_image, height, width):
-        # If neither ref provided, leave reference_latents/clip_feature unset.
-        if reference_image is None and sink_reference_image is None:
+    def process(self, pipe: WanVideoPipeline, reference_image, sink_reference_image, height, width, recent_latent=None):
+        # If nothing provided, leave reference_latents/clip_feature unset.
+        if reference_image is None and sink_reference_image is None and recent_latent is None:
             return {}
         pipe.load_models_to_device(self.onload_model_names)
 
-        # Encode each provided ref to a 1-frame latent and concat along T:
-        # sink occupies T=0, recent occupies T=1 (Helios-style x0 prefix +
-        # short-history layout, simplified to a single recent frame).
+        # Build the reference latent: sink occupies T=0, recent occupies T=1
+        # (Helios-style x0 prefix + short-history layout, single recent frame).
         latents_parts = []
-        for img in [sink_reference_image, reference_image]:
-            if img is None:
-                continue
-            img_resized = img.resize((width, height))
-            part = pipe.preprocess_video([img_resized])
-            part = pipe.vae.encode(part, device=pipe.device)
+        # --- sink @ T=0: always pixel-encoded (one-time anchor, no roundtrip
+        #     accumulation across chunks). ---
+        if sink_reference_image is not None:
+            part = pipe.preprocess_video([sink_reference_image.resize((width, height))])
+            part = pipe.vae.encode(part, device=pipe.device).to(dtype=pipe.torch_dtype, device=pipe.device)
+            latents_parts.append(part)
+        # --- recent @ T=1 ---
+        if recent_latent is not None:
+            # PLP: use the previous chunk's latent directly — no decode→re-encode,
+            # so the recent anchor keeps its high-freq detail (less blur/drift).
+            latents_parts.append(recent_latent.to(dtype=pipe.torch_dtype, device=pipe.device))
+        elif reference_image is not None:
+            part = pipe.preprocess_video([reference_image.resize((width, height))])
+            part = pipe.vae.encode(part, device=pipe.device).to(dtype=pipe.torch_dtype, device=pipe.device)
             latents_parts.append(part)
         reference_latents = torch.cat(latents_parts, dim=2) if len(latents_parts) > 1 else latents_parts[0]
 
         out = {"reference_latents": reference_latents}
-        if pipe.image_encoder is not None:
-            # CLIP feature uses the recent ref if available (richer signal for
-            # the current chunk); fall back to sink when only sink is given.
-            clip_img = reference_image if reference_image is not None else sink_reference_image
+        # CLIP feature uses the recent pixel ref if available (richer signal for
+        # the current chunk); fall back to sink. Under latent-only PLP (no pixel
+        # ref of either kind, e.g. --plp --no_recent --no_sink), there's no image
+        # to encode → skip CLIP (downstream FunControl uses a zero clip).
+        clip_img = reference_image if reference_image is not None else sink_reference_image
+        if pipe.image_encoder is not None and clip_img is not None:
             clip_img = clip_img.resize((width, height))
             clip_feature = pipe.preprocess_image(clip_img)
             clip_feature = pipe.image_encoder.encode_image([clip_feature])
@@ -1461,7 +1475,11 @@ def model_fn_wan_video(
             reference_latents = dit.ref_conv(reference_latents).flatten(2).transpose(1, 2)
         x = torch.concat([reference_latents, x], dim=1)
         f += T_ref
-    
+
+    # Causal-AR baseline: attach block-causal self-attn mask (no-op unless
+    # dit._causal_block_frames is set). f now = T_ref + target frames.
+    maybe_apply_causal_mask(dit, T_ref, f, h, w)
+
     helios_has_history = getattr(dit, '_helios_history', None) is not None
     if getattr(dit, '_helios_patch_applied', False):
         from diffsynth.models.wan_video_helios_attention import _build_current_freqs

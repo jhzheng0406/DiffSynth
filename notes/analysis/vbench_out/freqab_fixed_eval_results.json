@@ -1,0 +1,2580 @@
+{
+    "subject_consistency": [
+        0.9732962794931365,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0000.mp4",
+                "video_results": 0.96733732894063
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0001.mp4",
+                "video_results": 0.9733693227171898
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0002.mp4",
+                "video_results": 0.9692253426959118
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0003.mp4",
+                "video_results": 0.9668217115104198
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0004.mp4",
+                "video_results": 0.9749348927289248
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0005.mp4",
+                "video_results": 0.9715637372185787
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0006.mp4",
+                "video_results": 0.9731742503742377
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0007.mp4",
+                "video_results": 0.9641496433566014
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0008.mp4",
+                "video_results": 0.9821863907078902
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0009.mp4",
+                "video_results": 0.9729442733029524
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0010.mp4",
+                "video_results": 0.9778707101941109
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0011.mp4",
+                "video_results": 0.9747974742203951
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0012.mp4",
+                "video_results": 0.9821859120080868
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0013.mp4",
+                "video_results": 0.9813846126198769
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0014.mp4",
+                "video_results": 0.9789779956142107
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0015.mp4",
+                "video_results": 0.9770544040948153
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0016.mp4",
+                "video_results": 0.9764766649653515
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0017.mp4",
+                "video_results": 0.9799958250174919
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0018.mp4",
+                "video_results": 0.9717244934290648
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0019.mp4",
+                "video_results": 0.9735514124234518
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0020.mp4",
+                "video_results": 0.9712670526156822
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0021.mp4",
+                "video_results": 0.9594100055595239
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0022.mp4",
+                "video_results": 0.9737704607347647
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0023.mp4",
+                "video_results": 0.9670258785287539
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0024.mp4",
+                "video_results": 0.9705681744962931
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0025.mp4",
+                "video_results": 0.9702164003004631
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0026.mp4",
+                "video_results": 0.984724302465717
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0027.mp4",
+                "video_results": 0.9643585203836361
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0028.mp4",
+                "video_results": 0.9783253949135542
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0029.mp4",
+                "video_results": 0.9671903178095818
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0030.mp4",
+                "video_results": 0.9631464121242365
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0031.mp4",
+                "video_results": 0.9719216333081325
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0032.mp4",
+                "video_results": 0.9685103073716164
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0033.mp4",
+                "video_results": 0.9692761227488518
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0034.mp4",
+                "video_results": 0.9673351173599561
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0035.mp4",
+                "video_results": 0.9833526959021887
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0036.mp4",
+                "video_results": 0.9673146065324545
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0037.mp4",
+                "video_results": 0.9750792278597752
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0038.mp4",
+                "video_results": 0.9740518908947706
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0039.mp4",
+                "video_results": 0.9830984013775984
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0040.mp4",
+                "video_results": 0.9821750385065874
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0041.mp4",
+                "video_results": 0.9768105236192545
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0042.mp4",
+                "video_results": 0.9756530504673719
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0043.mp4",
+                "video_results": 0.9764155031492313
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0044.mp4",
+                "video_results": 0.981582955767711
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0045.mp4",
+                "video_results": 0.974181393161416
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0046.mp4",
+                "video_results": 0.9745918773114681
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0047.mp4",
+                "video_results": 0.9700023848563433
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0048.mp4",
+                "video_results": 0.9589413857708374
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0000.mp4",
+                "video_results": 0.9656970500946045
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0001.mp4",
+                "video_results": 0.9743324145674706
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0002.mp4",
+                "video_results": 0.9705042938391367
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0003.mp4",
+                "video_results": 0.9645929063359896
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0004.mp4",
+                "video_results": 0.9749809553225836
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0005.mp4",
+                "video_results": 0.9710884292920431
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0006.mp4",
+                "video_results": 0.9728345920642217
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0007.mp4",
+                "video_results": 0.9653276869406303
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0008.mp4",
+                "video_results": 0.9778763999541601
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0009.mp4",
+                "video_results": 0.9716494853297869
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0010.mp4",
+                "video_results": 0.9794192872941494
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0011.mp4",
+                "video_results": 0.974310852587223
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0012.mp4",
+                "video_results": 0.9824852192153534
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0013.mp4",
+                "video_results": 0.9813233241438866
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0014.mp4",
+                "video_results": 0.9792919227232536
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0015.mp4",
+                "video_results": 0.9772105521212021
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0016.mp4",
+                "video_results": 0.976359431942304
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0017.mp4",
+                "video_results": 0.980689354861776
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0018.mp4",
+                "video_results": 0.972144257898132
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0019.mp4",
+                "video_results": 0.9727392569184303
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0020.mp4",
+                "video_results": 0.9736405151585737
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0021.mp4",
+                "video_results": 0.95761672159036
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0022.mp4",
+                "video_results": 0.9736919421702623
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0023.mp4",
+                "video_results": 0.9675323888659477
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0024.mp4",
+                "video_results": 0.969876761858662
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0025.mp4",
+                "video_results": 0.9699528111765782
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0026.mp4",
+                "video_results": 0.9848269646366438
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0027.mp4",
+                "video_results": 0.9678352686266104
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0028.mp4",
+                "video_results": 0.9788964415589968
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0029.mp4",
+                "video_results": 0.9675508178770542
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0030.mp4",
+                "video_results": 0.9650107330332199
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0031.mp4",
+                "video_results": 0.97255654198428
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0032.mp4",
+                "video_results": 0.9706514459103346
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0033.mp4",
+                "video_results": 0.968736237535874
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0034.mp4",
+                "video_results": 0.9700909828146299
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0035.mp4",
+                "video_results": 0.9838489753504595
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0036.mp4",
+                "video_results": 0.9687118039776882
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0037.mp4",
+                "video_results": 0.9765757018079361
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0038.mp4",
+                "video_results": 0.9728262995680174
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0039.mp4",
+                "video_results": 0.982201167071859
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0040.mp4",
+                "video_results": 0.9813500065356493
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0041.mp4",
+                "video_results": 0.9753053051729997
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0042.mp4",
+                "video_results": 0.9775267262011766
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0043.mp4",
+                "video_results": 0.9769424311816692
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0044.mp4",
+                "video_results": 0.9801912419497967
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0045.mp4",
+                "video_results": 0.9721071273088455
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0046.mp4",
+                "video_results": 0.9736545079698166
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0047.mp4",
+                "video_results": 0.9698032345622778
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0048.mp4",
+                "video_results": 0.9586431793868542
+            }
+        ]
+    ],
+    "background_consistency": [
+        0.9666703931328391,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0000.mp4",
+                "video_results": 0.9416046142578125,
+                "video_sim": 45.197021484375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0001.mp4",
+                "video_results": 0.9689788818359375,
+                "video_sim": 46.510986328125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0002.mp4",
+                "video_results": 0.962310791015625,
+                "video_sim": 46.19091796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0003.mp4",
+                "video_results": 0.9591318766276041,
+                "video_sim": 46.038330078125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0004.mp4",
+                "video_results": 0.9694671630859375,
+                "video_sim": 46.534423828125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0005.mp4",
+                "video_results": 0.9733632405598959,
+                "video_sim": 46.721435546875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0006.mp4",
+                "video_results": 0.9606221516927084,
+                "video_sim": 46.10986328125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0007.mp4",
+                "video_results": 0.9584706624348959,
+                "video_sim": 46.006591796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0008.mp4",
+                "video_results": 0.9675394694010416,
+                "video_sim": 46.44189453125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0009.mp4",
+                "video_results": 0.9738057454427084,
+                "video_sim": 46.74267578125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0010.mp4",
+                "video_results": 0.9728800455729166,
+                "video_sim": 46.6982421875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0011.mp4",
+                "video_results": 0.9726664225260416,
+                "video_sim": 46.68798828125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0012.mp4",
+                "video_results": 0.9698333740234375,
+                "video_sim": 46.552001953125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0013.mp4",
+                "video_results": 0.9719950358072916,
+                "video_sim": 46.65576171875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0014.mp4",
+                "video_results": 0.976837158203125,
+                "video_sim": 46.88818359375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0015.mp4",
+                "video_results": 0.9636586507161459,
+                "video_sim": 46.255615234375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0016.mp4",
+                "video_results": 0.9669342041015625,
+                "video_sim": 46.412841796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0017.mp4",
+                "video_results": 0.9671223958333334,
+                "video_sim": 46.421875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0018.mp4",
+                "video_results": 0.9653472900390625,
+                "video_sim": 46.336669921875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0019.mp4",
+                "video_results": 0.9607950846354166,
+                "video_sim": 46.1181640625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0020.mp4",
+                "video_results": 0.9696044921875,
+                "video_sim": 46.541015625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0021.mp4",
+                "video_results": 0.9641164143880209,
+                "video_sim": 46.277587890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0022.mp4",
+                "video_results": 0.9674326578776041,
+                "video_sim": 46.436767578125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0023.mp4",
+                "video_results": 0.9718475341796875,
+                "video_sim": 46.648681640625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0024.mp4",
+                "video_results": 0.9669748942057291,
+                "video_sim": 46.414794921875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0025.mp4",
+                "video_results": 0.9718831380208334,
+                "video_sim": 46.650390625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0026.mp4",
+                "video_results": 0.9767049153645834,
+                "video_sim": 46.8818359375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0027.mp4",
+                "video_results": 0.9629007975260416,
+                "video_sim": 46.21923828125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0028.mp4",
+                "video_results": 0.9689483642578125,
+                "video_sim": 46.509521484375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0029.mp4",
+                "video_results": 0.9703013102213541,
+                "video_sim": 46.574462890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0030.mp4",
+                "video_results": 0.9546763102213541,
+                "video_sim": 45.824462890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0031.mp4",
+                "video_results": 0.9719696044921875,
+                "video_sim": 46.654541015625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0032.mp4",
+                "video_results": 0.9658304850260416,
+                "video_sim": 46.35986328125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0033.mp4",
+                "video_results": 0.9552408854166666,
+                "video_sim": 45.8515625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0034.mp4",
+                "video_results": 0.9583689371744791,
+                "video_sim": 46.001708984375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0035.mp4",
+                "video_results": 0.96417236328125,
+                "video_sim": 46.2802734375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0036.mp4",
+                "video_results": 0.9620005289713541,
+                "video_sim": 46.176025390625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0037.mp4",
+                "video_results": 0.9711863199869791,
+                "video_sim": 46.616943359375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0038.mp4",
+                "video_results": 0.9619903564453125,
+                "video_sim": 46.175537109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0039.mp4",
+                "video_results": 0.9647979736328125,
+                "video_sim": 46.310302734375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0040.mp4",
+                "video_results": 0.97393798828125,
+                "video_sim": 46.7490234375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0041.mp4",
+                "video_results": 0.973846435546875,
+                "video_sim": 46.74462890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0042.mp4",
+                "video_results": 0.9671681722005209,
+                "video_sim": 46.424072265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0043.mp4",
+                "video_results": 0.9689381917317709,
+                "video_sim": 46.509033203125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0044.mp4",
+                "video_results": 0.9742075602213541,
+                "video_sim": 46.761962890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0045.mp4",
+                "video_results": 0.9645843505859375,
+                "video_sim": 46.300048828125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0046.mp4",
+                "video_results": 0.9589182535807291,
+                "video_sim": 46.028076171875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0047.mp4",
+                "video_results": 0.962371826171875,
+                "video_sim": 46.19384765625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0048.mp4",
+                "video_results": 0.9679056803385416,
+                "video_sim": 46.45947265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0000.mp4",
+                "video_results": 0.9391835530598959,
+                "video_sim": 45.080810546875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0001.mp4",
+                "video_results": 0.9642537434895834,
+                "video_sim": 46.2841796875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0002.mp4",
+                "video_results": 0.9682159423828125,
+                "video_sim": 46.474365234375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0003.mp4",
+                "video_results": 0.96343994140625,
+                "video_sim": 46.2451171875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0004.mp4",
+                "video_results": 0.9639129638671875,
+                "video_sim": 46.267822265625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0005.mp4",
+                "video_results": 0.9673004150390625,
+                "video_sim": 46.430419921875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0006.mp4",
+                "video_results": 0.9606272379557291,
+                "video_sim": 46.110107421875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0007.mp4",
+                "video_results": 0.9675496419270834,
+                "video_sim": 46.4423828125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0008.mp4",
+                "video_results": 0.967132568359375,
+                "video_sim": 46.42236328125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0009.mp4",
+                "video_results": 0.9725240071614584,
+                "video_sim": 46.68115234375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0010.mp4",
+                "video_results": 0.9740142822265625,
+                "video_sim": 46.752685546875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0011.mp4",
+                "video_results": 0.9717915852864584,
+                "video_sim": 46.64599609375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0012.mp4",
+                "video_results": 0.9659627278645834,
+                "video_sim": 46.3662109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0013.mp4",
+                "video_results": 0.9744974772135416,
+                "video_sim": 46.77587890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0014.mp4",
+                "video_results": 0.9765472412109375,
+                "video_sim": 46.874267578125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0015.mp4",
+                "video_results": 0.9714508056640625,
+                "video_sim": 46.629638671875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0016.mp4",
+                "video_results": 0.9696756998697916,
+                "video_sim": 46.54443359375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0017.mp4",
+                "video_results": 0.9784901936848959,
+                "video_sim": 46.967529296875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0018.mp4",
+                "video_results": 0.9681498209635416,
+                "video_sim": 46.47119140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0019.mp4",
+                "video_results": 0.9630177815755209,
+                "video_sim": 46.224853515625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0020.mp4",
+                "video_results": 0.9701334635416666,
+                "video_sim": 46.56640625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0021.mp4",
+                "video_results": 0.9673309326171875,
+                "video_sim": 46.431884765625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0022.mp4",
+                "video_results": 0.9623616536458334,
+                "video_sim": 46.193359375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0023.mp4",
+                "video_results": 0.97308349609375,
+                "video_sim": 46.7080078125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0024.mp4",
+                "video_results": 0.9699757893880209,
+                "video_sim": 46.558837890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0025.mp4",
+                "video_results": 0.9683125813802084,
+                "video_sim": 46.47900390625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0026.mp4",
+                "video_results": 0.9735768636067709,
+                "video_sim": 46.731689453125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0027.mp4",
+                "video_results": 0.9628550211588541,
+                "video_sim": 46.217041015625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0028.mp4",
+                "video_results": 0.9714101155598959,
+                "video_sim": 46.627685546875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0029.mp4",
+                "video_results": 0.9693857828776041,
+                "video_sim": 46.530517578125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0030.mp4",
+                "video_results": 0.9552103678385416,
+                "video_sim": 45.85009765625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0031.mp4",
+                "video_results": 0.9656982421875,
+                "video_sim": 46.353515625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0032.mp4",
+                "video_results": 0.9556427001953125,
+                "video_sim": 45.870849609375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0033.mp4",
+                "video_results": 0.9592183430989584,
+                "video_sim": 46.04248046875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0034.mp4",
+                "video_results": 0.9645843505859375,
+                "video_sim": 46.300048828125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0035.mp4",
+                "video_results": 0.9641977945963541,
+                "video_sim": 46.281494140625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0036.mp4",
+                "video_results": 0.9590708414713541,
+                "video_sim": 46.035400390625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0037.mp4",
+                "video_results": 0.9680633544921875,
+                "video_sim": 46.467041015625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0038.mp4",
+                "video_results": 0.96563720703125,
+                "video_sim": 46.3505859375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0039.mp4",
+                "video_results": 0.96502685546875,
+                "video_sim": 46.3212890625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0040.mp4",
+                "video_results": 0.9710947672526041,
+                "video_sim": 46.612548828125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0041.mp4",
+                "video_results": 0.9704538981119791,
+                "video_sim": 46.581787109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0042.mp4",
+                "video_results": 0.9675242106119791,
+                "video_sim": 46.441162109375,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0043.mp4",
+                "video_results": 0.9691619873046875,
+                "video_sim": 46.519775390625,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0044.mp4",
+                "video_results": 0.9722391764322916,
+                "video_sim": 46.66748046875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0045.mp4",
+                "video_results": 0.9636332194010416,
+                "video_sim": 46.25439453125,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0046.mp4",
+                "video_results": 0.9650217692057291,
+                "video_sim": 46.321044921875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0047.mp4",
+                "video_results": 0.9696858723958334,
+                "video_sim": 46.544921875,
+                "cnt_per_video": 48
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0048.mp4",
+                "video_results": 0.9701792399088541,
+                "video_sim": 46.568603515625,
+                "cnt_per_video": 48
+            }
+        ]
+    ],
+    "motion_smoothness": [
+        0.9944887024487946,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0000.mp4",
+                "video_results": 0.9937889844884713
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0001.mp4",
+                "video_results": 0.9948722498481231
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0002.mp4",
+                "video_results": 0.994729343911042
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0003.mp4",
+                "video_results": 0.9939460291968238
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0004.mp4",
+                "video_results": 0.994743025932996
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0005.mp4",
+                "video_results": 0.9948346909794232
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0006.mp4",
+                "video_results": 0.9951704275042682
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0007.mp4",
+                "video_results": 0.9937467952536695
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0008.mp4",
+                "video_results": 0.9937441035831622
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0009.mp4",
+                "video_results": 0.9950084731158088
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0010.mp4",
+                "video_results": 0.9950555747583933
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0011.mp4",
+                "video_results": 0.9948540063338815
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0012.mp4",
+                "video_results": 0.993372902771886
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0013.mp4",
+                "video_results": 0.9936249777967188
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0014.mp4",
+                "video_results": 0.9950010524737183
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0015.mp4",
+                "video_results": 0.9948636665342107
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0016.mp4",
+                "video_results": 0.9945456405357505
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0017.mp4",
+                "video_results": 0.992326919694605
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0018.mp4",
+                "video_results": 0.9947472186435116
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0019.mp4",
+                "video_results": 0.9952204657626494
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0020.mp4",
+                "video_results": 0.9946221294757888
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0021.mp4",
+                "video_results": 0.9944442963316469
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0022.mp4",
+                "video_results": 0.9931326751342453
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0023.mp4",
+                "video_results": 0.9949540171136564
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0024.mp4",
+                "video_results": 0.99484862885737
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0025.mp4",
+                "video_results": 0.9948864880431784
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0026.mp4",
+                "video_results": 0.994387809847608
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0027.mp4",
+                "video_results": 0.9945617497800402
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0028.mp4",
+                "video_results": 0.9950249047713815
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0029.mp4",
+                "video_results": 0.9947898863126536
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0030.mp4",
+                "video_results": 0.9937163605286978
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0031.mp4",
+                "video_results": 0.994810096617551
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0032.mp4",
+                "video_results": 0.9949930827504836
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0033.mp4",
+                "video_results": 0.9952092978395062
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0034.mp4",
+                "video_results": 0.993648011518866
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0035.mp4",
+                "video_results": 0.9939004220478256
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0036.mp4",
+                "video_results": 0.9948799507589049
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0037.mp4",
+                "video_results": 0.9953035697257224
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0038.mp4",
+                "video_results": 0.9950145127356276
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0039.mp4",
+                "video_results": 0.9935956325054728
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0040.mp4",
+                "video_results": 0.9935930705359513
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0041.mp4",
+                "video_results": 0.994948653957443
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0042.mp4",
+                "video_results": 0.9951997796147037
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0043.mp4",
+                "video_results": 0.9948563124474105
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0044.mp4",
+                "video_results": 0.9929409192507577
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0045.mp4",
+                "video_results": 0.9948300818891926
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0046.mp4",
+                "video_results": 0.9948915075122375
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0047.mp4",
+                "video_results": 0.9948450037761944
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0048.mp4",
+                "video_results": 0.9947197675867445
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0000.mp4",
+                "video_results": 0.9936150641953051
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0001.mp4",
+                "video_results": 0.9948675999791387
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0002.mp4",
+                "video_results": 0.9947964706493352
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0003.mp4",
+                "video_results": 0.9939332876774953
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0004.mp4",
+                "video_results": 0.9947662646399817
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0005.mp4",
+                "video_results": 0.9947647956501644
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0006.mp4",
+                "video_results": 0.9951249229158812
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0007.mp4",
+                "video_results": 0.9939422258620328
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0008.mp4",
+                "video_results": 0.9937792584147709
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0009.mp4",
+                "video_results": 0.9951359228141934
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0010.mp4",
+                "video_results": 0.9951269247571713
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0011.mp4",
+                "video_results": 0.9949313570830977
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0012.mp4",
+                "video_results": 0.9931558331020265
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0013.mp4",
+                "video_results": 0.9937694897893273
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0014.mp4",
+                "video_results": 0.9950924099746958
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0015.mp4",
+                "video_results": 0.9948730204165445
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0016.mp4",
+                "video_results": 0.9945902290342107
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0017.mp4",
+                "video_results": 0.9927954572086581
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0018.mp4",
+                "video_results": 0.9949346195197719
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0019.mp4",
+                "video_results": 0.995325996403614
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0020.mp4",
+                "video_results": 0.9946639575663109
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0021.mp4",
+                "video_results": 0.9945139618542173
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0022.mp4",
+                "video_results": 0.9932027312599943
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0023.mp4",
+                "video_results": 0.9949203157241128
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0024.mp4",
+                "video_results": 0.9948932477694159
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0025.mp4",
+                "video_results": 0.994743723672473
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0026.mp4",
+                "video_results": 0.9944077542041122
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0027.mp4",
+                "video_results": 0.994538624544369
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0028.mp4",
+                "video_results": 0.9949035320619746
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0029.mp4",
+                "video_results": 0.9946987102021186
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0030.mp4",
+                "video_results": 0.9936058780650348
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0031.mp4",
+                "video_results": 0.9946435392761316
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0032.mp4",
+                "video_results": 0.9950059959770055
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0033.mp4",
+                "video_results": 0.9949941009918702
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0034.mp4",
+                "video_results": 0.993661246338368
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0035.mp4",
+                "video_results": 0.9938674376278734
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0036.mp4",
+                "video_results": 0.9948756088445216
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0037.mp4",
+                "video_results": 0.995286273533296
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0038.mp4",
+                "video_results": 0.9949584224465027
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0039.mp4",
+                "video_results": 0.9935428538875708
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0040.mp4",
+                "video_results": 0.9934760472420361
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0041.mp4",
+                "video_results": 0.9949619440123806
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0042.mp4",
+                "video_results": 0.9952522665076758
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0043.mp4",
+                "video_results": 0.9947841921529785
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0044.mp4",
+                "video_results": 0.9929944740288165
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0045.mp4",
+                "video_results": 0.9948443691824129
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0046.mp4",
+                "video_results": 0.9949151544159107
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0047.mp4",
+                "video_results": 0.9948940711183645
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0048.mp4",
+                "video_results": 0.9947760870006389
+            }
+        ]
+    ],
+    "dynamic_degree": [
+        0.42857142857142855,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0000.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0001.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0002.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0003.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0004.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0005.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0006.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0007.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0008.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0009.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0010.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0011.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0012.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0013.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0014.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0015.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0016.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0017.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0018.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0019.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0020.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0021.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0022.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0023.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0024.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0025.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0026.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0027.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0028.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0029.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0030.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0031.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0032.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0033.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0034.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0035.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0036.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0037.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0038.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0039.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0040.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0041.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0042.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0043.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0044.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0045.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0046.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0047.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0048.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0000.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0001.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0002.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0003.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0004.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0005.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0006.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0007.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0008.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0009.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0010.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0011.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0012.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0013.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0014.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0015.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0016.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0017.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0018.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0019.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0020.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0021.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0022.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0023.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0024.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0025.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0026.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0027.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0028.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0029.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0030.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0031.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0032.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0033.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0034.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0035.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0036.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0037.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0038.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0039.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0040.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0041.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0042.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0043.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0044.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0045.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0046.mp4",
+                "video_results": false
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0047.mp4",
+                "video_results": true
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0048.mp4",
+                "video_results": false
+            }
+        ]
+    ],
+    "aesthetic_quality": [
+        0.6281722972587663,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0000.mp4",
+                "video_results": 0.7116006016731262
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0001.mp4",
+                "video_results": 0.6437192559242249
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0002.mp4",
+                "video_results": 0.6410772204399109
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0003.mp4",
+                "video_results": 0.6277346014976501
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0004.mp4",
+                "video_results": 0.6276518106460571
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0005.mp4",
+                "video_results": 0.6641603708267212
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0006.mp4",
+                "video_results": 0.6580541729927063
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0007.mp4",
+                "video_results": 0.627916157245636
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0008.mp4",
+                "video_results": 0.6472129821777344
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0009.mp4",
+                "video_results": 0.6167736053466797
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0010.mp4",
+                "video_results": 0.6511633396148682
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0011.mp4",
+                "video_results": 0.6343234777450562
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0012.mp4",
+                "video_results": 0.6192706227302551
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0013.mp4",
+                "video_results": 0.6326905488967896
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0014.mp4",
+                "video_results": 0.5984595417976379
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0015.mp4",
+                "video_results": 0.6441808938980103
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0016.mp4",
+                "video_results": 0.6044367551803589
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0017.mp4",
+                "video_results": 0.6169992685317993
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0018.mp4",
+                "video_results": 0.6201003789901733
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0019.mp4",
+                "video_results": 0.6251412630081177
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0020.mp4",
+                "video_results": 0.6494189500808716
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0021.mp4",
+                "video_results": 0.6138283610343933
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0022.mp4",
+                "video_results": 0.6280037760734558
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0023.mp4",
+                "video_results": 0.6039438843727112
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0024.mp4",
+                "video_results": 0.6211851239204407
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0025.mp4",
+                "video_results": 0.6381605267524719
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0026.mp4",
+                "video_results": 0.6110185980796814
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0027.mp4",
+                "video_results": 0.6197971105575562
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0028.mp4",
+                "video_results": 0.624382495880127
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0029.mp4",
+                "video_results": 0.6233909726142883
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0030.mp4",
+                "video_results": 0.6368321180343628
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0031.mp4",
+                "video_results": 0.6268325448036194
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0032.mp4",
+                "video_results": 0.6213768124580383
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0033.mp4",
+                "video_results": 0.6443573236465454
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0034.mp4",
+                "video_results": 0.627260148525238
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0035.mp4",
+                "video_results": 0.6546873450279236
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0036.mp4",
+                "video_results": 0.6519681811332703
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0037.mp4",
+                "video_results": 0.6292191743850708
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0038.mp4",
+                "video_results": 0.649249255657196
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0039.mp4",
+                "video_results": 0.6276965737342834
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0040.mp4",
+                "video_results": 0.6477036476135254
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0041.mp4",
+                "video_results": 0.6559311747550964
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0042.mp4",
+                "video_results": 0.624963641166687
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0043.mp4",
+                "video_results": 0.626729428768158
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0044.mp4",
+                "video_results": 0.6407158374786377
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0045.mp4",
+                "video_results": 0.6277020573616028
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0046.mp4",
+                "video_results": 0.6518290042877197
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0047.mp4",
+                "video_results": 0.6297338604927063
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0048.mp4",
+                "video_results": 0.6374056339263916
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0000.mp4",
+                "video_results": 0.7037074565887451
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0001.mp4",
+                "video_results": 0.6565173864364624
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0002.mp4",
+                "video_results": 0.643169641494751
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0003.mp4",
+                "video_results": 0.6229668855667114
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0004.mp4",
+                "video_results": 0.6309296488761902
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0005.mp4",
+                "video_results": 0.6441419124603271
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0006.mp4",
+                "video_results": 0.6404659152030945
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0007.mp4",
+                "video_results": 0.6116685271263123
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0008.mp4",
+                "video_results": 0.6261405348777771
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0009.mp4",
+                "video_results": 0.6080535650253296
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0010.mp4",
+                "video_results": 0.6408499479293823
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0011.mp4",
+                "video_results": 0.6167384386062622
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0012.mp4",
+                "video_results": 0.6043648719787598
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0013.mp4",
+                "video_results": 0.6261101961135864
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0014.mp4",
+                "video_results": 0.6028030514717102
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0015.mp4",
+                "video_results": 0.6227458119392395
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0016.mp4",
+                "video_results": 0.59732586145401
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0017.mp4",
+                "video_results": 0.6223373413085938
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0018.mp4",
+                "video_results": 0.6385877132415771
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0019.mp4",
+                "video_results": 0.6139864325523376
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0020.mp4",
+                "video_results": 0.6392441987991333
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0021.mp4",
+                "video_results": 0.6100234985351562
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0022.mp4",
+                "video_results": 0.6055552959442139
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0023.mp4",
+                "video_results": 0.6134049296379089
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0024.mp4",
+                "video_results": 0.618236243724823
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0025.mp4",
+                "video_results": 0.6334965825080872
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0026.mp4",
+                "video_results": 0.6206836700439453
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0027.mp4",
+                "video_results": 0.5994123220443726
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0028.mp4",
+                "video_results": 0.6228588223457336
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0029.mp4",
+                "video_results": 0.6169135570526123
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0030.mp4",
+                "video_results": 0.6269428133964539
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0031.mp4",
+                "video_results": 0.6269744634628296
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0032.mp4",
+                "video_results": 0.5967797040939331
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0033.mp4",
+                "video_results": 0.6316912174224854
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0034.mp4",
+                "video_results": 0.6135176420211792
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0035.mp4",
+                "video_results": 0.6497669219970703
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0036.mp4",
+                "video_results": 0.6204693913459778
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0037.mp4",
+                "video_results": 0.596821665763855
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0038.mp4",
+                "video_results": 0.6133304238319397
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0039.mp4",
+                "video_results": 0.6119241118431091
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0040.mp4",
+                "video_results": 0.6048981547355652
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0041.mp4",
+                "video_results": 0.6273130178451538
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0042.mp4",
+                "video_results": 0.6106191277503967
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0043.mp4",
+                "video_results": 0.6170653104782104
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0044.mp4",
+                "video_results": 0.6200749278068542
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0045.mp4",
+                "video_results": 0.6250977516174316
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0046.mp4",
+                "video_results": 0.6237116456031799
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0047.mp4",
+                "video_results": 0.6199372410774231
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0048.mp4",
+                "video_results": 0.6125189065933228
+            }
+        ]
+    ],
+    "imaging_quality": [
+        0.7382766046170542,
+        [
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0000.mp4",
+                "video_results": 74.1313412724709
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0001.mp4",
+                "video_results": 73.41199073012994
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0002.mp4",
+                "video_results": 73.62638995112205
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0003.mp4",
+                "video_results": 74.24208535953444
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0004.mp4",
+                "video_results": 73.9464527052276
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0005.mp4",
+                "video_results": 74.29865638577208
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0006.mp4",
+                "video_results": 74.67548292510364
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0007.mp4",
+                "video_results": 74.34903717041016
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0008.mp4",
+                "video_results": 73.73126173992546
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0009.mp4",
+                "video_results": 73.41022133340641
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0010.mp4",
+                "video_results": 73.75202537069515
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0011.mp4",
+                "video_results": 74.05438512685348
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0012.mp4",
+                "video_results": 73.37900449791734
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0013.mp4",
+                "video_results": 73.68601211236448
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0014.mp4",
+                "video_results": 74.40644322609415
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0015.mp4",
+                "video_results": 73.72686985560826
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0016.mp4",
+                "video_results": 74.00123471629863
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0017.mp4",
+                "video_results": 73.15222230249522
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0018.mp4",
+                "video_results": 72.70318447813696
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0019.mp4",
+                "video_results": 74.03950998734454
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0020.mp4",
+                "video_results": 73.8086821886958
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0021.mp4",
+                "video_results": 74.42860973124601
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0022.mp4",
+                "video_results": 73.60041310835858
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0023.mp4",
+                "video_results": 73.01752503064213
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0024.mp4",
+                "video_results": 74.06587997747927
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0025.mp4",
+                "video_results": 73.35983587771045
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0026.mp4",
+                "video_results": 73.51358748455436
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0027.mp4",
+                "video_results": 74.17614325698541
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0028.mp4",
+                "video_results": 73.63999394008091
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0029.mp4",
+                "video_results": 73.4676071478396
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0030.mp4",
+                "video_results": 73.02563787966358
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0031.mp4",
+                "video_results": 74.03179698087732
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0032.mp4",
+                "video_results": 75.08059085145288
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0033.mp4",
+                "video_results": 74.36189223308952
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0034.mp4",
+                "video_results": 74.31416133958466
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0035.mp4",
+                "video_results": 73.72796957833427
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0036.mp4",
+                "video_results": 73.84322575160435
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0037.mp4",
+                "video_results": 75.02042653609296
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0038.mp4",
+                "video_results": 74.43090415487484
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0039.mp4",
+                "video_results": 72.77645609330158
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0040.mp4",
+                "video_results": 73.61552834024235
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0041.mp4",
+                "video_results": 75.182355452557
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0042.mp4",
+                "video_results": 74.67341691620496
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0043.mp4",
+                "video_results": 74.06929093964246
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0044.mp4",
+                "video_results": 72.25478549879425
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0045.mp4",
+                "video_results": 74.16235974370217
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0046.mp4",
+                "video_results": 74.14157696159519
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0047.mp4",
+                "video_results": 74.10260679283921
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2__w0048.mp4",
+                "video_results": 73.19518124327368
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0000.mp4",
+                "video_results": 73.81172024473852
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0001.mp4",
+                "video_results": 73.62994447046397
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0002.mp4",
+                "video_results": 73.72581435223015
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0003.mp4",
+                "video_results": 74.0443583897182
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0004.mp4",
+                "video_results": 74.60161933120416
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0005.mp4",
+                "video_results": 74.83533913748605
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0006.mp4",
+                "video_results": 74.8308580359634
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0007.mp4",
+                "video_results": 74.04364480777663
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0008.mp4",
+                "video_results": 73.22979347073301
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0009.mp4",
+                "video_results": 74.46423884800502
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0010.mp4",
+                "video_results": 74.09678463060028
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0011.mp4",
+                "video_results": 74.4021625129544
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0012.mp4",
+                "video_results": 73.12810438506457
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0013.mp4",
+                "video_results": 74.15510418950295
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0014.mp4",
+                "video_results": 75.20739761663943
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0015.mp4",
+                "video_results": 73.87744685581752
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0016.mp4",
+                "video_results": 74.2625983101981
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0017.mp4",
+                "video_results": 72.8437409692881
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0018.mp4",
+                "video_results": 72.69878947978117
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0019.mp4",
+                "video_results": 73.88826160041653
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0020.mp4",
+                "video_results": 73.23207995356346
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0021.mp4",
+                "video_results": 74.3547970518774
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0022.mp4",
+                "video_results": 72.81112375064772
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0023.mp4",
+                "video_results": 72.23660107048191
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0024.mp4",
+                "video_results": 73.00579398018974
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0025.mp4",
+                "video_results": 73.26643293731067
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0026.mp4",
+                "video_results": 72.36218541982223
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0027.mp4",
+                "video_results": 74.07818992770449
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0028.mp4",
+                "video_results": 73.98831285749164
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0029.mp4",
+                "video_results": 73.56268964494977
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0030.mp4",
+                "video_results": 73.06754038285236
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0031.mp4",
+                "video_results": 74.07207769277144
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0032.mp4",
+                "video_results": 74.94325240777464
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0033.mp4",
+                "video_results": 73.67661721365792
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0034.mp4",
+                "video_results": 73.71156747000558
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0035.mp4",
+                "video_results": 73.2877953977001
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0036.mp4",
+                "video_results": 74.01783441037549
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0037.mp4",
+                "video_results": 74.55547659737724
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0038.mp4",
+                "video_results": 73.67339013547314
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0039.mp4",
+                "video_results": 72.07611706792092
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0040.mp4",
+                "video_results": 73.20745911890147
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0041.mp4",
+                "video_results": 75.10912618831712
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0042.mp4",
+                "video_results": 73.72454195606466
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0043.mp4",
+                "video_results": 74.49253658372528
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0044.mp4",
+                "video_results": 72.15309812584702
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0045.mp4",
+                "video_results": 73.80328867386798
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0046.mp4",
+                "video_results": 74.55814719686703
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0047.mp4",
+                "video_results": 74.54923403992944
+            },
+            {
+                "video_path": "notes/analysis/vbench_out/clips_freqab_fixed/wan1-3b-dmd-recycle-v2-freqsplit__w0048.mp4",
+                "video_results": 73.94344407684949
+            }
+        ]
+    ]
+}

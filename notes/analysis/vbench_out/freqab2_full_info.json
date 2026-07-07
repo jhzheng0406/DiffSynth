@@ -1,0 +1,688 @@
+[
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0000",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0000.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0001",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0001.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0002",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0002.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0003",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0003.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0004",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0004.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0005",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0005.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0006",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0006.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0007",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0007.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0008",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0008.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0009",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0009.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0010",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0010.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0011",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0011.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0012",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0012.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0013",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0013.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0014",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0014.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0015",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0015.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0016",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0016.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0017",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0017.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0018",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0018.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0019",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0019.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0020",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0020.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0021",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0021.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0022",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0022.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0023",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0023.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0024",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0024.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0025",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0025.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0026",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0026.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0027",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0027.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0028",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0028.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0029",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0029.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0030",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0030.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0031",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0031.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0032",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0032.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0033",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0033.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0034",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0034.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0035",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0035.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0036",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0036.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0037",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0037.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0038",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0038.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0039",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0039.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0040",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0040.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0041",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0041.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0042",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0042.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0043",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0043.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0044",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0044.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0045",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0045.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0046",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0046.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0047",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0047.mp4"
+        ]
+    },
+    {
+        "prompt_en": "dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0048",
+        "dimension": [
+            "subject_consistency",
+            "background_consistency",
+            "motion_smoothness",
+            "dynamic_degree",
+            "aesthetic_quality",
+            "imaging_quality"
+        ],
+        "video_list": [
+            "notes/analysis/vbench_out/clips_freqab2/dmd-sink-sink-recycle-v1-exp-wan1-3b-dmd__w0048.mp4"
+        ]
+    }
+]

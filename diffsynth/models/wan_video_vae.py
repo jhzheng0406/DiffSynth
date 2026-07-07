@@ -1,6 +1,7 @@
 from einops import rearrange, repeat
 
 import torch
+import torch.utils.checkpoint
 import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm
@@ -1033,6 +1034,45 @@ class VideoVAE_(nn.Module):
                 out = torch.cat([out, out_], 2) # may add tensor offload
         return out
 
+    def decode_window(self, z, scale, t_start, t_len):
+        """Decode ONLY latent steps [t_start, t_start + t_len) with autograd.
+
+        The decoder is temporally causal, so the returned frames are identical
+        to the corresponding slice of a full decode(). The prefix [0, t_start)
+        runs under no_grad purely to prime feat_cache, so autograd memory
+        scales with t_len instead of T. Gradient flows into
+        z[:, :, t_start : t_start + t_len]; the context path is truncated.
+
+        Returns pixel frames of the window: 4*t_len if t_start > 0,
+        4*t_len - 3 if t_start == 0.
+        """
+        self.clear_cache()
+        if isinstance(scale[0], torch.Tensor):
+            scale = [s.to(dtype=z.dtype, device=z.device) for s in scale]
+            z = z / scale[1].view(1, self.z_dim, 1, 1, 1) + scale[0].view(
+                1, self.z_dim, 1, 1, 1)
+        else:
+            scale = scale.to(dtype=z.dtype, device=z.device)
+            z = z / scale[1] + scale[0]
+        t_end = min(t_start + t_len, z.shape[2])
+        # conv2 is a kernel-1 CausalConv3d: prefix slicing is exact.
+        x = self.conv2(z[:, :, :t_end])
+        out = None
+        for i in range(t_end):
+            self._conv_idx = [0]
+            if i < t_start:
+                # Prime the causal cache only; no graph, frames discarded.
+                with torch.no_grad():
+                    _, self._feat_map, self._conv_idx = self.decoder(
+                        x[:, :, i:i + 1, :, :].detach(),
+                        feat_cache=self._feat_map, feat_idx=self._conv_idx)
+            else:
+                out_, self._feat_map, self._conv_idx = self.decoder(
+                    x[:, :, i:i + 1, :, :],
+                    feat_cache=self._feat_map, feat_idx=self._conv_idx)
+                out = out_ if out is None else torch.cat([out, out_], 2)
+        return out
+
     def reparameterize(self, mu, log_var):
         std = torch.exp(0.5 * log_var)
         eps = torch.randn_like(std)
@@ -1123,7 +1163,18 @@ class WanVideoVAE(nn.Module):
 
         for h, h_, w, w_ in tqdm(tasks, desc="VAE decoding"):
             hidden_states_batch = hidden_states[:, :, :, h:h_, w:w_].to(computation_device)
-            hidden_states_batch = self.model.decode(hidden_states_batch, self.scale).to(data_device)
+            if torch.is_grad_enabled() and hidden_states_batch.requires_grad:
+                # Outer training checkpoint recomputes the whole tiled decode in
+                # backward. Checkpoint each tile too, otherwise all tile-level
+                # VAE activations accumulate before backward can consume them.
+                hidden_states_batch = torch.utils.checkpoint.checkpoint(
+                    lambda z: self.model.decode(z, self.scale),
+                    hidden_states_batch,
+                    use_reentrant=False,
+                )
+            else:
+                hidden_states_batch = self.model.decode(hidden_states_batch, self.scale)
+            hidden_states_batch = hidden_states_batch.to(data_device)
 
             mask = self.build_mask(
                 hidden_states_batch,
@@ -1245,6 +1296,22 @@ class WanVideoVAE(nn.Module):
             videos.append(video)
         videos = torch.stack(videos)
         return videos
+
+
+    def decode_window(self, hidden_states, device, t_start, t_len):
+        """Windowed causal decode with autograd (see model.decode_window).
+
+        hidden_states: [B, C, T, H, W]. Returns [B, 3, T_win, H*8, W*8] in
+        [-1, 1], where the frames are bit-identical to the same slice of a
+        full decode; autograd memory scales with t_len, not T. Intended for
+        training losses that need gradient through a few decoded frames.
+        """
+        videos = []
+        for i in range(hidden_states.shape[0]):
+            hs = hidden_states[i:i + 1].to(device)
+            video = self.model.decode_window(hs, self.scale, t_start, t_len)
+            videos.append(video.clamp(-1, 1))
+        return torch.cat(videos, dim=0)
 
 
     def encode_framewise(self, videos, device):

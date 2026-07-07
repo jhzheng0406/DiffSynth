@@ -33,7 +33,7 @@ Reference: SVI (Stable-Video-Infinity, vita-epfl). Adapted from base-model
 finetuning to DMD distillation regime by anchoring the self-correcting
 target to the clean-input rollout.
 """
-import argparse, os, random, sys, time
+import argparse, contextlib, os, random, sys, time
 import accelerate
 import decord
 import numpy as np
@@ -77,18 +77,44 @@ from cls_branch import ClsBranch, FeatureCapturer, gan_g_loss, gan_d_loss
 # Error replay buffer (FIFO ring buffer of latent residuals)
 # ===========================================================================
 class ErrorBuffer:
-    """Per-rank FIFO buffer of single-latent-frame residuals [C, h, w]."""
-    def __init__(self, max_size: int = 500):
+    """Per-rank FIFO buffer of single-latent-frame residuals [C, h, w].
+
+    Default (freq_split=False): a single FIFO — IDENTICAL to the original
+    behaviour. With freq_split=True it keeps TWO FIFOs, splitting each residual
+    into low-/high-spatial-frequency bands (box low-pass at scale band_k) so the
+    injection can weight them separately (α_low for background/stability drift,
+    α_high for detail/clarity drift). Diagnostic justified this: residual energy
+    is substantial + stable in both bands (k=2: 58/42, k=4: 33/67)."""
+    def __init__(self, max_size: int = 500, freq_split: bool = False, band_k: int = 2):
         self.max_size = max_size
-        self.buf = []     # list of CPU bf16 tensors
+        self.freq_split = freq_split
+        self.band_k = band_k
+        self.buf = []          # flat mode
+        self.buf_low = []      # freq mode
+        self.buf_high = []
+
+    @staticmethod
+    def _split(err, k):
+        """err [C,h,w] → (low, high). low = avg_pool(k)+nearest-upsample."""
+        xb = err.unsqueeze(0)
+        low = F.avg_pool2d(xb, kernel_size=k, stride=k, ceil_mode=True)
+        low = F.interpolate(low, size=err.shape[-2:], mode="nearest").squeeze(0)
+        return low, err - low
 
     def push(self, err: torch.Tensor):
-        self.buf.append(err.detach().to(torch.bfloat16).cpu().contiguous())
-        if len(self.buf) > self.max_size:
-            self.buf.pop(0)
+        e = err.detach().to(torch.bfloat16).cpu().contiguous()
+        if self.freq_split:
+            lo, hi = self._split(e, self.band_k)
+            self.buf_low.append(lo); self.buf_high.append(hi)
+            if len(self.buf_low) > self.max_size:
+                self.buf_low.pop(0); self.buf_high.pop(0)
+        else:
+            self.buf.append(e)
+            if len(self.buf) > self.max_size:
+                self.buf.pop(0)
 
     def sample(self, device=None, dtype=None) -> torch.Tensor:
-        """Returns a single error of shape [C, h, w]. Raises if empty."""
+        """Flat mode: a single error [C, h, w]."""
         assert len(self.buf) > 0, "ErrorBuffer is empty"
         idx = torch.randint(0, len(self.buf), (1,)).item()
         out = self.buf[idx]
@@ -96,32 +122,72 @@ class ErrorBuffer:
         if dtype is not None:  out = out.to(dtype)
         return out
 
+    def sample_bands(self, device=None, dtype=None):
+        """Freq mode: (low, high), each sampled INDEPENDENTLY from its own bank
+        (two reservoirs → maximal decoupling of the two drift modes)."""
+        assert len(self.buf_low) > 0, "ErrorBuffer (freq) is empty"
+        il = torch.randint(0, len(self.buf_low), (1,)).item()
+        ih = torch.randint(0, len(self.buf_high), (1,)).item()
+        lo, hi = self.buf_low[il], self.buf_high[ih]
+        if device is not None: lo, hi = lo.to(device), hi.to(device)
+        if dtype is not None:  lo, hi = lo.to(dtype), hi.to(dtype)
+        return lo, hi
+
+    def state_dict(self):
+        """Persist BOTH modes' banks so resume works regardless of freq_split."""
+        return {"freq_split": self.freq_split, "band_k": self.band_k,
+                "buf": list(self.buf), "buf_low": list(self.buf_low),
+                "buf_high": list(self.buf_high)}
+
+    def load_state_dict(self, sd):
+        """Tolerant restore. Accepts the new dict format OR a legacy flat list
+        (old checkpoints saved error_buffer as just list(buf))."""
+        def _trim(lst):
+            return [t.detach().to(torch.bfloat16).cpu().contiguous()
+                    for t in list(lst)[-self.max_size:]]
+        if isinstance(sd, dict):
+            self.buf = _trim(sd.get("buf", []))
+            self.buf_low = _trim(sd.get("buf_low", []))
+            self.buf_high = _trim(sd.get("buf_high", []))
+        else:                                   # legacy: a flat list of residuals
+            self.buf = _trim(sd)
+            self.buf_low, self.buf_high = [], []
+
     def __len__(self):
-        return len(self.buf)
+        return len(self.buf_low) if self.freq_split else len(self.buf)
 
 
 # ===========================================================================
 # Pipeline construction
 # ===========================================================================
-WAN_MODEL_CONFIGS = [
-    ModelConfig(model_id="PAI/Wan2.1-Fun-V1.1-1.3B-Control",
-                origin_file_pattern="diffusion_pytorch_model*.safetensors"),
-    ModelConfig(model_id="PAI/Wan2.1-Fun-V1.1-1.3B-Control",
-                origin_file_pattern="models_t5_umt5-xxl-enc-bf16.pth"),
-    ModelConfig(model_id="PAI/Wan2.1-Fun-V1.1-1.3B-Control",
-                origin_file_pattern="Wan2.1_VAE.pth"),
-    ModelConfig(model_id="PAI/Wan2.1-Fun-V1.1-1.3B-Control",
-                origin_file_pattern="models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth"),
-]
+# Default base = 1.3B Fun-Control. Override with --base_model_id (e.g.
+# "PAI/Wan2.1-Fun-V1.1-14B-Control") for the 14B scale-generality run; the dit
+# in_dim differs but y_dim is computed dynamically, so the rest adapts.
+DEFAULT_BASE_MODEL_ID = "PAI/Wan2.1-Fun-V1.1-1.3B-Control"
 TOKENIZER_CONFIG = ModelConfig(model_id="Wan-AI/Wan2.1-T2V-1.3B",
                                origin_file_pattern="google/umt5-xxl/")
 
 
-def build_pipe(device, dtype=torch.bfloat16):
+def wan_model_configs(model_id=DEFAULT_BASE_MODEL_ID):
+    """The 4 component files (DiT/T5/VAE/CLIP) all live under the same Fun-Control
+    model_id; only the tokenizer (umt5) is shared/separate."""
+    return [
+        ModelConfig(model_id=model_id, origin_file_pattern="diffusion_pytorch_model*.safetensors"),
+        ModelConfig(model_id=model_id, origin_file_pattern="models_t5_umt5-xxl-enc-bf16.pth"),
+        ModelConfig(model_id=model_id, origin_file_pattern="Wan2.1_VAE.pth"),
+        ModelConfig(model_id=model_id, origin_file_pattern="models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth"),
+    ]
+
+
+# Back-compat alias (some scripts import this name).
+WAN_MODEL_CONFIGS = wan_model_configs()
+
+
+def build_pipe(device, dtype=torch.bfloat16, model_id=DEFAULT_BASE_MODEL_ID):
     return WanVideoPipeline.from_pretrained(
         torch_dtype=dtype,
         device=device,
-        model_configs=WAN_MODEL_CONFIGS,
+        model_configs=wan_model_configs(model_id),
         tokenizer_config=TOKENIZER_CONFIG,
     )
 
@@ -190,15 +256,75 @@ class ResumableSampler:
         return len(self.base)
 
 
-def save_lora_state_dict(dit, out_path, remove_prefix=None):
-    """Save only the trainable LoRA params as a safetensors file."""
+def save_lora_state_dict(dit, out_path, remove_prefix=None, adapter=None):
+    """Save only the trainable LoRA params as a safetensors file. With `adapter`
+    set (shared-base), save ONLY that named adapter's params (e.g. 'student')."""
     state_dict = {}
     for name, param in dit.state_dict().items():
         if "lora_A" in name or "lora_B" in name:
+            if adapter is not None and f".{adapter}." not in name:
+                continue
             if remove_prefix and name.startswith(remove_prefix):
                 name = name[len(remove_prefix):]
             state_dict[name] = param.detach().cpu().contiguous()
     save_file(state_dict, out_path)
+
+
+# ===========================================================================
+# Shared-base: ONE heavy base+sink DiT carrying TWO named LoRA adapters
+# (student, critic) so 14B fits — teacher/student/critic no longer each hold a
+# full base copy. teacher = adapters disabled; student/critic = their adapter.
+# ===========================================================================
+SHARED_ADAPTERS = ("student", "critic")
+
+
+def add_named_lora(dit, target_modules, rank, names=SHARED_ADAPTERS):
+    """Inject MULTIPLE named LoRA adapters onto one (sink-fused) DiT."""
+    cfg = LoraConfig(r=rank, lora_alpha=rank, target_modules=target_modules)
+    for nm in names:
+        inject_adapter_in_model(cfg, dit, adapter_name=nm)
+    for n, p in dit.named_parameters():        # keep ALL adapters trainable
+        if "lora_" in n:
+            p.requires_grad_(True)
+    return dit
+
+
+def use_adapter(dit, name):
+    """Activate ONE adapter for the next forward(s), or None = base+sink only
+    (teacher). Uses peft's public set_adapter to switch, then RE-FORCES
+    requires_grad=True on every LoRA param — because set_adapter freezes the
+    non-active adapter, which would silently break the still-alive student
+    rollout graph when we switch to 'critic' mid-step."""
+    from peft.tuners.tuners_utils import BaseTunerLayer
+    for m in dit.modules():
+        if isinstance(m, BaseTunerLayer):
+            if name is None:
+                m.enable_adapters(False)
+            else:
+                m.enable_adapters(True)
+                m.set_adapter(name)
+    if name is not None:
+        for n, p in dit.named_parameters():
+            if "lora_" in n:
+                p.requires_grad_(True)
+
+
+def adapter_params(dit, name):
+    return [p for n, p in dit.named_parameters() if "lora_" in n and f".{name}." in n]
+
+
+def fsdp_wrap_blocks(dit):
+    """Per-DiTBlock FULL_SHARD (use_orig_params=True for PEFT). Leaves the dit
+    root intact → .dim/.in_dim/.blocks and FeatureCapturer hooks keep working.
+    All LoRA (q/k/v/o/ffn) lives inside the blocks → sharded + FSDP grad-reduced;
+    only cls_branch (outside) still needs manual all_reduce. Validated mechanics:
+    notes/analysis/test_fsdp_peft.py."""
+    from torch.distributed.fsdp import FullyShardedDataParallel as FSDP, ShardingStrategy
+    dev = torch.cuda.current_device()
+    for i in range(len(dit.blocks)):
+        dit.blocks[i] = FSDP(dit.blocks[i], use_orig_params=True,
+                             sharding_strategy=ShardingStrategy.FULL_SHARD, device_id=dev)
+    return dit
 
 
 def load_lora_into_trainable(dit, lora_state_dict):
@@ -233,14 +359,38 @@ def encode_prompt(pipe, prompt, dtype, device):
     return prompt_emb
 
 
+LATENT_CACHE_VERSION = "v1"   # bump to invalidate all on-disk latent caches
+
+
 @torch.no_grad()
-def encode_batch(pipe, batch, dtype, device, no_recent=False):
+def encode_batch(pipe, batch, dtype, device, no_recent=False, plp=False, cache_dir=None, aspect_crop=False, base_model_id="", vel_recent=False):
     """Use a pipe's encoders (T5/VAE/CLIP) to encode one batch from
     ChunkAwareDataset into the tensors model_fn_wan_video expects.
 
     Returns dict with: prompt_embed, target_latents, control_latents,
                        reference_latents (sink+recent on T-dim), clip_feature
     """
+    # ---- latent disk cache: on hit, skip ALL encoders (deterministic under
+    # --plp, where the recent ref is a video-mode latent, not a random aug).
+    # First epoch populates; later epochs / reruns load tensors. Key folds in
+    # everything that changes the cached conditioning: uid (video#pose#chunk),
+    # prompt, plp, no_recent, H, W, and a manual LATENT_CACHE_VERSION. Bump the
+    # version (or use a fresh --latent_cache dir per experiment) if the base
+    # VAE/T5/CLIP, the aug recipe, or the encoding logic changes. ----
+    _cache_path = None
+    if cache_dir is not None and batch.get("uid") is not None:
+        import hashlib
+        _w, _h = batch["sink_reference_image"][0].size
+        _phash = hashlib.md5(str(batch.get("prompt", "")).encode()).hexdigest()[:8]
+        _btag = hashlib.md5(str(base_model_id).encode()).hexdigest()[:6]   # control y_pad depends on dit.in_dim
+        _sig = f'{batch["uid"]}|p{_phash}|plp{int(plp)}|nr{int(no_recent)}|ac{int(aspect_crop)}|vr{int(vel_recent)}|b{_btag}|{LATENT_CACHE_VERSION}'
+        _key = hashlib.md5(_sig.encode()).hexdigest()[:16]
+        _cache_path = os.path.join(cache_dir, f"{_key}_{_w}x{_h}.pt")
+        if os.path.isfile(_cache_path):
+            d = torch.load(_cache_path, map_location="cpu")
+            return {k: (v.to(device=device, dtype=dtype) if torch.is_tensor(v) else v)
+                    for k, v in d.items()}
+
     # ---- T5 text ----
     prompt_emb = encode_prompt(pipe, batch["prompt"], dtype, device)
 
@@ -273,13 +423,32 @@ def encode_batch(pipe, batch, dtype, device, no_recent=False):
     recent_clean_pil = batch.get("reference_image_clean", [recent_aug_pil])[0]
     w, h = sink_pil.size
 
+    # PLP: recent reference = VIDEO-mode latent of the previous chunk's last
+    # frame (matches inference z_prev[:,:,-1]). When set, both aug and clean
+    # refs use this same latent (pixel-space recent_aug is moot in latent space;
+    # the student's drift perturbation comes from the recycle injection instead).
+    # None on chunk 0 / non-plp → falls back to the image-mode single-frame encode.
+    plp_recent = None
+    if plp and batch.get("recent_window") is not None:
+        rw = pipe.preprocess_video(batch["recent_window"]).to(dtype=dtype, device=device)
+        # PLP-v2 (--vel_recent): keep the prev chunk's LAST TWO latent frames so
+        # the 1-step student gets motion/velocity context, not just position
+        # (directly attacks the motion-region blur that survives flat PLP). The
+        # two frames land at ref T=1 (recent₋₂) and T=2 (recent₋₁); recycle error
+        # is injected into the last one (recent₋₁). Default (-1:) = original PLP.
+        _n = 2 if vel_recent else 1
+        plp_recent = pipe.vae.encode(rw, device=device).to(dtype=dtype)[:, :, -_n:]
+
     def _ref_latent(recent_pil):
         sink_video = pipe.preprocess_video([sink_pil.resize((w, h))]).to(dtype=dtype, device=device)
         sink_latent = pipe.vae.encode(sink_video, device=device).to(dtype=dtype)
         if no_recent:
             return sink_latent           # sink-only (1 frame) for sinkonly teacher
-        recent_video = pipe.preprocess_video([recent_pil.resize((w, h))]).to(dtype=dtype, device=device)
-        recent_latent = pipe.vae.encode(recent_video, device=device).to(dtype=dtype)
+        if plp_recent is not None:
+            recent_latent = plp_recent
+        else:
+            recent_video = pipe.preprocess_video([recent_pil.resize((w, h))]).to(dtype=dtype, device=device)
+            recent_latent = pipe.vae.encode(recent_video, device=device).to(dtype=dtype)
         # Concat sink at T=0, recent at T=1 (matches our patched FunReference)
         return torch.cat([sink_latent, recent_latent], dim=2)
 
@@ -302,7 +471,7 @@ def encode_batch(pipe, batch, dtype, device, no_recent=False):
             clip_feature_clean = (clip_feature_aug if recent_aug_pil is recent_clean_pil
                                   else _clip(recent_clean_pil))
 
-    return dict(
+    result = dict(
         prompt_embed=prompt_emb,
         target_latents=target_latents,
         control_latents=control_latents,
@@ -311,6 +480,14 @@ def encode_batch(pipe, batch, dtype, device, no_recent=False):
         clip_feature_aug=clip_feature_aug,
         clip_feature_clean=clip_feature_clean,
     )
+    # ---- populate cache (atomic write: tmp + rename, multi-rank safe) ----
+    if _cache_path is not None and not os.path.isfile(_cache_path):
+        os.makedirs(cache_dir, exist_ok=True)
+        tmp = f"{_cache_path}.tmp{os.getpid()}"
+        torch.save({k: (v.detach().cpu() if torch.is_tensor(v) else v)
+                    for k, v in result.items()}, tmp)
+        os.replace(tmp, _cache_path)
+    return result
 
 
 # ===========================================================================
@@ -418,6 +595,23 @@ def rollout_student(
 
 
 # ===========================================================================
+# Novel-2: motion-targeted recycle. A per-pixel spatial weight from the pose-
+# control video's frame-to-frame change (the subject-motion signal, free — no
+# optical flow). Used to up-weight the recycled error injection in high-motion
+# regions, where 1-step blur accumulates. weight = 1 + beta * motion01, shape
+# [B,1,h,w] so it broadcasts onto an error tensor [C,h,w] or [B,C,h,w].
+# ===========================================================================
+def motion_weight_map(control_latents, beta):
+    cl = control_latents[:, :16].float()                              # pose channels (drop y_pad)
+    if cl.shape[2] < 2:
+        return torch.ones(cl.shape[0], 1, cl.shape[-2], cl.shape[-1],
+                          device=control_latents.device, dtype=control_latents.dtype)
+    m = (cl[:, :, 1:] - cl[:, :, :-1]).abs().mean(dim=(1, 2))         # [B,h,w]
+    m01 = m / (m.amax(dim=(1, 2), keepdim=True) + 1e-6)              # per-sample [0,1]
+    return (1.0 + beta * m01).unsqueeze(1).to(control_latents.dtype)  # [B,1,h,w]
+
+
+# ===========================================================================
 # Argument parser
 # ===========================================================================
 def get_parser():
@@ -435,6 +629,18 @@ def get_parser():
                         "→ vanilla base teacher (student must learn sink itself; "
                         "without regression it can't — experimental).")
     p.add_argument("--lora_rank", type=int, default=32)
+    p.add_argument("--base_model_id", default=DEFAULT_BASE_MODEL_ID,
+                   help="Base Fun-Control model_id for teacher/student/critic pipes. "
+                        "Default 1.3B; set 'PAI/Wan2.1-Fun-V1.1-14B-Control' for the 14B run.")
+    p.add_argument("--shared_base", action="store_true",
+                   help="Memory: hold ONE base+sink DiT carrying student+critic LoRA "
+                        "adapters (teacher=adapters off) instead of 3 full copies. "
+                        "Required to fit 14B on 80GB. Default off = original 3 pipes.")
+    p.add_argument("--fsdp", action="store_true",
+                   help="Shard the shared-base DiT's transformer blocks across GPUs "
+                        "(FSDP FULL_SHARD, per-DiTBlock) → ~1/N weights per GPU, lets "
+                        "you drop the GAN CPU offload. 14B-only; requires --shared_base. "
+                        "Default off — does NOT touch the 1.3B / non-fsdp path.")
     p.add_argument("--lora_target_modules", default="q,k,v,o,ffn.0,ffn.2")
     p.add_argument("--no_recent", action="store_true",
                    help="Sink-only conditioning (no recent frame). Use when the "
@@ -475,6 +681,14 @@ def get_parser():
     p.add_argument("--gan_ffn_dim", type=int, default=4096,
                    help="FFN hidden dim inside each GanCrossAttnBlock (One-Forcing uses 8192).")
     p.add_argument("--gan_num_heads", type=int, default=12)
+    p.add_argument("--no_gan_offload", action="store_true",
+                   help="Skip CPU activation offload in the GAN-D/GAN-G forwards "
+                        "(faster, but uses more GPU memory). Safe when shared-base "
+                        "freed enough room; OOM risk otherwise.")
+    p.add_argument("--grad_clip", type=float, default=0.0,
+                   help="Max grad norm (clip_grad_norm_) on student/critic before each "
+                        "optimizer step. 0=off. Set ~1.0 to stop the recycle-feedback "
+                        "dmd_g runaway (err_norm→∞) that hits harder data at 14B.")
     # ─── SVI-style error recycle + self-correcting loss ───
     p.add_argument("--error_alpha", type=float, default=0.5,
                    help="Final scale on injected error (after warmup ramp). 0=off (sc loss still active).")
@@ -510,6 +724,50 @@ def get_parser():
     p.add_argument("--resume_student_from", default=None)
     p.add_argument("--resume_critic_from", default=None)
     p.add_argument("--use_gradient_checkpointing", action="store_true", default=True)
+    p.add_argument("--plp", action="store_true",
+                   help="Persistent Latent Propagation: recent reference = previous "
+                        "chunk's VIDEO-mode latent (last latent frame) instead of "
+                        "an image-mode single-frame encode. Matches PLP inference. "
+                        "Needs recent_window from ChunkAwareDataset (auto when set).")
+    p.add_argument("--aspect_crop", action="store_true",
+                   help="Resize-to-cover + center-crop instead of stretch (stops 3:4 "
+                        "sources being squished). Must match the teacher's setting.")
+    p.add_argument("--motion_weight_beta", type=float, default=0.0,
+                   help="Novel-2 (motion-targeted recycle): scale the recycled error "
+                        "injection by a per-pixel motion map derived FOR FREE from the "
+                        "pose-control video (|Δpose| over time), so self-correction "
+                        "focuses on high-motion regions where blur accumulates. "
+                        "weight = 1 + beta*motion01 (beta=0 → off, uniform injection; "
+                        "try 1.0-2.0). Prior art: motion-weighted LOSS (MimicMotion/MoCo); "
+                        "our twist applies it to the recycle INJECTION + uses pose, not flow.")
+    p.add_argument("--vel_recent", action="store_true",
+                   help="PLP-v2 velocity-aware recent: carry the prev chunk's LAST TWO "
+                        "latent frames (recent₋₂ @ ref T=1, recent₋₁ @ T=2) so the 1-step "
+                        "student has motion context, not just position. Targets the "
+                        "motion-region blur that survives flat PLP. Requires --plp. "
+                        "Recycle error injects into the last recent frame. Must match "
+                        "--vel_recent at inference.")
+    # --- frequency-band recycle (#2; default OFF = flat single-bank FIFO) ---
+    p.add_argument("--recycle_freq_split", action="store_true",
+                   help="Split recycle residuals into low/high spatial-freq banks "
+                        "and inject α_low·low + α_high·high (decouples background/"
+                        "stability drift from detail/clarity drift). OFF = original "
+                        "flat FIFO (bit-identical to baseline).")
+    p.add_argument("--recycle_band_k", type=int, default=2,
+                   help="Low-pass pool kernel = band cutoff scale (2 → 58/42 split, "
+                        "4 → 33/67). Only used with --recycle_freq_split.")
+    p.add_argument("--error_alpha_low", type=float, default=None,
+                   help="Injection scale for the LOW band (stability). Defaults to "
+                        "--error_alpha when unset.")
+    p.add_argument("--error_alpha_high", type=float, default=None,
+                   help="Injection scale for the HIGH band (clarity). Defaults to "
+                        "--error_alpha when unset.")
+    p.add_argument("--latent_cache", default=None,
+                   help="Dir for on-disk per-chunk latent cache. First epoch encodes "
+                        "+ saves; later epochs/reruns load (skips decode + VAE/T5/CLIP). "
+                        "Deterministic under --plp; do NOT use without --plp (the "
+                        "random recent aug would be frozen). Clear the dir if the base "
+                        "model changes.")
     return p
 
 
@@ -546,33 +804,54 @@ def main():
         print(f"[setup] sink LoRA fused into base: {use_sink} "
               f"({'teacher=base+sink' if use_sink else 'teacher=VANILLA base'})")
 
-    # ---------------- Build 3 pipes (each rank gets its own 3 DiTs) ----------------
-    if is_main: print("[setup] building teacher (frozen) ...")
-    teacher_pipe = build_pipe(device, dtype)
-    if use_sink:
-        fuse_sink_lora_into_pipe(teacher_pipe, args.teacher_lora_path)
-    teacher_pipe.dit.requires_grad_(False)
-    teacher_pipe.dit.eval()
+    if args.shared_base:
+        # ---- SHARED-BASE: ONE base+sink DiT + student/critic adapters (fits 14B) ----
+        if is_main: print("[setup] SHARED-BASE: 1 base+sink DiT + 2 LoRA adapters (student/critic) ...")
+        _pipe = build_pipe(device, dtype, model_id=args.base_model_id)
+        if use_sink:
+            fuse_sink_lora_into_pipe(_pipe, args.teacher_lora_path)
+        _pipe.dit.requires_grad_(False)                       # base+sink frozen
+        add_named_lora(_pipe.dit, target_modules, args.lora_rank)   # student + critic adapters
+        _pipe.dit.train()
+        if args.resume_student_from:
+            load_lora_into_trainable(_pipe.dit, load_state_dict(args.resume_student_from))
+            if is_main: print(f"[resume] student LoRA from {args.resume_student_from}")
+        if args.resume_critic_from:
+            load_lora_into_trainable(_pipe.dit, load_state_dict(args.resume_critic_from))
+            if is_main: print(f"[resume] critic LoRA from {args.resume_critic_from}")
+        if args.fsdp:
+            # shard each DiTBlock across GPUs → ~1/N weights/GPU (lets us drop GAN offload)
+            fsdp_wrap_blocks(_pipe.dit)
+            if is_main: print(f"[setup] FSDP: per-DiTBlock FULL_SHARD across {num_proc} GPUs")
+        teacher_pipe = student_pipe = critic_pipe = _pipe     # all share the one DiT
+    else:
+        # ---------------- Build 3 pipes (each rank gets its own 3 DiTs) ----------------
+        if is_main: print("[setup] building teacher (frozen) ...")
+        teacher_pipe = build_pipe(device, dtype, model_id=args.base_model_id)
+        if use_sink:
+            fuse_sink_lora_into_pipe(teacher_pipe, args.teacher_lora_path)
+        teacher_pipe.dit.requires_grad_(False)
+        teacher_pipe.dit.eval()
 
-    if is_main: print("[setup] building student (trainable LoRA) ...")
-    student_pipe = build_pipe(device, dtype)
-    if use_sink:
-        fuse_sink_lora_into_pipe(student_pipe, args.teacher_lora_path)
-    student_pipe.dit = add_trainable_lora(student_pipe.dit, target_modules, args.lora_rank)
-    student_pipe.dit.train()   # gradient_checkpoint_forward checks self.training
-    if args.resume_student_from:
-        load_lora_into_trainable(student_pipe.dit, load_state_dict(args.resume_student_from))
-        if is_main: print(f"[resume] student LoRA from {args.resume_student_from}")
+        if is_main: print("[setup] building student (trainable LoRA) ...")
+        student_pipe = build_pipe(device, dtype, model_id=args.base_model_id)
+        if use_sink:
+            fuse_sink_lora_into_pipe(student_pipe, args.teacher_lora_path)
+        student_pipe.dit = add_trainable_lora(student_pipe.dit, target_modules, args.lora_rank)
+        student_pipe.dit.train()   # gradient_checkpoint_forward checks self.training
+        if args.resume_student_from:
+            load_lora_into_trainable(student_pipe.dit, load_state_dict(args.resume_student_from))
+            if is_main: print(f"[resume] student LoRA from {args.resume_student_from}")
 
-    if is_main: print("[setup] building critic (trainable LoRA) ...")
-    critic_pipe = build_pipe(device, dtype)
-    if use_sink:
-        fuse_sink_lora_into_pipe(critic_pipe, args.teacher_lora_path)
-    critic_pipe.dit = add_trainable_lora(critic_pipe.dit, target_modules, args.lora_rank)
-    critic_pipe.dit.train()
-    if args.resume_critic_from:
-        load_lora_into_trainable(critic_pipe.dit, load_state_dict(args.resume_critic_from))
-        if is_main: print(f"[resume] critic LoRA from {args.resume_critic_from}")
+        if is_main: print("[setup] building critic (trainable LoRA) ...")
+        critic_pipe = build_pipe(device, dtype, model_id=args.base_model_id)
+        if use_sink:
+            fuse_sink_lora_into_pipe(critic_pipe, args.teacher_lora_path)
+        critic_pipe.dit = add_trainable_lora(critic_pipe.dit, target_modules, args.lora_rank)
+        critic_pipe.dit.train()
+        if args.resume_critic_from:
+            load_lora_into_trainable(critic_pipe.dit, load_state_dict(args.resume_critic_from))
+            if is_main: print(f"[resume] critic LoRA from {args.resume_critic_from}")
 
     # ---------------- ClsBranch discriminator (hangs off the critic) ----------------
     gan_layers = [int(x) for x in args.gan_feature_layers.split(",")]
@@ -590,8 +869,13 @@ def main():
         print(f"[setup] cls_branch: {n_cls/1e6:.1f}M params, layers={gan_layers}")
 
     # ---------------- Optimizers ----------------
-    student_params = trainable_params(student_pipe.dit)
-    critic_params  = trainable_params(critic_pipe.dit)
+    if args.shared_base:
+        # student_pipe.dit IS critic_pipe.dit → split by adapter name.
+        student_params = adapter_params(student_pipe.dit, "student")
+        critic_params  = adapter_params(critic_pipe.dit, "critic")
+    else:
+        student_params = trainable_params(student_pipe.dit)
+        critic_params  = trainable_params(critic_pipe.dit)
     cls_params     = list(cls_branch.parameters())
     if is_main:
         print(f"[setup] student trainable params: {sum(p.numel() for p in student_params)/1e6:.1f}M")
@@ -633,16 +917,27 @@ def main():
         # Optimizer states (+ SVI error buffer state)
         state_path = args.resume_student_from.replace(".safetensors", "_state.pt")
         if os.path.isfile(state_path):
-            ckpt = torch.load(state_path, map_location=device)
-            student_optimizer.load_state_dict(ckpt["student_optimizer"])
+            # Load to CPU: the optimizer state (full AdamW moments, ~3.4GB at
+            # 14B) must NOT land on the GPU — under FSDP it mismatches the
+            # sharded params and is discarded anyway, so putting it on-device
+            # just burns/fragments VRAM at the tight 80GB boundary. AdamW's
+            # load_state_dict moves the adopted tensors onto the param devices
+            # itself; on mismatch we cold-start and the CPU copy is freed.
+            ckpt = torch.load(state_path, map_location="cpu")
+            try:
+                student_optimizer.load_state_dict(ckpt["student_optimizer"])
+                if is_main:
+                    print(f"[resume] student optimizer state from {state_path} "
+                          f"(saved at step {ckpt.get('global_step', '?')})")
+            except (ValueError, KeyError, RuntimeError) as e:
+                if is_main:
+                    print(f"[resume] student_optimizer state mismatch ({e}) — "
+                          f"cold start student moments (FSDP transition?).")
             try:
                 critic_optimizer.load_state_dict(ckpt["critic_optimizer"])
-            except (ValueError, KeyError) as e:
+            except (ValueError, KeyError, RuntimeError) as e:
                 if is_main:
                     print(f"[resume] critic_optimizer state mismatch ({e}) — cold start critic moments.")
-            if is_main:
-                print(f"[resume] student optimizer state from {state_path} "
-                      f"(saved at step {ckpt.get('global_step', '?')})")
             # SVI buffer state (may not exist in old checkpoints — falls back to empty)
             resume_buffer = ckpt.get("error_buffer", None)
             resume_warmup_done_step = ckpt.get("error_warmup_done_step", None)
@@ -698,6 +993,8 @@ def main():
         chunk_frames=args.num_frames,
         recent_aug_strength=args.recent_aug_strength,
         dataset_repeat=args.dataset_repeat,
+        plp=args.plp,
+        aspect_crop=args.aspect_crop,
     )
     # Resume position: map global_step_offset back to (epoch, batch-in-epoch)
     # so we CONTINUE the stream instead of replaying epoch 0 from the top.
@@ -720,7 +1017,9 @@ def main():
         sampler=sampler,
         shuffle=False,            # sampler handles shuffling
         batch_size=None,
-        num_workers=2,
+        num_workers=4,
+        persistent_workers=True,
+        prefetch_factor=2,
     )
 
     # ---------------- Training log (main process only) ----------------
@@ -739,18 +1038,26 @@ def main():
               f"(index-level, no decode)")
 
     # ---------------- SVI Error Buffer + state ----------------
-    error_buffer = ErrorBuffer(max_size=args.error_buffer_size)
+    error_buffer = ErrorBuffer(max_size=args.error_buffer_size,
+                               freq_split=args.recycle_freq_split,
+                               band_k=args.recycle_band_k)
     error_warmup_done_step = None
     # Restore from resume checkpoint if available
     if resume_buffer is not None:
-        # torch.load(..., map_location=device) puts them on GPU; force back to CPU bf16
-        # to match the buffer's runtime invariant.
-        error_buffer.buf = [
-            t.detach().to(torch.bfloat16).cpu().contiguous()
-            for t in list(resume_buffer)[-args.error_buffer_size:]
-        ]
+        # Restores flat buf AND freq buf_low/buf_high (new dict format), or a
+        # legacy flat list — load_state_dict forces CPU bf16 + trims to max_size.
+        error_buffer.load_state_dict(resume_buffer)
     if resume_warmup_done_step is not None:
         error_warmup_done_step = resume_warmup_done_step
+    # Guard: if the ACTIVE buffer (mode-specific) is under-filled — e.g. resuming
+    # a flat checkpoint into --recycle_freq_split, where buf_low/high are empty —
+    # the restored warmup_done_step would make α ramp jump as the buffer refills.
+    # Force a fresh warmup in that case.
+    if error_warmup_done_step is not None and len(error_buffer) < args.error_warmup_count:
+        if is_main:
+            print(f"[resume] active buffer under-filled ({len(error_buffer)} < "
+                  f"{args.error_warmup_count}; mode switch?) → reset warmup, re-fill before ramp")
+        error_warmup_done_step = None
     if is_main:
         print(f"[setup] error recycle: alpha={args.error_alpha}, buffer={args.error_buffer_size}, "
               f"warmup_count={args.error_warmup_count}, ramp_steps={args.error_alpha_ramp_steps}, "
@@ -758,14 +1065,34 @@ def main():
         print(f"[setup] error_buffer initial size: {len(error_buffer)}, "
               f"warmup_done_step: {error_warmup_done_step}")
 
+    # Per-band injection scales (freq mode). Band α's fall back to --error_alpha.
+    # inject_enabled gates the whole recycle: in freq mode a nonzero band α is
+    # enough even when --error_alpha is 0 (so you can drive only one band).
+    base_alpha_lo = args.error_alpha if args.error_alpha_low  is None else args.error_alpha_low
+    base_alpha_hi = args.error_alpha if args.error_alpha_high is None else args.error_alpha_high
+    if args.recycle_freq_split:
+        inject_enabled = (base_alpha_lo > 0.0) or (base_alpha_hi > 0.0)
+        if is_main:
+            print(f"[error-recycle] FREQ-SPLIT on (band_k={args.recycle_band_k}): "
+                  f"α_low={base_alpha_lo}, α_high={base_alpha_hi}")
+    else:
+        inject_enabled = (args.error_alpha > 0.0)
+
+    if args.latent_cache and args.recent_aug_strength > 0 and is_main:
+        print(f"[warn] --latent_cache with recent_aug_strength={args.recent_aug_strength}: the "
+              f"random CLIP recent-aug is FROZEN on first cache write (cache key has no aug "
+              f"seed). Under PLP set --recent_aug_strength 0 (aug is moot there), or accept "
+              f"a fixed per-sample augmentation.")
+
     # ---------------- Training loop ----------------
     local_step = 0
+    freq_inject_logged = False     # one-shot log of actual a_lo/a_hi at first real inject
     for epoch in range(start_epoch, start_epoch + args.num_epochs):
         sampler.set_epoch(epoch)   # reshuffle + apply skip on the start epoch only
         pbar = tqdm(dataloader, desc=f"epoch {epoch}", disable=not is_main)
         for batch in pbar:
             # ─── encode all conditioning once ───
-            cond = encode_batch(student_pipe, batch, dtype, device, no_recent=args.no_recent)
+            cond = encode_batch(student_pipe, batch, dtype, device, no_recent=args.no_recent, plp=args.plp, cache_dir=args.latent_cache, aspect_crop=args.aspect_crop, base_model_id=args.base_model_id, vel_recent=args.vel_recent)
             target_latents    = cond["target_latents"]
             control_latents   = cond["control_latents"]
             prompt_embed      = cond["prompt_embed"]
@@ -794,13 +1121,14 @@ def main():
             # student actually sees during the gradient-bearing rollout.
             ref_student_clean = ref_student      # baseline (may already have random aug)
             alpha_eff = 0.0
+            ramp = 0.0                            # hoisted: used by freq-split injection
             # Use GLOBAL step for ramp calc so resume picks up where it left off.
             # (local_step resets to 0 on resume; global_step = offset + local_step.)
             cur_global_step = args.global_step_offset + local_step
             # Probabilistic injection: with prob `error_inject_prob`, do error
             # injection; otherwise use clean ref (SVI's clean_prob mechanism).
             this_step_inject = (random.random() < args.error_inject_prob)
-            if (args.error_alpha > 0.0
+            if (inject_enabled
                     and this_step_inject
                     and len(error_buffer) >= args.error_warmup_count):
                 if error_warmup_done_step is None:
@@ -812,7 +1140,12 @@ def main():
                     ramp = min(1.0, (cur_global_step - error_warmup_done_step) / args.error_alpha_ramp_steps)
                 else:
                     ramp = 1.0
-                alpha_eff = args.error_alpha * max(0.0, ramp)
+                # alpha_eff = master "injection active + scale" used by sc-loss /
+                # buffer-push gating. In freq mode use the stronger band.
+                if args.recycle_freq_split:
+                    alpha_eff = max(base_alpha_lo, base_alpha_hi) * max(0.0, ramp)
+                else:
+                    alpha_eff = args.error_alpha * max(0.0, ramp)
 
             if alpha_eff > 0.0:
                 # SVI injection targets the "recent" slice (T=1) of reference_latents.
@@ -824,10 +1157,25 @@ def main():
                               "skipping error injection.")
                     ref_student_corrupt = ref_student
                     alpha_eff = 0.0
+                elif args.recycle_freq_split:
+                    # Two-bank injection: α_low·low + α_high·high (each band sampled
+                    # independently). base_alpha_{lo,hi} fall back to error_alpha.
+                    a_lo = base_alpha_lo * max(0.0, ramp)
+                    a_hi = base_alpha_hi * max(0.0, ramp)
+                    lo, hi = error_buffer.sample_bands(device=ref_student.device, dtype=ref_student.dtype)
+                    ref_student_corrupt = ref_student.clone()
+                    _mw = motion_weight_map(control_latents, args.motion_weight_beta) if args.motion_weight_beta > 0.0 else 1.0
+                    ref_student_corrupt[:, :, -1, :, :] = ref_student_corrupt[:, :, -1, :, :] + _mw * (a_lo * lo + a_hi * hi)
+                    if not freq_inject_logged and is_main:
+                        print(f"[error-recycle] first freq inject @ step {cur_global_step}: "
+                              f"a_lo={a_lo:.4f} a_hi={a_hi:.4f} (ramp={ramp:.3f})")
+                        freq_inject_logged = True
                 else:
                     err = error_buffer.sample(device=ref_student.device, dtype=ref_student.dtype)
+                    if args.motion_weight_beta > 0.0:
+                        err = err * motion_weight_map(control_latents, args.motion_weight_beta)
                     ref_student_corrupt = ref_student.clone()
-                    ref_student_corrupt[:, :, 1, :, :] = ref_student_corrupt[:, :, 1, :, :] + alpha_eff * err
+                    ref_student_corrupt[:, :, -1, :, :] = ref_student_corrupt[:, :, -1, :, :] + alpha_eff * err
             else:
                 ref_student_corrupt = ref_student
 
@@ -837,6 +1185,18 @@ def main():
             # random noise inputs to the same output, which pressures student
             # toward noise-invariance (= mode collapse).
             sc_loss_active = (alpha_eff > 0.0 and args.sc_weight > 0.0)
+
+            # The clean rollout has TWO consumers:
+            #   1. SC loss (gated by sc_loss_active)
+            #   2. Buffer push, which requires a clean source whenever
+            #      alpha_eff > 0 (otherwise x_pred is corrupt-ref output and
+            #      pushing it creates a polluted feedback loop where injected
+            #      noise gets re-injected).
+            # When alpha_eff = 0, x_pred IS the clean rollout (ref_student_corrupt
+            # falls back to ref_student above), so no separate clean rollout
+            # is needed — the line-1020 fallback can safely use x_pred.
+            will_push = (cur_global_step >= args.error_collect_start_step)
+            need_clean_rollout = sc_loss_active or (alpha_eff > 0.0 and will_push)
             N_steps = len(denoising_step_list)
             shared_exit_idx     = random.randrange(N_steps)
             shared_initial_noisy = torch.randn(target_latents.shape, dtype=dtype, device=device)
@@ -845,8 +1205,9 @@ def main():
                 for _ in range(shared_exit_idx)        # only need this many fresh re-noises
             ]
 
-            # ─── CLEAN ROLLOUT (no grad) — target for self-correcting loss ───
-            if sc_loss_active:
+            if args.shared_base: use_adapter(student_pipe.dit, "student")
+            # ─── CLEAN ROLLOUT (no grad) — used by SC loss and/or buffer push ───
+            if need_clean_rollout:
                 with torch.no_grad():
                     x_pred_clean_target, _ = rollout_student(
                         student_pipe.dit, denoising_step_list, tuple(target_latents.shape),
@@ -873,6 +1234,7 @@ def main():
                 renoise_noises=shared_renoise_noises,
             )
 
+            if args.shared_base: use_adapter(critic_pipe.dit, "critic")
             # ─── critic update × N (use x_pred.detach() — no grad to student) ───
             for _ in range(args.dfake_gen_update_ratio):
                 t_c = sample_critic_timestep(shift=args.flow_shift)
@@ -888,7 +1250,8 @@ def main():
                 critic_loss = compute_critic_loss(v_critic_pred, x_pred, noise_c)
                 critic_optimizer.zero_grad()
                 critic_loss.backward()
-                all_reduce_grads(critic_params + cls_params, num_proc)   # sync
+                all_reduce_grads(cls_params if args.fsdp else critic_params + cls_params, num_proc)   # sync
+                if args.grad_clip > 0: torch.nn.utils.clip_grad_norm_(critic_params + cls_params, args.grad_clip)
                 critic_optimizer.step()
 
             # ─── GAN-D update × N (One-Forcing's discriminator step) ───
@@ -909,7 +1272,8 @@ def main():
                 ref_2 = torch.cat([ref_student, ref_student], dim=0)
                 clip_2 = torch.cat([clip_student, clip_student], dim=0) if clip_student is not None else None
 
-                with torch.autograd.graph.save_on_cpu(pin_memory=False):
+                with (contextlib.nullcontext() if args.no_gan_offload
+                      else torch.autograd.graph.save_on_cpu(pin_memory=False)):
                     with FeatureCapturer(critic_pipe.dit, gan_layers) as cap:
                         _ = dit_forward(
                             critic_pipe.dit, stacked, t_d, prompt_2,
@@ -923,7 +1287,8 @@ def main():
                 d_loss = gan_d_loss(real_logit_d, fake_logit_d) * args.gan_d_weight
                 critic_optimizer.zero_grad()
                 d_loss.backward()
-                all_reduce_grads(critic_params + cls_params, num_proc)
+                all_reduce_grads(cls_params if args.fsdp else critic_params + cls_params, num_proc)
+                if args.grad_clip > 0: torch.nn.utils.clip_grad_norm_(critic_params + cls_params, args.grad_clip)
                 critic_optimizer.step()
 
             # ─── generator update × 1 (DMD + GAN-G, with grad through x_pred) ───
@@ -933,6 +1298,7 @@ def main():
             x_pred_noisy_dmd, _ = add_noise_flow(x_pred, sigma_dmd, noise_dmd)
 
             with torch.no_grad():
+                if args.shared_base: use_adapter(critic_pipe.dit, "critic")
                 # fake score (critic), conditional only — student-side recent
                 v_fake = dit_forward(
                     critic_pipe.dit, x_pred_noisy_dmd, t_dmd, prompt_embed,
@@ -940,6 +1306,7 @@ def main():
                 )
                 pred_fake = velocity_to_x0(v_fake, x_pred_noisy_dmd, sigma_dmd)
 
+                if args.shared_base: use_adapter(teacher_pipe.dit, None)   # base+sink only
                 # real score (teacher), CFG-enhanced — teacher-side (clean) recent
                 v_real_cond = dit_forward(
                     teacher_pipe.dit, x_pred_noisy_dmd, t_dmd, prompt_embed,
@@ -970,7 +1337,9 @@ def main():
             sigma_g = timestep_to_sigma(t_g)
             noise_g = torch.randn_like(x_pred)
             fake_noisy_g, _ = add_noise_flow(x_pred, sigma_g, noise_g)
-            with torch.autograd.graph.save_on_cpu(pin_memory=False):
+            if args.shared_base: use_adapter(critic_pipe.dit, "critic")   # discriminator
+            with (contextlib.nullcontext() if args.no_gan_offload
+                  else torch.autograd.graph.save_on_cpu(pin_memory=False)):
                 with FeatureCapturer(critic_pipe.dit, gan_layers) as cap:
                     _ = dit_forward(
                         critic_pipe.dit, fake_noisy_g, t_g, prompt_embed,
@@ -992,7 +1361,8 @@ def main():
             gen_loss = dmd_g_loss + g_loss + args.sc_weight * sc_loss
             student_optimizer.zero_grad()
             gen_loss.backward()
-            all_reduce_grads(student_params, num_proc)   # sync across ranks
+            if not args.fsdp: all_reduce_grads(student_params, num_proc)   # FSDP reduces LoRA grads itself
+            if args.grad_clip > 0: torch.nn.utils.clip_grad_norm_(student_params, args.grad_clip)
             student_optimizer.step()
 
             # ─── SVI COLLECT: push student's drift direction to buffer ───
@@ -1017,6 +1387,11 @@ def main():
             err_norm = 0.0
             if cur_global_step >= args.error_collect_start_step:
                 with torch.no_grad():
+                    # Invariant guaranteed by `need_clean_rollout` upstream:
+                    #   - alpha_eff > 0 ⇒ x_pred_clean_target is computed
+                    #   - alpha_eff == 0 ⇒ x_pred IS clean (no injection happened),
+                    #     so falling back to x_pred here is also a clean source.
+                    # The fallback NEVER reads a corrupt-ref rollout into the buffer.
                     ref_x_pred = x_pred_clean_target if x_pred_clean_target is not None else x_pred
                     real_last    = target_latents[:, :, -1, :, :]
                     student_last = ref_x_pred[:,    :, -1, :, :].detach()
@@ -1061,12 +1436,23 @@ def main():
             # ─── save (main process only — params are sync'd across ranks anyway) ───
             if global_step % args.save_steps == 0:
                 accelerator.wait_for_everyone()
+                # Under FSDP the LoRA is sharded → gather full params for saving.
+                # summon_full_params is COLLECTIVE: every rank enters/exits; with
+                # rank0_only only rank0 materializes (on CPU) → rank0 then writes.
+                _save_es = contextlib.ExitStack()
+                if args.fsdp:
+                    from torch.distributed.fsdp import FullyShardedDataParallel as _FSDP
+                    for _b in (mm for mm in student_pipe.dit.modules() if isinstance(mm, _FSDP)):
+                        _save_es.enter_context(_FSDP.summon_full_params(
+                            _b, writeback=False, rank0_only=True, offload_to_cpu=True))
                 if is_main:
                     student_path = os.path.join(args.output_path, f"step-{global_step}.safetensors")
                     critic_path  = os.path.join(args.output_path, f"step-{global_step}_critic.safetensors")
                     state_path   = os.path.join(args.output_path, f"step-{global_step}_state.pt")
-                    save_lora_state_dict(student_pipe.dit, student_path, remove_prefix="dit.")
-                    save_lora_state_dict(critic_pipe.dit,  critic_path,  remove_prefix="dit.")
+                    save_lora_state_dict(student_pipe.dit, student_path, remove_prefix="dit.",
+                                         adapter="student" if args.shared_base else None)
+                    save_lora_state_dict(critic_pipe.dit,  critic_path,  remove_prefix="dit.",
+                                         adapter="critic"  if args.shared_base else None)
                     cls_path     = os.path.join(args.output_path, f"step-{global_step}_cls.pt")
                     torch.save(cls_branch.state_dict(), cls_path)
                     # EMA LoRA — this is typically what you want for inference
@@ -1085,11 +1471,12 @@ def main():
                         "critic_optimizer":  critic_optimizer.state_dict(),
                         "global_step": global_step,
                         # SVI error recycle state (per-rank buffer; we save rank-0's only)
-                        "error_buffer": list(error_buffer.buf),     # list of CPU bf16 [C,h,w]
+                        "error_buffer": error_buffer.state_dict(),   # flat buf + freq buf_low/high + band_k
                         "error_warmup_done_step": error_warmup_done_step,
                     }, state_path)
                     print(f"[save] {student_path} + ema:{ema_path} + {cls_path} + {state_path} "
                           f"(buf={len(error_buffer)})")
+                _save_es.close()   # exit FSDP summon (collective; all ranks)
 
     if is_main:
         log_file.write(f"=== run end {time.strftime('%Y-%m-%d %H:%M:%S')} | "

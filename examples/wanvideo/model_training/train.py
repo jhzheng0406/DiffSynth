@@ -124,6 +124,19 @@ class WanTrainingModule(DiffusionTrainingModule):
             "min_timestep_boundary": self.min_timestep_boundary,
         }
         inputs_shared = self.parse_extra_inputs(data, self.extra_inputs, inputs_shared)
+        # PLP (persistent latent propagation): if the dataset emitted a previous-
+        # chunk window, encode it VIDEO-mode and use its LAST latent frame as the
+        # recent reference (matches inference z_prev[:,:,-1]) instead of the
+        # image-mode single-frame encode. Gated purely on recent_window presence,
+        # so any chunk-aware path (plain or recycle) gets it; UnifiedDataset (no
+        # such key) is unaffected. None on chunk 0 → image-mode fallback.
+        recent_window = data.get("recent_window") if isinstance(data, dict) else None
+        if recent_window is not None:
+            self.pipe.load_models_to_device(["vae"])
+            vid = self.pipe.preprocess_video(recent_window).to(
+                dtype=self.pipe.torch_dtype, device=self.pipe.device)
+            z = self.pipe.vae.encode(vid, device=self.pipe.device).to(dtype=self.pipe.torch_dtype)
+            inputs_shared["recent_latent"] = z[:, :, -1:]
         return inputs_shared, inputs_posi, inputs_nega
     
     def forward(self, data, inputs=None):

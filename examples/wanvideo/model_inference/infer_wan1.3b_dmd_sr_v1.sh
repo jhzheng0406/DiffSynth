@@ -1,10 +1,10 @@
 #!/bin/bash
-# Inference for the One-Forcing (DMD + GAN) baseline, no EMA, 1-step.
-# Used as the A/B reference vs FD/HF variants.
+# Inference for sr_v1: DMD + One-Forcing GAN with unsharp-masked real
+# as GAN-D anchor (aspirational distribution). 1-step, auto-picks latest step.
 #
-#   bash infer_wan1.3b_oneforcing.sh                  # step 850, 180s, GPU 0
-#   STEP=200 DURATION=30 bash infer_wan1.3b_oneforcing.sh
-#   GPU=2 bash infer_wan1.3b_oneforcing.sh
+#   bash infer_wan1.3b_dmd_sr_v1.sh                   # latest step, 180s, GPU 0
+#   STEP=200 DURATION=30 bash infer_wan1.3b_dmd_sr_v1.sh
+#   GPU=2 bash infer_wan1.3b_dmd_sr_v1.sh
 
 set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
